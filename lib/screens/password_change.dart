@@ -24,6 +24,7 @@ class PasswordChangeScreen extends StatelessWidget {
                   controller: userProvider.password,
                   obscureText: userProvider.isHidden ? false : true,
                   textInputType: null,
+                  maxLines: 1,
                   labelText: '新しいパスワード',
                   prefixIconData: Icons.lock,
                   suffixIconData: userProvider.isHidden
@@ -38,6 +39,7 @@ class PasswordChangeScreen extends StatelessWidget {
                   controller: userProvider.cPassword,
                   obscureText: userProvider.isCHidden ? false : true,
                   textInputType: null,
+                  maxLines: 1,
                   labelText: '新しいパスワードの再入力',
                   prefixIconData: Icons.lock_outlined,
                   suffixIconData: userProvider.isCHidden

@@ -9,7 +9,7 @@ class UserNoticeService {
   void updateNotice(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
-        .doc(values['shopId'])
+        .doc(values['userId'])
         .collection(_subCollection)
         .doc(values['id'])
         .update(values);

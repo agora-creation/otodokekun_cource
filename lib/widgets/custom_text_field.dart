@@ -5,6 +5,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool obscureText;
   final TextInputType textInputType;
+  final int maxLines;
   final String labelText;
   final IconData prefixIconData;
   final IconData suffixIconData;
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.obscureText,
     this.textInputType,
+    this.maxLines,
     this.labelText,
     this.prefixIconData,
     this.suffixIconData,
@@ -26,7 +28,7 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       keyboardType: textInputType,
-      maxLines: null,
+      maxLines: maxLines,
       style: TextStyle(
         color: kMainColor,
         fontSize: 14.0,

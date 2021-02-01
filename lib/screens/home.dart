@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
+import 'package:otodokekun_cource/models/shop.dart';
+import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/app.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/shop_product.dart';
@@ -20,29 +22,22 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
-    final userNoticeProvider = Provider.of<UserNoticeProvider>(context)
-      ..getNoticeRead(userId: userProvider.user?.id);
+    ShopModel _shop = userProvider.shop;
+    UserModel _user = userProvider.user;
+    final userNoticeProvider = Provider.of<UserNoticeProvider>(context);
     final shopProductProvider = Provider.of<ShopProductProvider>(context);
-    final shopOrderProvider = Provider.of<ShopOrderProvider>(context)
-      ..getTotalPrice(
-          shopId: userProvider.user?.shopId, userId: userProvider.user?.id);
-
+    final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final List<Widget> _tabsList = [
-      OrderScreen(appProvider: appProvider, userProvider: userProvider),
-      HistoryScreen(appProvider: appProvider, userProvider: userProvider),
-      SettingsScreen(appProvider: appProvider, userProvider: userProvider),
+      OrderScreen(),
+      HistoryScreen(),
+      SettingsScreen(),
     ];
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
         title: GestureDetector(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (_) {},
-            );
-          },
-          child: Text(userProvider.shop?.name ?? ''),
+          onTap: () {},
+          child: Text(_shop?.name ?? ''),
         ),
         actions: [
           IconButton(
@@ -53,12 +48,16 @@ class HomeScreen extends StatelessWidget {
                 builder: (context) => NoticeScreen(),
               );
             },
-            icon: userNoticeProvider.isRead
-                ? Icon(
-                    Icons.notifications_active,
-                    color: Colors.redAccent,
-                  )
-                : Icon(Icons.notifications_none),
+            icon: FutureBuilder<Icon>(
+              future: userNoticeProvider.getNoticeRead(userId: _user?.id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return snapshot.data;
+                } else {
+                  return Icon(Icons.notifications_none);
+                }
+              },
+            ),
           ),
         ],
       ),
@@ -82,7 +81,7 @@ class HomeScreen extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: userProvider.user?.name ?? '',
+            label: _user?.name ?? '',
           ),
         ],
       ),

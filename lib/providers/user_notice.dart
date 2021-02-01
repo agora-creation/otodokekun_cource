@@ -5,9 +5,6 @@ import 'package:otodokekun_cource/services/user_notice.dart';
 class UserNoticeProvider with ChangeNotifier {
   UserNoticeService _userNoticeService = UserNoticeService();
 
-  List<UserNoticeModel> notices = [];
-  bool isRead = false;
-
   void changeReadNotice({UserNoticeModel notice}) {
     _userNoticeService.updateNotice({
       'id': notice.id,
@@ -16,13 +13,22 @@ class UserNoticeProvider with ChangeNotifier {
     });
   }
 
-  Future getNotices({String userId}) async {
+  Future<List<UserNoticeModel>> getNotices({String userId}) async {
+    List<UserNoticeModel> notices = [];
     notices = await _userNoticeService.getNotices(userId: userId);
-    notifyListeners();
+    return notices;
   }
 
-  Future getNoticeRead({String userId}) async {
+  Future<Icon> getNoticeRead({String userId}) async {
+    bool isRead = false;
     isRead = await _userNoticeService.getNoticeRead(userId: userId);
-    notifyListeners();
+    if (isRead) {
+      return Icon(
+        Icons.notifications_active,
+        color: Colors.redAccent,
+      );
+    } else {
+      return Icon(Icons.notifications_none);
+    }
   }
 }

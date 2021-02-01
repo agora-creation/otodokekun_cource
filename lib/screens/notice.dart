@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
+import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/models/user_notice.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/providers/user_notice.dart';
@@ -12,8 +13,8 @@ class NoticeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    final userNoticeProvider = Provider.of<UserNoticeProvider>(context)
-      ..getNotices(userId: userProvider.user?.id);
+    UserModel _user = userProvider.user;
+    final userNoticeProvider = Provider.of<UserNoticeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -24,12 +25,16 @@ class NoticeScreen extends StatelessWidget {
         ),
         title: Text('お知らせ'),
       ),
-      body: userNoticeProvider.notices.length > 0
-          ? ListView.builder(
+      body: FutureBuilder<List<UserNoticeModel>>(
+        future: userNoticeProvider.getNotices(userId: _user?.id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data.length > 0) {
+            return ListView.builder(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-              itemCount: userNoticeProvider.notices.length,
+              itemCount: snapshot.data.length,
               itemBuilder: (_, index) {
-                UserNoticeModel _notice = userNoticeProvider.notices[index];
+                UserNoticeModel _notice = snapshot.data[index];
                 return NoticeListTile(
                   createdAt: DateFormat('yyyy年MM月dd日 HH:mm')
                       .format(_notice.createdAt)
@@ -44,8 +49,12 @@ class NoticeScreen extends StatelessWidget {
                   },
                 );
               },
-            )
-          : Center(child: Text('お知らせはありません')),
+            );
+          } else {
+            return Center(child: Text('お知らせはありません'));
+          }
+        },
+      ),
     );
   }
 }

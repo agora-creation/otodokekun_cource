@@ -6,14 +6,12 @@ import 'package:otodokekun_cource/services/shop_product.dart';
 class ShopProductProvider with ChangeNotifier {
   ShopProductService _shopProductService = ShopProductService();
 
-  List<ShopProductModel> products = [];
   List<CartModel> cart = [];
 
-  Future getProducts({String shopId}) async {
-    if (shopId != null) {
-      products = await _shopProductService.getProducts(shopId: shopId);
-    }
-    notifyListeners();
+  Future<List<ShopProductModel>> getProducts({String shopId}) async {
+    List<ShopProductModel> products = [];
+    products = await _shopProductService.getProducts(shopId: shopId);
+    return products;
   }
 
   void checkCart({ShopProductModel product}) {

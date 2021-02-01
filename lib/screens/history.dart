@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
+import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
-import 'package:otodokekun_cource/providers/app.dart';
+import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/history_details.dart';
@@ -10,26 +11,27 @@ import 'package:otodokekun_cource/widgets/history_list_tile.dart';
 import 'package:provider/provider.dart';
 
 class HistoryScreen extends StatelessWidget {
-  final AppProvider appProvider;
-  final UserProvider userProvider;
-
-  HistoryScreen({@required this.appProvider, @required this.userProvider});
-
   @override
   Widget build(BuildContext context) {
-    final shopOrderProvider = Provider.of<ShopOrderProvider>(context)
-      ..getOrders(
-          shopId: userProvider.user?.shopId, userId: userProvider.user?.id);
-    return shopOrderProvider.orders.length > 0
-        ? ListView(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-            children: [
-              ListView.builder(
+    final userProvider = Provider.of<UserProvider>(context);
+    ShopModel _shop = userProvider.shop;
+    UserModel _user = userProvider.user;
+    final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+    return ListView(
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+      children: [
+        FutureBuilder<List<ShopOrderModel>>(
+          future:
+              shopOrderProvider.getOrders(shopId: _shop?.id, userId: _user?.id),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.data.length > 0) {
+              return ListView.builder(
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-                itemCount: shopOrderProvider.orders.length,
+                itemCount: snapshot.data.length,
                 itemBuilder: (_, index) {
-                  ShopOrderModel _order = shopOrderProvider.orders[index];
+                  ShopOrderModel _order = snapshot.data[index];
                   return HistoryListTile(
                     cart: _order.cart,
                     deliveryAt: DateFormat('yyyy年MM月dd日')
@@ -45,10 +47,14 @@ class HistoryScreen extends StatelessWidget {
                     },
                   );
                 },
-              ),
-              SizedBox(height: 32.0),
-            ],
-          )
-        : Center(child: Text('注文履歴はありません'));
+              );
+            } else {
+              return Center(child: Text('注文履歴はありません'));
+            }
+          },
+        ),
+        SizedBox(height: 32.0),
+      ],
+    );
   }
 }

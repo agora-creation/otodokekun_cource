@@ -6,7 +6,6 @@ import 'package:otodokekun_cource/services/shop_order.dart';
 class ShopOrderProvider with ChangeNotifier {
   ShopOrderService _shopOrderService = ShopOrderService();
 
-  List<ShopOrderModel> orders = [];
   List<CartModel> cart = [];
   DateTime deliveryAt = DateTime.now().add(Duration(days: 3));
   String remarks = '';
@@ -112,19 +111,15 @@ class ShopOrderProvider with ChangeNotifier {
     });
   }
 
-  Future getOrders({String shopId, String userId}) async {
-    if (shopId != null) {
-      orders =
-          await _shopOrderService.getOrders(shopId: shopId, userId: userId);
-    }
-    notifyListeners();
+  Future<List<ShopOrderModel>> getOrders({String shopId, String userId}) async {
+    List<ShopOrderModel> orders = [];
+    orders = await _shopOrderService.getOrders(shopId: shopId, userId: userId);
+    return orders;
   }
 
   Future getTotalPrice({String shopId, String userId}) async {
-    if (shopId != null) {
-      totalPrice =
-          await _shopOrderService.getTotalPrice(shopId: shopId, userId: userId);
-    }
+    totalPrice =
+        await _shopOrderService.getTotalPrice(shopId: shopId, userId: userId);
     notifyListeners();
   }
 

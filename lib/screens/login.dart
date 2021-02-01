@@ -48,6 +48,7 @@ class LoginScreen extends StatelessWidget {
                               controller: userProvider.email,
                               obscureText: false,
                               textInputType: TextInputType.emailAddress,
+                              maxLines: 1,
                               labelText: 'メールアドレス',
                               prefixIconData: Icons.mail,
                               suffixIconData: null,
@@ -58,6 +59,7 @@ class LoginScreen extends StatelessWidget {
                               controller: userProvider.password,
                               obscureText: userProvider.isHidden ? false : true,
                               textInputType: null,
+                              maxLines: 1,
                               labelText: 'パスワード',
                               prefixIconData: Icons.lock,
                               suffixIconData: userProvider.isHidden

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
+import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/app.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/address_change.dart';
@@ -13,15 +14,14 @@ import 'package:otodokekun_cource/screens/tokushoho.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:otodokekun_cource/widgets/setting_list_tile.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
-  final AppProvider appProvider;
-  final UserProvider userProvider;
-
-  SettingsScreen({@required this.appProvider, @required this.userProvider});
-
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
+    UserModel _user = userProvider.user;
     return appProvider.isLoading
         ? LoadingWidget()
         : ListView(
@@ -33,6 +33,9 @@ class SettingsScreen extends StatelessWidget {
                 iconData: Icons.person,
                 title: 'アカウント情報変更',
                 onTap: () {
+                  userProvider.clearController();
+                  userProvider.name.text = _user.name;
+                  userProvider.email.text = _user.email;
                   nextPage(context, EmailChangeScreen());
                 },
               ),
@@ -41,6 +44,7 @@ class SettingsScreen extends StatelessWidget {
                 iconData: Icons.lock,
                 title: 'パスワード変更',
                 onTap: () {
+                  userProvider.clearController();
                   nextPage(context, PasswordChangeScreen());
                 },
               ),
@@ -49,6 +53,10 @@ class SettingsScreen extends StatelessWidget {
                 iconData: Icons.location_pin,
                 title: 'お届け先情報変更',
                 onTap: () {
+                  userProvider.clearController();
+                  userProvider.zip.text = _user.zip;
+                  userProvider.address.text = _user.address;
+                  userProvider.tel.text = _user.tel;
                   nextPage(context, AddressChangeScreen());
                 },
               ),

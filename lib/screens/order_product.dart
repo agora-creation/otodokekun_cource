@@ -115,6 +115,7 @@ class OrderProductScreen extends StatelessWidget {
                   controller: null,
                   obscureText: false,
                   textInputType: TextInputType.multiline,
+                  maxLines: null,
                   labelText: 'ご要望など',
                   prefixIconData: Icons.message,
                   suffixIconData: null,

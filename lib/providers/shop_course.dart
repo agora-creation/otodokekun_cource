@@ -5,14 +5,12 @@ import 'package:otodokekun_cource/services/shop_course.dart';
 class ShopCourseProvider with ChangeNotifier {
   ShopCourseService _shopCourseService = ShopCourseService();
 
-  List<ShopCourseModel> courses = [];
   int courseQuantity = 1;
 
-  Future getCourses({String shopId}) async {
-    if (shopId != null) {
-      courses = await _shopCourseService.getCourses(shopId: shopId);
-    }
-    notifyListeners();
+  Future<List<ShopCourseModel>> getCourses({String shopId}) async {
+    List<ShopCourseModel> courses = [];
+    courses = await _shopCourseService.getCourses(shopId: shopId);
+    return courses;
   }
 
   void addQuantity() {

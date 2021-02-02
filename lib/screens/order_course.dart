@@ -5,7 +5,8 @@ import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/days.dart';
 import 'package:otodokekun_cource/models/shop_course.dart';
-import 'package:otodokekun_cource/providers/app.dart';
+import 'package:otodokekun_cource/models/user.dart';
+import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_course.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
@@ -26,15 +27,16 @@ class OrderCourseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
+    final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
+    UserModel _user = userProvider.user;
     final shopCourseProvider = Provider.of<ShopCourseProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('注文確認'),
       ),
-      body: appProvider.isLoading
+      body: homeProvider.isLoading
           ? LoadingWidget()
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -54,13 +56,13 @@ class OrderCourseScreen extends StatelessWidget {
                       separatorBuilder: (_, index) => Divider(color: kSubColor),
                       itemCount: course.days.length,
                       itemBuilder: (_, index) {
-                        DaysModel _products = course.days[index];
+                        DaysModel _days = course.days[index];
                         return CourseDaysListTile(
                           deliveryAt: DateFormat('MM/dd')
-                              .format(_products.deliveryAt)
+                              .format(_days.deliveryAt)
                               .toString(),
-                          image: _products.image,
-                          name: _products.name,
+                          image: _days.image,
+                          name: _days.name,
                         );
                       },
                     ),
@@ -83,14 +85,14 @@ class OrderCourseScreen extends StatelessWidget {
                 SizedBox(height: 8.0),
                 Text('注文者名'),
                 SizedBox(height: 8.0),
-                Center(child: Text(userProvider.user?.name ?? '')),
+                Center(child: Text(_user?.name ?? '')),
                 SizedBox(height: 8.0),
                 Text('お届け先'),
                 SizedBox(height: 8.0),
                 AddressListTile(
-                  zip: userProvider.user?.zip ?? '',
-                  address: userProvider.user?.address ?? '',
-                  tel: userProvider.user?.tel ?? '',
+                  zip: _user?.zip ?? '',
+                  address: _user?.address ?? '',
+                  tel: _user?.tel ?? '',
                   onTap: () {
                     nextPage(context, AddressChangeScreen());
                   },
@@ -99,7 +101,7 @@ class OrderCourseScreen extends StatelessWidget {
                 Text('備考欄'),
                 SizedBox(height: 8.0),
                 CustomTextField(
-                  controller: null,
+                  controller: shopOrderProvider.remarks,
                   obscureText: false,
                   textInputType: TextInputType.multiline,
                   maxLines: null,
@@ -116,36 +118,35 @@ class OrderCourseScreen extends StatelessWidget {
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () {
-                    appProvider.changeLoading();
-                    for (DaysModel product in course.days) {
+                    homeProvider.changeLoading();
+                    for (DaysModel days in course.days) {
                       List<CartModel> _cart = [];
                       Map _cartProduct = {
-                        'id': product.id,
-                        'name': product.name,
-                        'image': product.image,
-                        'unit': product.unit,
-                        'price': product.price,
+                        'id': days.id,
+                        'name': days.name,
+                        'image': days.image,
+                        'unit': days.unit,
+                        'price': days.price,
                         'quantity': shopCourseProvider.courseQuantity,
                         'totalPrice':
-                            product.price * shopCourseProvider.courseQuantity,
+                            days.price * shopCourseProvider.courseQuantity,
                       };
                       CartModel _cartModel = CartModel.fromMap(_cartProduct);
                       _cart.add(_cartModel);
                       shopOrderProvider.createOrderCourse(
-                        shopId: userProvider.user.shopId,
-                        userId: userProvider.user.id,
-                        name: userProvider.user.name,
-                        zip: userProvider.user.zip,
-                        address: userProvider.user.address,
-                        tel: userProvider.user.tel,
+                        shopId: _user.shopId,
+                        userId: _user.id,
+                        name: _user.name,
+                        zip: _user.zip,
+                        address: _user.address,
+                        tel: _user.tel,
                         cart: _cart,
-                        deliveryAt: product.deliveryAt,
-                        remarks: shopOrderProvider.remarks,
+                        deliveryAt: days.deliveryAt,
                       );
                     }
-                    shopOrderProvider.remarks = '';
+                    shopOrderProvider.clearController();
                     shopCourseProvider.clearQuantity();
-                    appProvider.changeLoading();
+                    homeProvider.changeLoading();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('注文が完了しました')),
                     );

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/models/cart.dart';
-import 'package:otodokekun_cource/providers/app.dart';
+import 'package:otodokekun_cource/models/user.dart';
+import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
-import 'package:otodokekun_cource/providers/shop_product.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/address_change.dart';
 import 'package:otodokekun_cource/widgets/address_list_tile.dart';
@@ -19,35 +19,35 @@ import 'package:provider/provider.dart';
 class OrderProductScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
+    final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
-    final shopProductProvider = Provider.of<ShopProductProvider>(context);
+    UserModel _user = userProvider.user;
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('注文確認'),
       ),
-      body: appProvider.isLoading
+      body: homeProvider.isLoading
           ? LoadingWidget()
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               children: [
                 Text('選択した商品'),
                 SizedBox(height: 8.0),
-                shopProductProvider.cart.length > 0
+                homeProvider.cart.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
-                        itemCount: shopProductProvider.cart.length,
+                        itemCount: homeProvider.cart.length,
                         itemBuilder: (_, index) {
-                          CartModel _cart = shopProductProvider.cart[index];
+                          CartModel _cart = homeProvider.cart[index];
                           return ProductOrderListTile(
-                            image: _cart.image,
                             name: _cart.name,
-                            price: _cart.price,
+                            image: _cart.image,
                             unit: _cart.unit,
+                            price: _cart.price,
                             onTap: () {
-                              shopProductProvider.deleteCart(cartModel: _cart);
+                              homeProvider.deleteCart(cartModel: _cart);
                             },
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
@@ -55,14 +55,10 @@ class OrderProductScreen extends StatelessWidget {
                                 unit: _cart.unit,
                                 quantity: _cart.quantity,
                                 removeOnPressed: () {
-                                  shopProductProvider.removeQuantity(
-                                    cartModel: _cart,
-                                  );
+                                  homeProvider.removeQuantity(cartModel: _cart);
                                 },
                                 addOnPressed: () {
-                                  shopProductProvider.addQuantity(
-                                    cartModel: _cart,
-                                  );
+                                  homeProvider.addQuantity(cartModel: _cart);
                                 },
                               ),
                             ),
@@ -75,14 +71,14 @@ class OrderProductScreen extends StatelessWidget {
                 SizedBox(height: 8.0),
                 Text('注文者名'),
                 SizedBox(height: 8.0),
-                Center(child: Text(userProvider.user?.name ?? '')),
+                Center(child: Text(_user?.name ?? '')),
                 SizedBox(height: 8.0),
                 Text('お届け先'),
                 SizedBox(height: 8.0),
                 AddressListTile(
-                  zip: userProvider.user?.zip ?? '',
-                  address: userProvider.user?.address ?? '',
-                  tel: userProvider.user?.tel ?? '',
+                  zip: _user?.zip ?? '',
+                  address: _user?.address ?? '',
+                  tel: _user?.tel ?? '',
                   onTap: () {
                     nextPage(context, AddressChangeScreen());
                   },
@@ -112,7 +108,7 @@ class OrderProductScreen extends StatelessWidget {
                 Text('備考欄'),
                 SizedBox(height: 8.0),
                 CustomTextField(
-                  controller: null,
+                  controller: shopOrderProvider.remarks,
                   obscureText: false,
                   textInputType: TextInputType.multiline,
                   maxLines: null,
@@ -129,20 +125,20 @@ class OrderProductScreen extends StatelessWidget {
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () {
-                    if (shopProductProvider.cart.length > 0) {
-                      appProvider.changeLoading();
+                    if (homeProvider.cart.length > 0) {
+                      homeProvider.changeLoading();
                       shopOrderProvider.createOrder(
-                        shopId: userProvider.user.shopId,
-                        userId: userProvider.user.id,
-                        name: userProvider.user.name,
-                        zip: userProvider.user.zip,
-                        address: userProvider.user.address,
-                        tel: userProvider.user.tel,
-                        cart: shopProductProvider.cart,
+                        shopId: _user.shopId,
+                        userId: _user.id,
+                        name: _user.name,
+                        zip: _user.zip,
+                        address: _user.address,
+                        tel: _user.tel,
+                        cart: homeProvider.cart,
                       );
-                      shopOrderProvider.remarks = '';
-                      shopProductProvider.cart.clear();
-                      appProvider.changeLoading();
+                      shopOrderProvider.clearController();
+                      homeProvider.cart.clear();
+                      homeProvider.changeLoading();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('注文が完了しました')),
                       );

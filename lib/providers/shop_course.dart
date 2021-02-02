@@ -7,10 +7,10 @@ class ShopCourseProvider with ChangeNotifier {
 
   int courseQuantity = 1;
 
-  Future<List<ShopCourseModel>> getCourses({String shopId}) async {
+  Stream<List<ShopCourseModel>> getCourses({String shopId}) async* {
     List<ShopCourseModel> courses = [];
     courses = await _shopCourseService.getCourses(shopId: shopId);
-    return courses;
+    yield courses;
   }
 
   void addQuantity() {

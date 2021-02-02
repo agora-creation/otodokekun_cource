@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
-import 'package:otodokekun_cource/providers/app.dart';
+import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
@@ -18,7 +18,7 @@ class HistoryDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
+    final appProvider = Provider.of<HomeProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     return Scaffold(
       appBar: AppBar(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
-import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/app.dart';
+import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/address_change.dart';
 import 'package:otodokekun_cource/screens/company.dart';
@@ -14,15 +13,19 @@ import 'package:otodokekun_cource/screens/tokushoho.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:otodokekun_cource/widgets/setting_list_tile.dart';
-import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
+  final HomeProvider homeProvider;
+  final UserProvider userProvider;
+
+  SettingsScreen({
+    @required this.homeProvider,
+    @required this.userProvider,
+  });
+
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
-    final userProvider = Provider.of<UserProvider>(context);
-    UserModel _user = userProvider.user;
-    return appProvider.isLoading
+    return homeProvider.isLoading
         ? LoadingWidget()
         : ListView(
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -34,8 +37,8 @@ class SettingsScreen extends StatelessWidget {
                 title: 'アカウント情報変更',
                 onTap: () {
                   userProvider.clearController();
-                  userProvider.name.text = _user.name;
-                  userProvider.email.text = _user.email;
+                  userProvider.name.text = userProvider.user.name;
+                  userProvider.email.text = userProvider.user.email;
                   nextPage(context, EmailChangeScreen());
                 },
               ),
@@ -54,9 +57,9 @@ class SettingsScreen extends StatelessWidget {
                 title: 'お届け先情報変更',
                 onTap: () {
                   userProvider.clearController();
-                  userProvider.zip.text = _user.zip;
-                  userProvider.address.text = _user.address;
-                  userProvider.tel.text = _user.tel;
+                  userProvider.zip.text = userProvider.user.zip;
+                  userProvider.address.text = userProvider.user.address;
+                  userProvider.tel.text = userProvider.user.tel;
                   nextPage(context, AddressChangeScreen());
                 },
               ),
@@ -100,9 +103,9 @@ class SettingsScreen extends StatelessWidget {
                 labelColor: Colors.redAccent,
                 borderColor: Colors.redAccent,
                 onPressed: () {
-                  appProvider.changeLoading();
+                  homeProvider.changeLoading();
                   userProvider.signOut();
-                  appProvider.changeLoading();
+                  homeProvider.changeLoading();
                   changePage(context, LoginScreen());
                 },
               ),

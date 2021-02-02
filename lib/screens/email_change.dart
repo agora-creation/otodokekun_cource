@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource/providers/app.dart';
+import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 class EmailChangeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
+    final appProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(

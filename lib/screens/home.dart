@@ -5,38 +5,58 @@ import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/app.dart';
-import 'package:otodokekun_cource/providers/shop_order.dart';
-import 'package:otodokekun_cource/providers/shop_product.dart';
+import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
-import 'package:otodokekun_cource/providers/user_notice.dart';
 import 'package:otodokekun_cource/screens/history.dart';
 import 'package:otodokekun_cource/screens/notice.dart';
 import 'package:otodokekun_cource/screens/order.dart';
 import 'package:otodokekun_cource/screens/order_product.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
+import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
+    final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     ShopModel _shop = userProvider.shop;
     UserModel _user = userProvider.user;
-    final userNoticeProvider = Provider.of<UserNoticeProvider>(context);
-    final shopProductProvider = Provider.of<ShopProductProvider>(context);
-    final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
-    final List<Widget> _tabsList = [
-      OrderScreen(),
-      HistoryScreen(),
-      SettingsScreen(),
+    final List<Widget> _tabs = [
+      OrderScreen(homeProvider: homeProvider, shop: _shop),
+      HistoryScreen(homeProvider: homeProvider, shop: _shop, user: _user),
+      SettingsScreen(homeProvider: homeProvider, userProvider: userProvider),
     ];
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
         title: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (_) {
+                return CustomDialog(
+                  title: _shop?.name ?? '',
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('〒${_shop?.zip}'),
+                      Text('${_shop?.address}'),
+                      Text('${_shop?.tel}'),
+                      Text('担当者名 : ${_shop?.staff}'),
+                    ],
+                  ),
+                  actions: [
+                    FlatButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('閉じる'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
           child: Text(_shop?.name ?? ''),
         ),
         actions: [
@@ -48,25 +68,24 @@ class HomeScreen extends StatelessWidget {
                 builder: (context) => NoticeScreen(),
               );
             },
-            icon: FutureBuilder<Icon>(
-              future: userNoticeProvider.getNoticeRead(userId: _user?.id),
+            icon: StreamBuilder<Icon>(
+              stream: homeProvider.getNoticeRead(userId: _user?.id),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.connectionState == ConnectionState.active) {
                   return snapshot.data;
-                } else {
-                  return Icon(Icons.notifications_none);
                 }
+                return Icon(Icons.notifications_none);
               },
             ),
           ),
         ],
       ),
-      body: _tabsList[appProvider.selectedIndex],
+      body: _tabs[homeProvider.tabsIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) {
-          appProvider.changeTabs(index);
+          homeProvider.changeTabs(index);
         },
-        currentIndex: appProvider.selectedIndex,
+        currentIndex: homeProvider.tabsIndex,
         fixedColor: kMainColor,
         type: BottomNavigationBarType.fixed,
         elevation: 0.0,
@@ -86,7 +105,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton:
-          appProvider.selectedIndex == 0 && shopProductProvider.cart.length > 0
+          homeProvider.tabsIndex == 0 && homeProvider.cart.length > 0
               ? FloatingActionButton.extended(
                   onPressed: () {
                     nextPage(context, OrderProductScreen());
@@ -96,12 +115,12 @@ class HomeScreen extends StatelessWidget {
                   backgroundColor: Colors.blueAccent.withOpacity(0.8),
                   elevation: 0.0,
                 )
-              : appProvider.selectedIndex == 1
+              : homeProvider.tabsIndex == 1
                   ? FloatingActionButton.extended(
                       onPressed: null,
                       icon: null,
                       label: Text(
-                          '請求金額 : ¥ ${NumberFormat('#,###').format(shopOrderProvider.totalPrice)}'),
+                          '請求金額 : ¥ ${NumberFormat('#,###').format(homeProvider.totalPrice)}'),
                       backgroundColor: Colors.redAccent.withOpacity(0.8),
                       elevation: 0.0,
                     )

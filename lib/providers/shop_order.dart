@@ -8,16 +8,11 @@ class ShopOrderProvider with ChangeNotifier {
 
   List<CartModel> cart = [];
   DateTime deliveryAt = DateTime.now().add(Duration(days: 3));
-  String remarks = '';
-  int totalPrice = 0;
+
+  TextEditingController remarks = TextEditingController();
 
   void setDeliveryAt({DateTime dateTime}) {
     deliveryAt = dateTime;
-    notifyListeners();
-  }
-
-  void setRemarks({String newRemarks}) {
-    remarks = newRemarks;
     notifyListeners();
   }
 
@@ -47,7 +42,7 @@ class ShopOrderProvider with ChangeNotifier {
       'tel': tel,
       'cart': convertedCart,
       'deliveryAt': deliveryAt,
-      'remarks': remarks,
+      'remarks': remarks.text,
       'totalPrice': _totalPrice,
       'shipping': false,
       'createdAt': DateTime.now(),
@@ -63,7 +58,6 @@ class ShopOrderProvider with ChangeNotifier {
     String tel,
     List<CartModel> cart,
     DateTime deliveryAt,
-    String remarks,
   }) {
     List<Map> convertedCart = [];
     int _totalPrice = 0;
@@ -82,7 +76,7 @@ class ShopOrderProvider with ChangeNotifier {
       'tel': tel,
       'cart': convertedCart,
       'deliveryAt': deliveryAt,
-      'remarks': remarks,
+      'remarks': remarks.text,
       'totalPrice': _totalPrice,
       'shipping': false,
       'createdAt': DateTime.now(),
@@ -111,16 +105,15 @@ class ShopOrderProvider with ChangeNotifier {
     });
   }
 
-  Future<List<ShopOrderModel>> getOrders({String shopId, String userId}) async {
-    List<ShopOrderModel> orders = [];
-    orders = await _shopOrderService.getOrders(shopId: shopId, userId: userId);
-    return orders;
+  void clearController(){
+    remarks.text = '';
   }
 
-  Future getTotalPrice({String shopId, String userId}) async {
-    totalPrice =
-        await _shopOrderService.getTotalPrice(shopId: shopId, userId: userId);
-    notifyListeners();
+  Stream<List<ShopOrderModel>> getOrders(
+      {String shopId, String userId}) async* {
+    List<ShopOrderModel> orders = [];
+    orders = await _shopOrderService.getOrders(shopId: shopId, userId: userId);
+    yield orders;
   }
 
   void getCart({ShopOrderModel order}) {

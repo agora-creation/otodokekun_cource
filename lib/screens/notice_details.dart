@@ -1,11 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/models/user_notice.dart';
+import 'package:otodokekun_cource/providers/home.dart';
+import 'package:otodokekun_cource/providers/user_notice.dart';
 
-class NoticeDetailsScreen extends StatelessWidget {
+class NoticeDetailsScreen extends StatefulWidget {
+  final HomeProvider homeProvider;
+  final UserNoticeProvider userNoticeProvider;
   final UserNoticeModel notice;
 
-  NoticeDetailsScreen({@required this.notice});
+  NoticeDetailsScreen({
+    @required this.homeProvider,
+    @required this.userNoticeProvider,
+    @required this.notice,
+  });
+
+  @override
+  _NoticeDetailsScreenState createState() => _NoticeDetailsScreenState();
+}
+
+class _NoticeDetailsScreenState extends State<NoticeDetailsScreen> {
+  void readCheck() {
+    if (widget.notice.read) {
+      widget.userNoticeProvider.changeReadNotice(notice: widget.notice);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    readCheck();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +42,7 @@ class NoticeDetailsScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
         children: [
           Text(
-            notice.title,
+            widget.notice.title,
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
@@ -25,7 +50,7 @@ class NoticeDetailsScreen extends StatelessWidget {
           ),
           SizedBox(height: 8.0),
           Text(
-            notice.message,
+            widget.notice.message,
             style: TextStyle(fontSize: 16.0),
           ),
           SizedBox(height: 8.0),
@@ -34,7 +59,7 @@ class NoticeDetailsScreen extends StatelessWidget {
             alignment: Alignment.bottomRight,
             child: Text(
               DateFormat('yyyy年MM月dd日 HH:mm')
-                  .format(notice.createdAt)
+                  .format(widget.notice.createdAt)
                   .toString(),
             ),
           ),

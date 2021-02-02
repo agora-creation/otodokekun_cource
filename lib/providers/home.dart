@@ -1,17 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
-import 'package:otodokekun_cource/services/shop_product.dart';
+import 'package:otodokekun_cource/services/user_notice.dart';
 
-class ShopProductProvider with ChangeNotifier {
-  ShopProductService _shopProductService = ShopProductService();
+class HomeProvider with ChangeNotifier {
+  UserNoticeService _userNoticeService = UserNoticeService();
 
+  int tabsIndex = 0;
+
+  bool isLoading = false;
   List<CartModel> cart = [];
+  int totalPrice = 0;
 
-  Stream<List<ShopProductModel>> getProducts({String shopId}) async* {
-    List<ShopProductModel> products = [];
-    products = await _shopProductService.getProducts(shopId: shopId);
-    yield products;
+  void changeTabs(int index) {
+    tabsIndex = index;
+    notifyListeners();
+  }
+
+  void changeLoading() {
+    isLoading = !isLoading;
+    notifyListeners();
+  }
+
+  Stream<Icon> getNoticeRead({String userId}) async* {
+    bool isRead = false;
+    isRead = await _userNoticeService.getNoticeRead(userId: userId);
+    if (isRead) {
+      yield Icon(
+        Icons.notifications_active,
+        color: Colors.redAccent,
+      );
+    } else {
+      yield Icon(Icons.notifications_none);
+    }
   }
 
   void checkCart({ShopProductModel product}) {

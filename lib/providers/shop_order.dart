@@ -105,15 +105,8 @@ class ShopOrderProvider with ChangeNotifier {
     });
   }
 
-  void clearController(){
+  void clearController() {
     remarks.text = '';
-  }
-
-  Stream<List<ShopOrderModel>> getOrders(
-      {String shopId, String userId}) async* {
-    List<ShopOrderModel> orders = [];
-    orders = await _shopOrderService.getOrders(shopId: shopId, userId: userId);
-    yield orders;
   }
 
   void getCart({ShopOrderModel order}) {

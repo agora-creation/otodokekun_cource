@@ -20,7 +20,7 @@ class SplashScreen extends StatelessWidget {
                   style: kTitleTextStyle,
                 ),
                 SizedBox(height: 8.0),
-                Text('期間配達サービス'),
+                Text('BtoCサービス'),
                 SizedBox(height: 24.0),
                 LoadingWidget(),
               ],

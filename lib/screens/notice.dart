@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
@@ -7,6 +8,7 @@ import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/providers/user_notice.dart';
 import 'package:otodokekun_cource/screens/notice_details.dart';
+import 'package:otodokekun_cource/services/user_notice.dart';
 import 'package:otodokekun_cource/widgets/notice_list_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -27,16 +29,22 @@ class NoticeScreen extends StatelessWidget {
         ),
         title: Text('お知らせ'),
       ),
-      body: StreamBuilder<List<UserNoticeModel>>(
-        stream: userNoticeProvider.getNotices(userId: _user?.id),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: UserNoticeService().getNotices(userId: _user?.id),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active &&
-              snapshot.data.length > 0) {
+          if (!snapshot.hasData) {
+            return Center(child: Text('読み込み中'));
+          }
+          List<UserNoticeModel> notices = [];
+          for (DocumentSnapshot notice in snapshot.data.docs) {
+            notices.add(UserNoticeModel.fromSnapshot(notice));
+          }
+          if (notices.length > 0) {
             return ListView.builder(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-              itemCount: snapshot.data.length,
+              itemCount: notices.length,
               itemBuilder: (_, index) {
-                UserNoticeModel _notice = snapshot.data[index];
+                UserNoticeModel _notice = notices[index];
                 return NoticeListTile(
                   title: _notice.title,
                   read: _notice.read,
@@ -56,8 +64,9 @@ class NoticeScreen extends StatelessWidget {
                 );
               },
             );
+          } else {
+            return Center(child: Text('お知らせはありません'));
           }
-          return Center(child: Text('お知らせはありません'));
         },
       ),
     );

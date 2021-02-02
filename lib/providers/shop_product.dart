@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
-import 'package:otodokekun_cource/services/shop_product.dart';
 
 class ShopProductProvider with ChangeNotifier {
-  ShopProductService _shopProductService = ShopProductService();
-
   List<CartModel> cart = [];
-
-  Stream<List<ShopProductModel>> getProducts({String shopId}) async* {
-    List<ShopProductModel> products = [];
-    products = await _shopProductService.getProducts(shopId: shopId);
-    yield products;
-  }
 
   void checkCart({ShopProductModel product}) {
     var contain = cart.where((e) => e.id == product.id);

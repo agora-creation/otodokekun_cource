@@ -4,13 +4,12 @@ import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/home.dart';
-import 'package:otodokekun_cource/screens/registration.dart';
+import 'package:otodokekun_cource/widgets/border_round_button.dart';
 import 'package:otodokekun_cource/widgets/custom_text_field.dart';
-import 'package:otodokekun_cource/widgets/fill_round_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+class RegistrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -46,6 +45,17 @@ class LoginScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomTextField(
+                              controller: userProvider.name,
+                              obscureText: false,
+                              textInputType: null,
+                              maxLines: 1,
+                              labelText: 'お名前',
+                              prefixIconData: Icons.person,
+                              suffixIconData: null,
+                              onTap: null,
+                            ),
+                            SizedBox(height: 24.0),
+                            CustomTextField(
                               controller: userProvider.email,
                               obscureText: false,
                               textInputType: TextInputType.emailAddress,
@@ -73,14 +83,14 @@ class LoginScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 24.0),
-                        FillRoundButton(
-                          labelText: 'ログイン',
-                          labelColor: Colors.white,
-                          backgroundColor: Colors.blueAccent,
+                        BorderRoundButton(
+                          labelText: '登録',
+                          labelColor: Colors.blueAccent,
+                          borderColor: Colors.blueAccent,
                           onPressed: () async {
-                            if (!await userProvider.signIn()) {
+                            if (!await userProvider.signUp()) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('ログイン失敗')),
+                                SnackBar(content: Text('登録に失敗しました')),
                               );
                               return;
                             }
@@ -90,13 +100,11 @@ class LoginScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 32.0),
                         Align(
-                          alignment: Alignment.bottomRight,
+                          alignment: Alignment.bottomLeft,
                           child: GestureDetector(
-                            onTap: () {
-                              nextPage(context, RegistrationScreen());
-                            },
+                            onTap: () => Navigator.pop(context, true),
                             child: Text(
-                              '初めての方はコチラ',
+                              'ログインはコチラ',
                               style: TextStyle(
                                 decoration: TextDecoration.underline,
                               ),

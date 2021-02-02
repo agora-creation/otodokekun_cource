@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
@@ -10,6 +11,8 @@ import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_course.dart';
 import 'package:otodokekun_cource/providers/shop_product.dart';
 import 'package:otodokekun_cource/screens/order_course.dart';
+import 'package:otodokekun_cource/services/shop_course.dart';
+import 'package:otodokekun_cource/services/shop_product.dart';
 import 'package:otodokekun_cource/widgets/course_days_list_tile.dart';
 import 'package:otodokekun_cource/widgets/course_list_tile.dart';
 import 'package:otodokekun_cource/widgets/product_list_tile.dart';
@@ -31,17 +34,23 @@ class OrderScreen extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
-        StreamBuilder<List<ShopCourseModel>>(
-          stream: shopCourseProvider.getCourses(shopId: shop?.id),
+        StreamBuilder<QuerySnapshot>(
+          stream: ShopCourseService().getCourses(shopId: shop?.id),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active &&
-                snapshot.data.length > 0) {
+            if (!snapshot.hasData) {
+              return Center(child: Text('読み込み中'));
+            }
+            List<ShopCourseModel> courses = [];
+            for (DocumentSnapshot course in snapshot.data.docs) {
+              courses.add(ShopCourseModel.fromSnapshot(course));
+            }
+            if (courses.length > 0) {
               return ListView.builder(
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-                itemCount: snapshot.data.length,
+                itemCount: courses.length,
                 itemBuilder: (_, index) {
-                  ShopCourseModel _courses = snapshot.data[index];
+                  ShopCourseModel _courses = courses[index];
                   return CourseListTile(
                     openedAt: DateFormat('MM月dd日')
                         .format(_courses.openedAt)
@@ -76,22 +85,29 @@ class OrderScreen extends StatelessWidget {
                   );
                 },
               );
+            } else {
+              return Container();
             }
-            return Container();
           },
         ),
         SizedBox(height: 8.0),
-        StreamBuilder<List<ShopProductModel>>(
-          stream: shopProductProvider.getProducts(shopId: shop?.id),
+        StreamBuilder<QuerySnapshot>(
+          stream: ShopProductService().getProducts(shopId: shop?.id),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active &&
-                snapshot.data.length > 0) {
+            if (!snapshot.hasData) {
+              return Center(child: Text('読み込み中'));
+            }
+            List<ShopProductModel> products = [];
+            for (DocumentSnapshot product in snapshot.data.docs) {
+              products.add(ShopProductModel.fromSnapshot(product));
+            }
+            if (products.length > 0) {
               return ListView.builder(
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-                itemCount: snapshot.data.length,
+                itemCount: products.length,
                 itemBuilder: (_, index) {
-                  ShopProductModel _product = snapshot.data[index];
+                  ShopProductModel _product = products[index];
                   var contain =
                       homeProvider.cart.where((e) => e.id == _product.id);
                   return ProductListTile(
@@ -106,8 +122,9 @@ class OrderScreen extends StatelessWidget {
                   );
                 },
               );
+            } else {
+              return Center(child: Text('商品の登録がありません'));
             }
-            return Center(child: Text('商品の登録がありません'));
           },
         ),
         SizedBox(height: 32.0),

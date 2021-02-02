@@ -16,9 +16,9 @@ class CustomDialog extends StatelessWidget {
     return AlertDialog(
       title: Center(child: Text(title)),
       content: content,
-      contentPadding: EdgeInsets.all(8.0),
+      contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       actions: actions,
-      actionsPadding: EdgeInsets.all(8.0),
+      actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
     );
   }
 }

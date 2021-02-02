@@ -1,10 +1,12 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
-import 'package:otodokekun_cource/services/user_notice.dart';
 
 class HomeProvider with ChangeNotifier {
-  UserNoticeService _userNoticeService = UserNoticeService();
+  FirebaseMessaging firebaseMessaging;
 
   int tabsIndex = 0;
 
@@ -20,19 +22,6 @@ class HomeProvider with ChangeNotifier {
   void changeLoading() {
     isLoading = !isLoading;
     notifyListeners();
-  }
-
-  Stream<Icon> getNoticeRead({String userId}) async* {
-    bool isRead = false;
-    isRead = await _userNoticeService.getNoticeRead(userId: userId);
-    if (isRead) {
-      yield Icon(
-        Icons.notifications_active,
-        color: Colors.redAccent,
-      );
-    } else {
-      yield Icon(Icons.notifications_none);
-    }
   }
 
   void checkCart({ShopProductModel product}) {
@@ -72,5 +61,28 @@ class HomeProvider with ChangeNotifier {
   void deleteCart({CartModel cartModel}) {
     cart.removeWhere((e) => e.id == cartModel.id);
     notifyListeners();
+  }
+
+  Future<void> initNotification() async {
+    firebaseMessaging = FirebaseMessaging();
+    if (Platform.isIOS) {
+      bool permitted = await firebaseMessaging.requestNotificationPermissions();
+      if (!permitted) {
+        return;
+      }
+    }
+    firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print('FirebaseMessaging onMessage');
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('FirebaseMessaging onLaunch');
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('FirebaseMessaging onResume');
+      },
+    );
+    String token = await firebaseMessaging.getToken();
+    print('FirebaseMessaging token: $token');
   }
 }

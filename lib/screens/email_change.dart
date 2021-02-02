@@ -51,10 +51,13 @@ class EmailChangeScreen extends StatelessWidget {
                     if (!await userProvider.updateEmail()) {
                       appProvider.changeLoading();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('保存失敗')),
+                        SnackBar(content: Text('変更に失敗しました')),
                       );
                       return;
                     }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('変更に成功しました')),
+                    );
                     userProvider.clearController();
                     userProvider.reloadUserModel();
                     appProvider.changeLoading();

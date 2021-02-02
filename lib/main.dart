@@ -24,14 +24,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: HomeProvider()),
+        ChangeNotifierProvider.value(value: HomeProvider()..initNotification()),
         ChangeNotifierProvider.value(value: ShopCourseProvider()),
         ChangeNotifierProvider.value(value: ShopOrderProvider()),
         ChangeNotifierProvider.value(value: ShopProductProvider()),
         ChangeNotifierProvider.value(value: UserProvider.initialize()),
-        ChangeNotifierProvider.value(
-          value: UserNoticeProvider()..initNotification(),
-        ),
+        ChangeNotifierProvider.value(value: UserNoticeProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

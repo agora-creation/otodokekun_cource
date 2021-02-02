@@ -65,6 +65,41 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> signUp() async {
+    if (name.text == null) return false;
+    if (email.text == null) return false;
+    if (password.text == null) return false;
+    if (password.text != cPassword.text) return false;
+    try {
+      _status = Status.Authenticating;
+      notifyListeners();
+      await _auth
+          .createUserWithEmailAndPassword(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      )
+          .then((value) {
+        _userService.createUser({
+          'id': value.user.uid,
+          'shopId': '',
+          'name': name.text.trim(),
+          'zip': '',
+          'address': '',
+          'tel': '',
+          'email': email.text.trim(),
+          'password': password.text.trim(),
+          'createdAt': DateTime.now(),
+        });
+      });
+      return true;
+    } catch (e) {
+      _status = Status.Unauthenticated;
+      notifyListeners();
+      print(e.toString());
+      return false;
+    }
+  }
+
   Future<bool> updateEmail() async {
     if (name.text == null) return false;
     if (email.text == null) return false;

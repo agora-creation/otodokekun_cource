@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:otodokekun_cource/models/shop_order.dart';
 
 class ShopOrderService {
   String _collection = 'shop';
@@ -43,8 +42,7 @@ class ShopOrderService {
         .delete();
   }
 
-  Future<List<ShopOrderModel>> getOrders({String shopId, String userId}) async {
-    List<ShopOrderModel> orders = [];
+  Stream<QuerySnapshot> getOrders({String shopId, String userId}) async* {
     QuerySnapshot snapshot = await _firebaseFirestore
         .collection(_collection)
         .doc(shopId)
@@ -52,10 +50,7 @@ class ShopOrderService {
         .where('userId', isEqualTo: userId)
         .orderBy('deliveryAt', descending: true)
         .get();
-    for (DocumentSnapshot order in snapshot.docs) {
-      orders.add(ShopOrderModel.fromSnapshot(order));
-    }
-    return orders;
+    yield snapshot;
   }
 
   Future<int> getTotalPrice({String shopId, String userId}) async {

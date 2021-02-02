@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -12,6 +13,7 @@ import 'package:otodokekun_cource/screens/notice.dart';
 import 'package:otodokekun_cource/screens/order.dart';
 import 'package:otodokekun_cource/screens/order_product.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
+import 'package:otodokekun_cource/services/user_notice.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -68,13 +70,19 @@ class HomeScreen extends StatelessWidget {
                 builder: (context) => NoticeScreen(),
               );
             },
-            icon: StreamBuilder<Icon>(
-              stream: homeProvider.getNoticeRead(userId: _user?.id),
+            icon: StreamBuilder<QuerySnapshot>(
+              stream: UserNoticeService().getNoticeRead(userId: _user?.id),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  return snapshot.data;
+                if (!snapshot.hasData) {
+                  return Icon(Icons.notifications_off_outlined);
                 }
-                return Icon(Icons.notifications_none);
+                List<DocumentSnapshot> docs = snapshot.data.docs;
+                if (docs.length == 0) {
+                  return Icon(Icons.notifications_none);
+                } else {
+                  return Icon(Icons.notifications_active,
+                      color: Colors.redAccent);
+                }
               },
             ),
           ),

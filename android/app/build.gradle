@@ -22,10 +22,11 @@ if (flutterVersionName == null) {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystorePropertiesFile = rootProject.file('keystore.properties')
 
 android {
     compileSdkVersion 30
@@ -46,7 +47,7 @@ android {
 
     signingConfig {
         release {
-            if(keystorePropertiesFile.exists()){
+            if (keystorePropertiesFile.exists()) {
                 def keystoreProperties = new Properties()
                 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
                 keyAlias keystoreProperties['keyAlias']
@@ -75,5 +76,3 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.4.0')
     implementation 'com.google.firebase:firebase-analytics'
 }
-
-apply plugin: 'com.google.gms.google-services'

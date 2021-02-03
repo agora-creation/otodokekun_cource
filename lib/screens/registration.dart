@@ -45,7 +45,7 @@ class RegistrationScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomTextField(
-                              controller: null,
+                              controller: userProvider.shopId,
                               obscureText: false,
                               textInputType: null,
                               maxLines: 1,

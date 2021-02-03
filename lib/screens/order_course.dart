@@ -7,7 +7,6 @@ import 'package:otodokekun_cource/models/days.dart';
 import 'package:otodokekun_cource/models/shop_course.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/home.dart';
-import 'package:otodokekun_cource/providers/shop_course.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/address_change.dart';
@@ -30,7 +29,6 @@ class OrderCourseScreen extends StatelessWidget {
     final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     UserModel _user = userProvider.user;
-    final shopCourseProvider = Provider.of<ShopCourseProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +39,7 @@ class OrderCourseScreen extends StatelessWidget {
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               children: [
-                Text('注文コース'),
+                Text('注文内容'),
                 SizedBox(height: 8.0),
                 CourseOrderListTile(
                   openedAt:
@@ -61,8 +59,8 @@ class OrderCourseScreen extends StatelessWidget {
                           deliveryAt: DateFormat('MM/dd')
                               .format(_days.deliveryAt)
                               .toString(),
-                          image: _days.image,
                           name: _days.name,
+                          image: _days.image,
                         );
                       },
                     ),
@@ -71,12 +69,12 @@ class OrderCourseScreen extends StatelessWidget {
                     padding: EdgeInsets.all(8.0),
                     child: QuantityChangeButton(
                       unit: 'セット',
-                      quantity: shopCourseProvider.courseQuantity,
+                      quantity: homeProvider.courseQuantity,
                       removeOnPressed: () {
-                        shopCourseProvider.removeQuantity();
+                        homeProvider.removeCourseQuantity();
                       },
                       addOnPressed: () {
-                        shopCourseProvider.addQuantity();
+                        homeProvider.addCourseQuantity();
                       },
                     ),
                   ),
@@ -94,6 +92,10 @@ class OrderCourseScreen extends StatelessWidget {
                   address: _user?.address ?? '',
                   tel: _user?.tel ?? '',
                   onTap: () {
+                    userProvider.clearController();
+                    userProvider.zip.text = _user?.zip;
+                    userProvider.address.text = _user?.address;
+                    userProvider.tel.text = _user?.tel;
                     nextPage(context, AddressChangeScreen());
                   },
                 ),
@@ -127,9 +129,8 @@ class OrderCourseScreen extends StatelessWidget {
                         'image': days.image,
                         'unit': days.unit,
                         'price': days.price,
-                        'quantity': shopCourseProvider.courseQuantity,
-                        'totalPrice':
-                            days.price * shopCourseProvider.courseQuantity,
+                        'quantity': homeProvider.courseQuantity,
+                        'totalPrice': days.price * homeProvider.courseQuantity,
                       };
                       CartModel _cartModel = CartModel.fromMap(_cartProduct);
                       _cart.add(_cartModel);
@@ -145,7 +146,7 @@ class OrderCourseScreen extends StatelessWidget {
                       );
                     }
                     shopOrderProvider.clearController();
-                    shopCourseProvider.clearQuantity();
+                    homeProvider.clearCourseQuantity();
                     homeProvider.changeLoading();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('注文が完了しました')),

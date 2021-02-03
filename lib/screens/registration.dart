@@ -45,6 +45,17 @@ class RegistrationScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomTextField(
+                              controller: null,
+                              obscureText: false,
+                              textInputType: null,
+                              maxLines: 1,
+                              labelText: ' 店舗ID',
+                              prefixIconData: Icons.store,
+                              suffixIconData: null,
+                              onTap: null,
+                            ),
+                            SizedBox(height: 24.0),
+                            CustomTextField(
                               controller: userProvider.name,
                               obscureText: false,
                               textInputType: null,
@@ -78,6 +89,22 @@ class RegistrationScreen extends StatelessWidget {
                                   : Icons.visibility_off,
                               onTap: () {
                                 userProvider.changeHidden();
+                              },
+                            ),
+                            SizedBox(height: 24.0),
+                            CustomTextField(
+                              controller: userProvider.cPassword,
+                              obscureText:
+                                  userProvider.isCHidden ? false : true,
+                              textInputType: null,
+                              maxLines: 1,
+                              labelText: 'パスワードの再入力',
+                              prefixIconData: Icons.lock_outline,
+                              suffixIconData: userProvider.isCHidden
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              onTap: () {
+                                userProvider.changeCHidden();
                               },
                             ),
                           ],

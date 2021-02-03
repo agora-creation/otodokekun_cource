@@ -19,6 +19,7 @@ class NoticeScreen extends StatelessWidget {
     final userProvider = Provider.of<UserProvider>(context);
     UserModel _user = userProvider.user;
     final userNoticeProvider = Provider.of<UserNoticeProvider>(context);
+    final UserNoticeService userNoticeService = UserNoticeService();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -30,7 +31,7 @@ class NoticeScreen extends StatelessWidget {
         title: Text('お知らせ'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: UserNoticeService().getNotices(userId: _user?.id),
+        stream: userNoticeService.getNotices(userId: _user?.id),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: Text('読み込み中'));

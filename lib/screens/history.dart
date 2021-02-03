@@ -26,12 +26,13 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+    final ShopOrderService shopOrderService = ShopOrderService();
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
         StreamBuilder<QuerySnapshot>(
           stream:
-              ShopOrderService().getOrders(shopId: shop?.id, userId: user?.id),
+              shopOrderService.getOrders(shopId: shop?.id, userId: user?.id),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Center(child: Text('読み込み中'));
@@ -54,11 +55,8 @@ class HistoryScreen extends StatelessWidget {
                         .toString(),
                     shipping: _order.shipping,
                     onTap: () {
-                      shopOrderProvider.getCart(order: _order);
-                      nextPage(
-                        context,
-                        HistoryDetailsScreen(order: _order),
-                      );
+                      shopOrderProvider.setTmpCart(order: _order);
+                      nextPage(context, HistoryDetailsScreen(order: _order));
                     },
                   );
                 },

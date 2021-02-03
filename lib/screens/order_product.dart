@@ -32,7 +32,7 @@ class OrderProductScreen extends StatelessWidget {
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               children: [
-                Text('選択した商品'),
+                Text('注文内容'),
                 SizedBox(height: 8.0),
                 homeProvider.cart.length > 0
                     ? ListView.builder(
@@ -80,6 +80,10 @@ class OrderProductScreen extends StatelessWidget {
                   address: _user?.address ?? '',
                   tel: _user?.tel ?? '',
                   onTap: () {
+                    userProvider.clearController();
+                    userProvider.zip.text = _user?.zip;
+                    userProvider.address.text = _user?.address;
+                    userProvider.tel.text = _user?.tel;
                     nextPage(context, AddressChangeScreen());
                   },
                 ),

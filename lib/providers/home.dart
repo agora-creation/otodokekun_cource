@@ -12,6 +12,7 @@ class HomeProvider with ChangeNotifier {
 
   bool isLoading = false;
   List<CartModel> cart = [];
+  int courseQuantity = 1;
   int totalPrice = 0;
 
   void changeTabs(int index) {
@@ -60,6 +61,23 @@ class HomeProvider with ChangeNotifier {
 
   void deleteCart({CartModel cartModel}) {
     cart.removeWhere((e) => e.id == cartModel.id);
+    notifyListeners();
+  }
+
+  void addCourseQuantity() {
+    courseQuantity += 1;
+    notifyListeners();
+  }
+
+  void removeCourseQuantity() {
+    if (courseQuantity != 1) {
+      courseQuantity -= 1;
+      notifyListeners();
+    }
+  }
+
+  void clearCourseQuantity() {
+    courseQuantity = 1;
     notifyListeners();
   }
 

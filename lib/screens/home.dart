@@ -29,6 +29,7 @@ class HomeScreen extends StatelessWidget {
       HistoryScreen(homeProvider: homeProvider, shop: _shop, user: _user),
       SettingsScreen(homeProvider: homeProvider, userProvider: userProvider),
     ];
+    final UserNoticeService userNoticeService = UserNoticeService();
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
@@ -71,7 +72,7 @@ class HomeScreen extends StatelessWidget {
               );
             },
             icon: StreamBuilder<QuerySnapshot>(
-              stream: UserNoticeService().getNoticeRead(userId: _user?.id),
+              stream: userNoticeService.getNoticeRead(userId: _user?.id),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Icon(Icons.notifications_off_outlined);

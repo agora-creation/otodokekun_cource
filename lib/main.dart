@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/providers/home.dart';
-import 'package:otodokekun_cource/providers/shop_course.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
-import 'package:otodokekun_cource/providers/shop_product.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/providers/user_notice.dart';
 import 'package:otodokekun_cource/screens/home.dart';
@@ -25,9 +23,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: HomeProvider()..initNotification()),
-        ChangeNotifierProvider.value(value: ShopCourseProvider()),
         ChangeNotifierProvider.value(value: ShopOrderProvider()),
-        ChangeNotifierProvider.value(value: ShopProductProvider()),
         ChangeNotifierProvider.value(value: UserProvider.initialize()),
         ChangeNotifierProvider.value(value: UserNoticeProvider()),
       ],

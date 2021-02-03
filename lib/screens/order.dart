@@ -8,15 +8,12 @@ import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_course.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
 import 'package:otodokekun_cource/providers/home.dart';
-import 'package:otodokekun_cource/providers/shop_course.dart';
-import 'package:otodokekun_cource/providers/shop_product.dart';
 import 'package:otodokekun_cource/screens/order_course.dart';
 import 'package:otodokekun_cource/services/shop_course.dart';
 import 'package:otodokekun_cource/services/shop_product.dart';
 import 'package:otodokekun_cource/widgets/course_days_list_tile.dart';
 import 'package:otodokekun_cource/widgets/course_list_tile.dart';
 import 'package:otodokekun_cource/widgets/product_list_tile.dart';
-import 'package:provider/provider.dart';
 
 class OrderScreen extends StatelessWidget {
   final HomeProvider homeProvider;
@@ -29,16 +26,16 @@ class OrderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shopCourseProvider = Provider.of<ShopCourseProvider>(context);
-    final shopProductProvider = Provider.of<ShopProductProvider>(context);
+    final ShopCourseService shopCourseService = ShopCourseService();
+    final ShopProductService shopProductService = ShopProductService();
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
         StreamBuilder<QuerySnapshot>(
-          stream: ShopCourseService().getCourses(shopId: shop?.id),
+          stream: shopCourseService.getCourses(shopId: shop?.id),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: Text('読み込み中'));
+              return Container();
             }
             List<ShopCourseModel> courses = [];
             for (DocumentSnapshot course in snapshot.data.docs) {
@@ -79,7 +76,7 @@ class OrderScreen extends StatelessWidget {
                       ),
                     ],
                     onPressed: () {
-                      shopCourseProvider.clearQuantity();
+                      homeProvider.clearCourseQuantity();
                       nextPage(context, OrderCourseScreen(course: _courses));
                     },
                   );
@@ -92,7 +89,7 @@ class OrderScreen extends StatelessWidget {
         ),
         SizedBox(height: 8.0),
         StreamBuilder<QuerySnapshot>(
-          stream: ShopProductService().getProducts(shopId: shop?.id),
+          stream: shopProductService.getProducts(shopId: shop?.id),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Center(child: Text('読み込み中'));

@@ -6,7 +6,7 @@ import 'package:otodokekun_cource/services/shop_order.dart';
 class ShopOrderProvider with ChangeNotifier {
   ShopOrderService _shopOrderService = ShopOrderService();
 
-  List<CartModel> cart = [];
+  List<CartModel> tmpCart = [];
   DateTime deliveryAt = DateTime.now().add(Duration(days: 3));
 
   TextEditingController remarks = TextEditingController();
@@ -93,7 +93,7 @@ class ShopOrderProvider with ChangeNotifier {
   void updateQuantity({ShopOrderModel order}) {
     List<Map> convertedCart = [];
     int _totalPrice = 0;
-    for (CartModel product in cart) {
+    for (CartModel product in tmpCart) {
       convertedCart.add(product.toMap());
       _totalPrice += product.price * product.quantity;
     }
@@ -109,8 +109,8 @@ class ShopOrderProvider with ChangeNotifier {
     remarks.text = '';
   }
 
-  void getCart({ShopOrderModel order}) {
-    cart = order.cart;
+  void setTmpCart({ShopOrderModel order}) {
+    tmpCart = order.cart;
   }
 
   void addQuantity({CartModel cartModel}) {

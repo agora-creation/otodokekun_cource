@@ -18,7 +18,7 @@ class HistoryDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<HomeProvider>(context);
+    final homeProvider = Provider.of<HomeProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +38,7 @@ class HistoryDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: appProvider.isLoading
+      body: homeProvider.isLoading
           ? LoadingWidget()
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -62,18 +62,18 @@ class HistoryDetailsScreen extends StatelessWidget {
                 SizedBox(height: 8.0),
                 Text('注文商品'),
                 SizedBox(height: 8.0),
-                shopOrderProvider.cart.length > 0
+                shopOrderProvider.tmpCart.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
-                        itemCount: shopOrderProvider.cart.length,
+                        itemCount: shopOrderProvider.tmpCart.length,
                         itemBuilder: (_, index) {
-                          CartModel _cart = shopOrderProvider.cart[index];
+                          CartModel _cart = shopOrderProvider.tmpCart[index];
                           return HistoryDetailsListTile(
-                            image: _cart.image,
                             name: _cart.name,
-                            price: _cart.price,
+                            image: _cart.image,
                             unit: _cart.unit,
+                            price: _cart.price,
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
                               child: QuantityChangeButton(
@@ -109,9 +109,9 @@ class HistoryDetailsScreen extends StatelessWidget {
                         labelColor: Colors.white,
                         backgroundColor: Colors.blueAccent,
                         onPressed: () {
-                          appProvider.changeLoading();
+                          homeProvider.changeLoading();
                           shopOrderProvider.updateQuantity(order: order);
-                          appProvider.changeLoading();
+                          homeProvider.changeLoading();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('注文数量を変更しました')),
                           );
@@ -125,9 +125,9 @@ class HistoryDetailsScreen extends StatelessWidget {
                         labelColor: Colors.blueGrey,
                         borderColor: Colors.blueGrey,
                         onPressed: () {
-                          appProvider.changeLoading();
+                          homeProvider.changeLoading();
                           shopOrderProvider.deleteOrder(order: order);
-                          appProvider.changeLoading();
+                          homeProvider.changeLoading();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('注文をキャンセルしました')),
                           );

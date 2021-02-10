@@ -21,10 +21,10 @@ class UserProvider with ChangeNotifier {
   Status get status => _status;
   User get fUser => _fUser;
 
-  TextEditingController shopId = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController cPassword = TextEditingController();
+  TextEditingController code = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController zip = TextEditingController();
   TextEditingController address = TextEditingController();
@@ -67,7 +67,13 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<bool> signUp() async {
-    if (shopId.text == null) return false;
+    String _shopId = '';
+    if (code.text == null) {
+      return false;
+    } else {
+      _shopId = await _shopService.getShopCode(code: code.text.trim());
+      if (_shopId == null) return false;
+    }
     if (name.text == null) return false;
     if (email.text == null) return false;
     if (password.text == null) return false;
@@ -83,7 +89,7 @@ class UserProvider with ChangeNotifier {
           .then((value) {
         _userService.createUser({
           'id': value.user.uid,
-          'shopId': shopId.text.trim(),
+          'shopId': _shopId,
           'name': name.text.trim(),
           'zip': '',
           'address': '',
@@ -166,10 +172,10 @@ class UserProvider with ChangeNotifier {
   }
 
   void clearController() {
-    shopId.text = '';
     email.text = '';
     password.text = '';
     cPassword.text = '';
+    code.text = '';
     name.text = '';
     zip.text = '';
     address.text = '';

@@ -25,11 +25,13 @@ class CourseDaysListTile extends StatelessWidget {
         child: Center(child: Text(deliveryAt)),
       ),
       title: ListTile(
-        leading: Image.network(
-          image,
-          fit: BoxFit.cover,
-        ),
-        title: Text(name),
+        leading: image != null
+            ? Image.network(
+                image,
+                fit: BoxFit.cover,
+              )
+            : Container(),
+        title: name != null ? Text(name) : Container(),
       ),
       contentPadding: EdgeInsets.all(8.0),
     );

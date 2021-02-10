@@ -48,6 +48,8 @@ class HomeScreen extends StatelessWidget {
                       Text('${_shop?.address}'),
                       Text('${_shop?.tel}'),
                       Text('担当者名 : ${_shop?.staff}'),
+                      SizedBox(height: 8.0),
+                      Text('キャンセルは${_shop?.cancelLimit}前まで'),
                     ],
                   ),
                   actions: [

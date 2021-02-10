@@ -123,17 +123,20 @@ class OrderCourseScreen extends StatelessWidget {
                     homeProvider.changeLoading();
                     for (DaysModel days in course.days) {
                       List<CartModel> _cart = [];
-                      Map _cartProduct = {
-                        'id': days.id,
-                        'name': days.name,
-                        'image': days.image,
-                        'unit': days.unit,
-                        'price': days.price,
-                        'quantity': homeProvider.courseQuantity,
-                        'totalPrice': days.price * homeProvider.courseQuantity,
-                      };
-                      CartModel _cartModel = CartModel.fromMap(_cartProduct);
-                      _cart.add(_cartModel);
+                      if (days.id != null) {
+                        Map _cartProduct = {
+                          'id': days.id,
+                          'name': days.name,
+                          'image': days.image,
+                          'unit': days.unit,
+                          'price': days.price,
+                          'quantity': homeProvider.courseQuantity,
+                          'totalPrice':
+                              days.price * homeProvider.courseQuantity,
+                        };
+                        CartModel _cartModel = CartModel.fromMap(_cartProduct);
+                        _cart.add(_cartModel);
+                      }
                       shopOrderProvider.createOrderCourse(
                         shopId: _user.shopId,
                         userId: _user.id,

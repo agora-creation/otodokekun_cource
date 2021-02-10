@@ -45,11 +45,11 @@ class RegistrationScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomTextField(
-                              controller: userProvider.shopId,
+                              controller: userProvider.code,
                               obscureText: false,
                               textInputType: null,
                               maxLines: 1,
-                              labelText: ' 店舗ID',
+                              labelText: ' 店舗コード',
                               prefixIconData: Icons.store,
                               suffixIconData: null,
                               onTap: null,

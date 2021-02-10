@@ -31,6 +31,8 @@ class OrderScreen extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
+        shop?.remarks != null ? Text(shop?.remarks) : null,
+        shop?.remarks != null ? SizedBox(height: 8.0) : null,
         StreamBuilder<QuerySnapshot>(
           stream: shopCourseService.getCourses(shopId: shop?.id),
           builder: (context, snapshot) {
@@ -69,8 +71,8 @@ class OrderScreen extends StatelessWidget {
                             deliveryAt: DateFormat('MM/dd')
                                 .format(_days.deliveryAt)
                                 .toString(),
-                            name: _days.name,
-                            image: _days.image,
+                            name: _days.name ?? null,
+                            image: _days.image ?? null,
                           );
                         },
                       ),

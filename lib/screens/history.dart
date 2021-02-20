@@ -8,7 +8,6 @@ import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/screens/history_details.dart';
-import 'package:otodokekun_cource/services/shop_order.dart';
 import 'package:otodokekun_cource/widgets/history_list_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -26,13 +25,18 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
-    final ShopOrderService shopOrderService = ShopOrderService();
+    final Stream<QuerySnapshot> streamOrder = FirebaseFirestore.instance
+        .collection('shop')
+        .doc(shop?.id)
+        .collection('order')
+        .where('userId', isEqualTo: user?.id)
+        .orderBy('deliveryAt', descending: true)
+        .snapshots();
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
         StreamBuilder<QuerySnapshot>(
-          stream:
-              shopOrderService.getOrders(shopId: shop?.id, userId: user?.id),
+          stream: streamOrder,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Center(child: Text('読み込み中'));

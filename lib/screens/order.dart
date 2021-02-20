@@ -9,8 +9,6 @@ import 'package:otodokekun_cource/models/shop_course.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/screens/order_course.dart';
-import 'package:otodokekun_cource/services/shop_course.dart';
-import 'package:otodokekun_cource/services/shop_product.dart';
 import 'package:otodokekun_cource/widgets/course_days_list_tile.dart';
 import 'package:otodokekun_cource/widgets/course_list_tile.dart';
 import 'package:otodokekun_cource/widgets/product_list_tile.dart';
@@ -26,15 +24,27 @@ class OrderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ShopCourseService shopCourseService = ShopCourseService();
-    final ShopProductService shopProductService = ShopProductService();
+    final Stream<QuerySnapshot> streamCourse = FirebaseFirestore.instance
+        .collection('shop')
+        .doc(shop?.id)
+        .collection('course')
+        .where('published', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+    final Stream<QuerySnapshot> streamProduct = FirebaseFirestore.instance
+        .collection('shop')
+        .doc(shop?.id)
+        .collection('product')
+        .where('published', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
-        shop?.remarks != null ? Text(shop?.remarks) : null,
-        shop?.remarks != null ? SizedBox(height: 8.0) : null,
+        Text(shop?.remarks ?? ''),
+        SizedBox(height: 8.0),
         StreamBuilder<QuerySnapshot>(
-          stream: shopCourseService.getCourses(shopId: shop?.id),
+          stream: streamCourse,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Container();
@@ -91,7 +101,7 @@ class OrderScreen extends StatelessWidget {
         ),
         SizedBox(height: 8.0),
         StreamBuilder<QuerySnapshot>(
-          stream: shopProductService.getProducts(shopId: shop?.id),
+          stream: streamProduct,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Center(child: Text('読み込み中'));

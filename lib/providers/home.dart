@@ -1,19 +1,18 @@
-import 'dart:io';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
 
 class HomeProvider with ChangeNotifier {
-  FirebaseMessaging firebaseMessaging;
-
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  String _token;
   int tabsIndex = 0;
-
   bool isLoading = false;
   List<CartModel> cart = [];
   int courseQuantity = 1;
   int totalPrice = 0;
+
+  String get token => _token;
 
   void changeTabs(int index) {
     tabsIndex = index;
@@ -81,26 +80,21 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> initNotification() async {
-    firebaseMessaging = FirebaseMessaging();
-    if (Platform.isIOS) {
-      bool permitted = await firebaseMessaging.requestNotificationPermissions();
-      if (!permitted) {
-        return;
-      }
-    }
-    firebaseMessaging.configure(
+  Future<void> initFCM() async {
+    //iOS PUSH通知の許可確認
+    _firebaseMessaging.requestNotificationPermissions(
+      const IosNotificationSettings(sound: true, badge: true, alert: true),
+    );
+    //FCM tokenの取得
+    _firebaseMessaging.getToken().then((token) {
+      _token = token;
+      print("token: $_token");
+    });
+    //メッセージ受信時の処理
+    _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print('FirebaseMessaging onMessage');
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print('FirebaseMessaging onLaunch');
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print('FirebaseMessaging onResume');
+        print("onMessage: $message");
       },
     );
-    String token = await firebaseMessaging.getToken();
-    print('FirebaseMessaging token: $token');
   }
 }

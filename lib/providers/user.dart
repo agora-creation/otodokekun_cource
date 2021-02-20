@@ -47,16 +47,23 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> signIn() async {
+  Future<bool> signIn({String token}) async {
     if (email.text == null) return false;
     if (password.text == null) return false;
     try {
       _status = Status.Authenticating;
       notifyListeners();
-      await _auth.signInWithEmailAndPassword(
+      await _auth
+          .signInWithEmailAndPassword(
         email: email.text.trim(),
         password: password.text.trim(),
-      );
+      )
+          .then((value) {
+        _userService.updateUser({
+          'id': value.user.uid,
+          'token': token,
+        });
+      });
       return true;
     } catch (e) {
       _status = Status.Unauthenticated;
@@ -66,7 +73,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> signUp() async {
+  Future<bool> signUp({String token}) async {
     String _shopId = '';
     if (code.text == null) {
       return false;
@@ -97,6 +104,7 @@ class UserProvider with ChangeNotifier {
           'email': email.text.trim(),
           'password': password.text.trim(),
           'blacklist': false,
+          'token': token,
           'createdAt': DateTime.now(),
         });
       });

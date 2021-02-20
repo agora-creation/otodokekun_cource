@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
+import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/home.dart';
 import 'package:otodokekun_cource/screens/registration.dart';
@@ -13,6 +14,7 @@ import 'package:provider/provider.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -78,12 +80,16 @@ class LoginScreen extends StatelessWidget {
                           labelColor: Colors.white,
                           backgroundColor: Colors.blueAccent,
                           onPressed: () async {
-                            if (!await userProvider.signIn()) {
+                            String _token = homeProvider.token;
+                            if (!await userProvider.signIn(token: _token)) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('ログイン失敗')),
+                                SnackBar(content: Text('ログインに失敗しました')),
                               );
                               return;
                             }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('ログインに成功しました')),
+                            );
                             userProvider.clearController();
                             changePage(context, HomeScreen());
                           },

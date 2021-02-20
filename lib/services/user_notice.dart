@@ -13,24 +13,4 @@ class UserNoticeService {
         .doc(values['id'])
         .update(values);
   }
-
-  Stream<QuerySnapshot> getNotices({String userId}) async* {
-    QuerySnapshot snapshot = await _firebaseFirestore
-        .collection(_collection)
-        .doc(userId)
-        .collection(_subCollection)
-        .orderBy('createdAt', descending: true)
-        .get();
-    yield snapshot;
-  }
-
-  Stream<QuerySnapshot> getNoticeRead({String userId}) async* {
-    QuerySnapshot snapshot = await _firebaseFirestore
-        .collection(_collection)
-        .doc(userId)
-        .collection(_subCollection)
-        .where('read', isEqualTo: true)
-        .get();
-    yield snapshot;
-  }
 }

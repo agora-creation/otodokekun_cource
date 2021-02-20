@@ -42,17 +42,6 @@ class ShopOrderService {
         .delete();
   }
 
-  Stream<QuerySnapshot> getOrders({String shopId, String userId}) async* {
-    QuerySnapshot snapshot = await _firebaseFirestore
-        .collection(_collection)
-        .doc(shopId)
-        .collection(_subCollection)
-        .where('userId', isEqualTo: userId)
-        .orderBy('deliveryAt', descending: true)
-        .get();
-    yield snapshot;
-  }
-
   Future<int> getTotalPrice({String shopId, String userId}) async {
     int totalPrice = 0;
     await _firebaseFirestore

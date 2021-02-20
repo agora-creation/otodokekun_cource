@@ -8,7 +8,6 @@ import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/providers/user_notice.dart';
 import 'package:otodokekun_cource/screens/notice_details.dart';
-import 'package:otodokekun_cource/services/user_notice.dart';
 import 'package:otodokekun_cource/widgets/notice_list_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +18,12 @@ class NoticeScreen extends StatelessWidget {
     final userProvider = Provider.of<UserProvider>(context);
     UserModel _user = userProvider.user;
     final userNoticeProvider = Provider.of<UserNoticeProvider>(context);
-    final UserNoticeService userNoticeService = UserNoticeService();
+    final Stream<QuerySnapshot> streamNotice = FirebaseFirestore.instance
+        .collection('user')
+        .doc(_user?.id)
+        .collection('notice')
+        .orderBy('createdAt', descending: true)
+        .snapshots();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -31,7 +35,7 @@ class NoticeScreen extends StatelessWidget {
         title: Text('お知らせ'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: userNoticeService.getNotices(userId: _user?.id),
+        stream: streamNotice,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: Text('読み込み中'));

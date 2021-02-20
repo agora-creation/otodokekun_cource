@@ -24,7 +24,7 @@ class HistoryDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(''),
         actions: [
-          FlatButton(
+          TextButton(
             onPressed: null,
             child: order.shipping
                 ? Text(

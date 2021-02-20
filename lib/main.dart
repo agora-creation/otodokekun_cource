@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: HomeProvider()..initNotification()),
+        ChangeNotifierProvider.value(value: HomeProvider()..initFCM()),
         ChangeNotifierProvider.value(value: ShopOrderProvider()),
         ChangeNotifierProvider.value(value: UserProvider.initialize()),
         ChangeNotifierProvider.value(value: UserNoticeProvider()),

@@ -13,7 +13,6 @@ import 'package:otodokekun_cource/screens/notice.dart';
 import 'package:otodokekun_cource/screens/order.dart';
 import 'package:otodokekun_cource/screens/order_product.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
-import 'package:otodokekun_cource/services/user_notice.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +28,12 @@ class HomeScreen extends StatelessWidget {
       HistoryScreen(homeProvider: homeProvider, shop: _shop, user: _user),
       SettingsScreen(homeProvider: homeProvider, userProvider: userProvider),
     ];
-    final UserNoticeService userNoticeService = UserNoticeService();
+    final Stream<QuerySnapshot> streamNotice = FirebaseFirestore.instance
+        .collection('user')
+        .doc(_user?.id)
+        .collection('notice')
+        .where('read', isEqualTo: true)
+        .snapshots();
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
@@ -53,7 +57,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   actions: [
-                    FlatButton(
+                    TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: Text('閉じる'),
                     ),
@@ -74,7 +78,7 @@ class HomeScreen extends StatelessWidget {
               );
             },
             icon: StreamBuilder<QuerySnapshot>(
-              stream: userNoticeService.getNoticeRead(userId: _user?.id),
+              stream: streamNotice,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Icon(Icons.notifications_off_outlined);

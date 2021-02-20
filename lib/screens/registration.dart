@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
+import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/home.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
@@ -12,6 +13,7 @@ import 'package:provider/provider.dart';
 class RegistrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -115,12 +117,16 @@ class RegistrationScreen extends StatelessWidget {
                           labelColor: Colors.blueAccent,
                           borderColor: Colors.blueAccent,
                           onPressed: () async {
-                            if (!await userProvider.signUp()) {
+                            String _token = homeProvider.token;
+                            if (!await userProvider.signUp(token: _token)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('登録に失敗しました')),
                               );
                               return;
                             }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('登録に成功しました')),
+                            );
                             userProvider.clearController();
                             changePage(context, HomeScreen());
                           },

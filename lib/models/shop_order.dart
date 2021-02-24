@@ -13,6 +13,7 @@ class ShopOrderModel {
   DateTime _deliveryAt;
   String _remarks;
   int _totalPrice;
+  String _staff;
   bool _shipping;
   DateTime _createdAt;
 
@@ -26,6 +27,7 @@ class ShopOrderModel {
   DateTime get deliveryAt => _deliveryAt;
   String get remarks => _remarks;
   int get totalPrice => _totalPrice;
+  String get staff => _staff;
   bool get shipping => _shipping;
   DateTime get createdAt => _createdAt;
 
@@ -41,6 +43,7 @@ class ShopOrderModel {
     _deliveryAt = snapshot.data()['deliveryAt'].toDate();
     _remarks = snapshot.data()['remarks'];
     _totalPrice = snapshot.data()['totalPrice'];
+    _staff = snapshot.data()['staff'];
     _shipping = snapshot.data()['shipping'];
     _createdAt = snapshot.data()['createdAt'].toDate();
   }

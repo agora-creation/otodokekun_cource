@@ -60,7 +60,7 @@ class RegistrationScreen extends StatelessWidget {
                             CustomTextField(
                               controller: userProvider.name,
                               obscureText: false,
-                              textInputType: null,
+                              textInputType: TextInputType.name,
                               maxLines: 1,
                               labelText: 'お名前',
                               prefixIconData: Icons.person,

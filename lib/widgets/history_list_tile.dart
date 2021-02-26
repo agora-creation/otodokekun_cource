@@ -27,10 +27,12 @@ class HistoryListTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: ListTile(
-            leading: Image.network(
-              cart[0].image,
-              fit: BoxFit.cover,
-            ),
+            leading: cart[0].image != ''
+                ? Image.network(
+                    cart[0].image,
+                    fit: BoxFit.cover,
+                  )
+                : null,
             title: cart.length > 1
                 ? Text('${cart[0].name} 他')
                 : Text('${cart[0].name}'),

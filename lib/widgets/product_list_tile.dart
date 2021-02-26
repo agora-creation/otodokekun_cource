@@ -30,10 +30,12 @@ class ProductListTile extends StatelessWidget {
         child: CheckboxListTile(
           title: Text(name),
           subtitle: Text('¥ $price / $unit'),
-          secondary: Image.network(
-            image,
-            fit: BoxFit.cover,
-          ),
+          secondary: image != ''
+              ? Image.network(
+                  image,
+                  fit: BoxFit.cover,
+                )
+              : null,
           value: value,
           activeColor: Colors.blueAccent,
           onChanged: onChanged,

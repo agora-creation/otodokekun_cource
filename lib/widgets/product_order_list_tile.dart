@@ -30,10 +30,12 @@ class ProductOrderListTile extends StatelessWidget {
         child: Column(
           children: [
             ListTile(
-              leading: Image.network(
-                image,
-                fit: BoxFit.cover,
-              ),
+              leading: image != ''
+                  ? Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                    )
+                  : null,
               title: Text(name),
               subtitle: Text('¥ $price / $unit'),
               trailing: GestureDetector(

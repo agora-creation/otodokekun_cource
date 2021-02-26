@@ -44,6 +44,7 @@ class ShopOrderProvider with ChangeNotifier {
       'deliveryAt': deliveryAt,
       'remarks': remarks.text,
       'totalPrice': _totalPrice,
+      'staff': '',
       'shipping': false,
       'createdAt': DateTime.now(),
     });
@@ -78,6 +79,7 @@ class ShopOrderProvider with ChangeNotifier {
       'deliveryAt': deliveryAt,
       'remarks': remarks.text,
       'totalPrice': _totalPrice,
+      'staff': '',
       'shipping': false,
       'createdAt': DateTime.now(),
     });

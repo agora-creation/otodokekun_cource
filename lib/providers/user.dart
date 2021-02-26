@@ -104,6 +104,7 @@ class UserProvider with ChangeNotifier {
           'email': email.text.trim(),
           'password': password.text.trim(),
           'blacklist': false,
+          'staff': '',
           'token': token,
           'createdAt': DateTime.now(),
         });

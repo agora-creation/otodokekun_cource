@@ -81,8 +81,8 @@ class OrderScreen extends StatelessWidget {
                             deliveryAt: DateFormat('MM/dd')
                                 .format(_days.deliveryAt)
                                 .toString(),
-                            name: _days.name ?? null,
-                            image: _days.image ?? null,
+                            name: _days.name,
+                            image: _days.image,
                           );
                         },
                       ),

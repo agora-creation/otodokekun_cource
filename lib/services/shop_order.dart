@@ -5,7 +5,7 @@ class ShopOrderService {
   String _subCollection = 'order';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  String getNewOrderId({String shopId}) {
+  String newId({String shopId}) {
     String id = _firebaseFirestore
         .collection(_collection)
         .doc(shopId)
@@ -15,7 +15,7 @@ class ShopOrderService {
     return id;
   }
 
-  void createOrder(Map<String, dynamic> values) {
+  void create(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -24,7 +24,7 @@ class ShopOrderService {
         .set(values);
   }
 
-  void updateOrder(Map<String, dynamic> values) {
+  void update(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -33,7 +33,7 @@ class ShopOrderService {
         .update(values);
   }
 
-  void deleteOrder(Map<String, dynamic> values) {
+  void delete(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['shopId'])
@@ -42,7 +42,7 @@ class ShopOrderService {
         .delete();
   }
 
-  Future<int> getTotalPrice({String shopId, String userId}) async {
+  Future<int> selectInvoice({String shopId, String userId}) async {
     int totalPrice = 0;
     await _firebaseFirestore
         .collection(_collection)

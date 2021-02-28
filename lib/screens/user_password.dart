@@ -6,11 +6,12 @@ import 'package:otodokekun_cource/widgets/fill_round_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
-class PasswordChangeScreen extends StatelessWidget {
+class UserPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('パスワード変更'),
@@ -34,7 +35,7 @@ class PasswordChangeScreen extends StatelessWidget {
                     userProvider.changeHidden();
                   },
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 8.0),
                 CustomTextField(
                   controller: userProvider.cPassword,
                   obscureText: userProvider.isCHidden ? false : true,
@@ -49,7 +50,7 @@ class PasswordChangeScreen extends StatelessWidget {
                     userProvider.changeCHidden();
                   },
                 ),
-                SizedBox(height: 24.0),
+                SizedBox(height: 16.0),
                 FillRoundButton(
                   labelText: '変更を保存',
                   labelColor: Colors.white,

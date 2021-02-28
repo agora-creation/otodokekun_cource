@@ -38,6 +38,7 @@ class HistoryDetailsListTile extends StatelessWidget {
               subtitle: Text('¥ $price / $unit'),
               contentPadding: EdgeInsets.all(8.0),
             ),
+            Divider(color: kSubColor),
             child,
           ],
         ),

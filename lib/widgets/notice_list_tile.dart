@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 
 class NoticeListTile extends StatelessWidget {
+  final String createdAt;
   final String title;
   final bool read;
-  final String createdAt;
   final Function onTap;
 
   NoticeListTile({
+    this.createdAt,
     this.title,
     this.read,
-    this.createdAt,
     this.onTap,
   });
 
@@ -45,7 +45,13 @@ class NoticeListTile extends StatelessWidget {
                               )
                             : Container(),
                         read ? SizedBox(width: 8.0) : Container(),
-                        Text(createdAt, style: TextStyle(color: kSubColor)),
+                        Text(
+                          createdAt,
+                          style: TextStyle(
+                            color: kSubColor,
+                            fontSize: 14.0,
+                          ),
+                        ),
                       ],
                     ),
                     Text(

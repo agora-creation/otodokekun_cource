@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
@@ -25,8 +24,12 @@ class HomeScreen extends StatelessWidget {
     UserModel _user = userProvider.user;
     final List<Widget> _tabs = [
       OrderScreen(homeProvider: homeProvider, shop: _shop),
-      HistoryScreen(homeProvider: homeProvider, shop: _shop, user: _user),
-      SettingsScreen(homeProvider: homeProvider, userProvider: userProvider),
+      HistoryScreen(shop: _shop, user: _user),
+      SettingsScreen(
+        homeProvider: homeProvider,
+        userProvider: userProvider,
+        shop: _shop,
+      ),
     ];
     final Stream<QuerySnapshot> streamNotice = FirebaseFirestore.instance
         .collection('user')
@@ -34,6 +37,7 @@ class HomeScreen extends StatelessWidget {
         .collection('notice')
         .where('read', isEqualTo: true)
         .snapshots();
+
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
@@ -42,27 +46,7 @@ class HomeScreen extends StatelessWidget {
             showDialog(
               context: context,
               builder: (_) {
-                return CustomDialog(
-                  title: _shop?.name ?? '',
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('〒${_shop?.zip}'),
-                      Text('${_shop?.address}'),
-                      Text('${_shop?.tel}'),
-                      Text('担当者 : ${_user?.staff}'),
-                      SizedBox(height: 8.0),
-                      Text('キャンセルは${_shop?.cancelLimit}前まで'),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text('閉じる'),
-                    ),
-                  ],
-                );
+                return ShopDialog(shop: _shop, user: _user);
               },
             );
           },
@@ -87,8 +71,10 @@ class HomeScreen extends StatelessWidget {
                 if (docs.length == 0) {
                   return Icon(Icons.notifications_none);
                 } else {
-                  return Icon(Icons.notifications_active,
-                      color: Colors.redAccent);
+                  return Icon(
+                    Icons.notifications_active,
+                    color: Colors.redAccent,
+                  );
                 }
               },
             ),
@@ -97,21 +83,19 @@ class HomeScreen extends StatelessWidget {
       ),
       body: _tabs[homeProvider.tabsIndex],
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) {
-          homeProvider.changeTabs(index);
-        },
+        onTap: (index) => homeProvider.changeTabs(index),
         currentIndex: homeProvider.tabsIndex,
         fixedColor: kMainColor,
         type: BottomNavigationBarType.fixed,
         elevation: 0.0,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping),
-            label: '注文',
+            icon: Icon(Icons.view_in_ar),
+            label: '注文する',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            label: '履歴',
+            icon: Icon(Icons.list_alt),
+            label: '注文履歴',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -122,9 +106,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton:
           homeProvider.tabsIndex == 0 && homeProvider.cart.length > 0
               ? FloatingActionButton.extended(
-                  onPressed: () {
-                    nextPage(context, OrderProductScreen());
-                  },
+                  onPressed: () => nextPage(context, OrderProductScreen()),
                   icon: Icon(Icons.check),
                   label: Text('選択した商品を注文する'),
                   backgroundColor: Colors.blueAccent.withOpacity(0.8),
@@ -134,12 +116,46 @@ class HomeScreen extends StatelessWidget {
                   ? FloatingActionButton.extended(
                       onPressed: null,
                       icon: null,
-                      label: Text(
-                          '請求金額 : ¥ ${NumberFormat('#,###').format(homeProvider.totalPrice)}'),
+                      label: Text('請求金額を見る'),
                       backgroundColor: Colors.redAccent.withOpacity(0.8),
                       elevation: 0.0,
                     )
                   : Container(),
+    );
+  }
+}
+
+class ShopDialog extends StatelessWidget {
+  final ShopModel shop;
+  final UserModel user;
+
+  ShopDialog({
+    @required this.shop,
+    @required this.user,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: shop?.name ?? '',
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('〒${shop?.zip}'),
+          Text('${shop?.address}'),
+          Text('${shop?.tel}'),
+          Text('担当者 : ${user?.staff}'),
+          SizedBox(height: 8.0),
+          Text('キャンセルは${shop?.cancelLimit}前まで'),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('閉じる'),
+        ),
+      ],
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
-import 'package:otodokekun_cource/screens/address_change.dart';
+import 'package:otodokekun_cource/screens/user_address.dart';
 import 'package:otodokekun_cource/widgets/address_list_tile.dart';
 import 'package:otodokekun_cource/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource/widgets/delivery_list_tile.dart';
@@ -23,6 +23,7 @@ class OrderProductScreen extends StatelessWidget {
     final userProvider = Provider.of<UserProvider>(context);
     UserModel _user = userProvider.user;
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('注文確認'),
@@ -84,16 +85,15 @@ class OrderProductScreen extends StatelessWidget {
                     userProvider.zip.text = _user?.zip;
                     userProvider.address.text = _user?.address;
                     userProvider.tel.text = _user?.tel;
-                    nextPage(context, AddressChangeScreen());
+                    nextPage(context, UserAddressScreen());
                   },
                 ),
                 SizedBox(height: 8.0),
                 Text('お届け指定日'),
                 SizedBox(height: 8.0),
                 DeliveryListTile(
-                  deliveryAt: DateFormat('yyyy年MM月dd日')
-                      .format(shopOrderProvider.deliveryAt)
-                      .toString(),
+                  deliveryAt:
+                      '${DateFormat('yyyy年MM月dd日').format(shopOrderProvider.deliveryAt)}',
                   onTap: () async {
                     final DateTime now = DateTime.now();
                     final DateTime dateTime = await showDatePicker(
@@ -131,7 +131,7 @@ class OrderProductScreen extends StatelessWidget {
                   onPressed: () {
                     if (homeProvider.cart.length > 0) {
                       homeProvider.changeLoading();
-                      shopOrderProvider.createOrder(
+                      shopOrderProvider.create(
                         shopId: _user.shopId,
                         userId: _user.id,
                         name: _user.name,

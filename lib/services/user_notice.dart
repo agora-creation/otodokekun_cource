@@ -5,7 +5,7 @@ class UserNoticeService {
   String _subCollection = 'notice';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  void updateNotice(Map<String, dynamic> values) {
+  void update(Map<String, dynamic> values) {
     _firebaseFirestore
         .collection(_collection)
         .doc(values['userId'])

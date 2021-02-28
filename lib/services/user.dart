@@ -5,15 +5,15 @@ class UserService {
   String _collection = 'user';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  void createUser(Map<String, dynamic> values) {
+  void create(Map<String, dynamic> values) {
     _firebaseFirestore.collection(_collection).doc(values['id']).set(values);
   }
 
-  void updateUser(Map<String, dynamic> values) {
+  void update(Map<String, dynamic> values) {
     _firebaseFirestore.collection(_collection).doc(values['id']).update(values);
   }
 
-  Future<UserModel> getUser({String userId}) async {
+  Future<UserModel> select({String userId}) async {
     DocumentSnapshot snapshot =
         await _firebaseFirestore.collection(_collection).doc(userId).get();
     return UserModel.fromSnapshot(snapshot);

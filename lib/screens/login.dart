@@ -16,6 +16,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -98,9 +99,8 @@ class LoginScreen extends StatelessWidget {
                         Align(
                           alignment: Alignment.bottomRight,
                           child: GestureDetector(
-                            onTap: () {
-                              nextPage(context, RegistrationScreen());
-                            },
+                            onTap: () =>
+                                nextPage(context, RegistrationScreen()),
                             child: Text(
                               '初めての方はコチラ',
                               style: TextStyle(

@@ -6,10 +6,9 @@ import 'package:otodokekun_cource/models/shop_product.dart';
 class HomeProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _token;
-  int tabsIndex = 0;
+  int tabsIndex = 1;
   bool isLoading = false;
   List<CartModel> cart = [];
-  int courseQuantity = 1;
   int totalPrice = 0;
 
   String get token => _token;
@@ -27,7 +26,7 @@ class HomeProvider with ChangeNotifier {
   void checkCart({ShopProductModel product}) {
     var contain = cart.where((e) => e.id == product.id);
     if (contain.isEmpty) {
-      Map cartProduct = {
+      Map cartMap = {
         'id': product.id,
         'name': product.name,
         'image': product.image,
@@ -36,8 +35,8 @@ class HomeProvider with ChangeNotifier {
         'quantity': 1,
         'totalPrice': product.price * 1,
       };
-      CartModel _cartModel = CartModel.fromMap(cartProduct);
-      cart.add(_cartModel);
+      CartModel _cart = CartModel.fromMap(cartMap);
+      cart.add(_cart);
     } else {
       cart.removeWhere((e) => e.id == product.id);
     }
@@ -60,23 +59,6 @@ class HomeProvider with ChangeNotifier {
 
   void deleteCart({CartModel cartModel}) {
     cart.removeWhere((e) => e.id == cartModel.id);
-    notifyListeners();
-  }
-
-  void addCourseQuantity() {
-    courseQuantity += 1;
-    notifyListeners();
-  }
-
-  void removeCourseQuantity() {
-    if (courseQuantity != 1) {
-      courseQuantity -= 1;
-      notifyListeners();
-    }
-  }
-
-  void clearCourseQuantity() {
-    courseQuantity = 1;
     notifyListeners();
   }
 

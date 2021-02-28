@@ -5,7 +5,7 @@ class ShopService {
   String _collection = 'shop';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  Future<String> getShopCode({String code}) async {
+  Future<String> selectCode({String code}) async {
     String shopId = '';
     await _firebaseFirestore
         .collection(_collection)
@@ -21,7 +21,7 @@ class ShopService {
     return shopId;
   }
 
-  Future<ShopModel> getShop({String shopId}) async {
+  Future<ShopModel> select({String shopId}) async {
     DocumentSnapshot snapshot =
         await _firebaseFirestore.collection(_collection).doc(shopId).get();
     return ShopModel.fromSnapshot(snapshot);

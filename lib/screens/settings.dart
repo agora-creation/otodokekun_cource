@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
+import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
-import 'package:otodokekun_cource/screens/address_change.dart';
 import 'package:otodokekun_cource/screens/company.dart';
-import 'package:otodokekun_cource/screens/email_change.dart';
 import 'package:otodokekun_cource/screens/login.dart';
-import 'package:otodokekun_cource/screens/password_change.dart';
 import 'package:otodokekun_cource/screens/privacy_policy.dart';
 import 'package:otodokekun_cource/screens/terms_use.dart';
 import 'package:otodokekun_cource/screens/tokushoho.dart';
+import 'package:otodokekun_cource/screens/user_address.dart';
+import 'package:otodokekun_cource/screens/user_email.dart';
+import 'package:otodokekun_cource/screens/user_password.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
+import 'package:otodokekun_cource/widgets/custom_icon_list_tile.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
-import 'package:otodokekun_cource/widgets/setting_list_tile.dart';
+import 'package:otodokekun_cource/widgets/remarks.dart';
 
 class SettingsScreen extends StatelessWidget {
   final HomeProvider homeProvider;
   final UserProvider userProvider;
+  final ShopModel shop;
 
   SettingsScreen({
     @required this.homeProvider,
     @required this.userProvider,
+    @required this.shop,
   });
 
   @override
@@ -30,29 +34,30 @@ class SettingsScreen extends StatelessWidget {
         : ListView(
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
             children: [
+              RemarksWidget(remarks: shop?.remarks ?? ''),
               Text('アカウント情報'),
               SizedBox(height: 8.0),
-              SettingListTile(
+              CustomIconListTile(
                 iconData: Icons.person,
                 title: 'アカウント情報変更',
                 onTap: () {
                   userProvider.clearController();
                   userProvider.name.text = userProvider.user.name;
                   userProvider.email.text = userProvider.user.email;
-                  nextPage(context, EmailChangeScreen());
+                  nextPage(context, UserEmailScreen());
                 },
               ),
               SizedBox(height: 8.0),
-              SettingListTile(
+              CustomIconListTile(
                 iconData: Icons.lock,
                 title: 'パスワード変更',
                 onTap: () {
                   userProvider.clearController();
-                  nextPage(context, PasswordChangeScreen());
+                  nextPage(context, UserPasswordScreen());
                 },
               ),
               SizedBox(height: 8.0),
-              SettingListTile(
+              CustomIconListTile(
                 iconData: Icons.location_pin,
                 title: 'お届け先情報変更',
                 onTap: () {
@@ -60,42 +65,34 @@ class SettingsScreen extends StatelessWidget {
                   userProvider.zip.text = userProvider.user.zip;
                   userProvider.address.text = userProvider.user.address;
                   userProvider.tel.text = userProvider.user.tel;
-                  nextPage(context, AddressChangeScreen());
+                  nextPage(context, UserAddressScreen());
                 },
               ),
               SizedBox(height: 24.0),
               Text('サポート情報'),
               SizedBox(height: 8.0),
-              SettingListTile(
+              CustomIconListTile(
                 iconData: Icons.business_outlined,
                 title: '運営会社',
-                onTap: () {
-                  nextPage(context, CompanyScreen());
-                },
+                onTap: () => nextPage(context, CompanyScreen()),
               ),
               SizedBox(height: 8.0),
-              SettingListTile(
+              CustomIconListTile(
                 iconData: Icons.description_outlined,
                 title: '利用規約',
-                onTap: () {
-                  nextPage(context, TermsUseScreen());
-                },
+                onTap: () => nextPage(context, TermsUseScreen()),
               ),
               SizedBox(height: 8.0),
-              SettingListTile(
+              CustomIconListTile(
                 iconData: Icons.info_outline,
                 title: '特定商取引法に関する方針',
-                onTap: () {
-                  nextPage(context, TokushohoScreen());
-                },
+                onTap: () => nextPage(context, TokushohoScreen()),
               ),
               SizedBox(height: 8.0),
-              SettingListTile(
+              CustomIconListTile(
                 iconData: Icons.lock_outline,
                 title: 'プライバシーポリシー',
-                onTap: () {
-                  nextPage(context, PrivacyPolicyScreen());
-                },
+                onTap: () => nextPage(context, PrivacyPolicyScreen()),
               ),
               SizedBox(height: 16.0),
               BorderRoundButton(

@@ -5,19 +5,17 @@ import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/screens/history_details.dart';
-import 'package:otodokekun_cource/widgets/history_list_tile.dart';
+import 'package:otodokekun_cource/widgets/custom_order_list_tile.dart';
+import 'package:otodokekun_cource/widgets/remarks.dart';
 import 'package:provider/provider.dart';
 
 class HistoryScreen extends StatelessWidget {
-  final HomeProvider homeProvider;
   final ShopModel shop;
   final UserModel user;
 
   HistoryScreen({
-    @required this.homeProvider,
     @required this.shop,
     @required this.user,
   });
@@ -32,9 +30,19 @@ class HistoryScreen extends StatelessWidget {
         .where('userId', isEqualTo: user?.id)
         .orderBy('deliveryAt', descending: true)
         .snapshots();
+
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
+        RemarksWidget(remarks: shop?.remarks ?? ''),
+        Row(
+          children: [
+            Icon(Icons.list_alt),
+            SizedBox(width: 4.0),
+            Text('注文履歴'),
+          ],
+        ),
+        SizedBox(height: 8.0),
         StreamBuilder<QuerySnapshot>(
           stream: streamOrder,
           builder: (context, snapshot) {
@@ -52,11 +60,9 @@ class HistoryScreen extends StatelessWidget {
                 itemCount: orders.length,
                 itemBuilder: (_, index) {
                   ShopOrderModel _order = orders[index];
-                  return HistoryListTile(
-                    cart: _order.cart,
-                    deliveryAt: DateFormat('yyyy年MM月dd日')
-                        .format(_order.deliveryAt)
-                        .toString(),
+                  return CustomOrderListTile(
+                    deliveryAt: DateFormat('MM/dd').format(_order.deliveryAt),
+                    name: _order.cart[0].name,
                     shipping: _order.shipping,
                     onTap: () {
                       shopOrderProvider.setTmpCart(order: _order);

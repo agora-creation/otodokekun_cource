@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 
-class SettingListTile extends StatelessWidget {
-  final String title;
+class CustomIconListTile extends StatelessWidget {
   final IconData iconData;
+  final String title;
   final Function onTap;
 
-  SettingListTile({
-    this.title,
+  CustomIconListTile({
     this.iconData,
+    this.title,
     this.onTap,
   });
 
@@ -22,7 +22,7 @@ class SettingListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: ListTile(
-          leading: Icon(iconData),
+          leading: Icon(iconData, color: kSubColor),
           title: Text(title),
           trailing: Icon(Icons.chevron_right),
         ),

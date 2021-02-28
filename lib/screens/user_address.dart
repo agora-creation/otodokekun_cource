@@ -6,14 +6,15 @@ import 'package:otodokekun_cource/widgets/fill_round_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
-class EmailChangeScreen extends StatelessWidget {
+class UserAddressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('アカウント情報変更'),
+        title: Text('お届け先情報変更'),
       ),
       body: appProvider.isLoading
           ? LoadingWidget()
@@ -21,34 +22,45 @@ class EmailChangeScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               children: [
                 CustomTextField(
-                  controller: userProvider.name,
+                  controller: userProvider.zip,
                   obscureText: false,
-                  textInputType: TextInputType.name,
+                  textInputType: null,
                   maxLines: 1,
-                  labelText: 'お名前',
-                  prefixIconData: Icons.person,
+                  labelText: '郵便番号',
+                  prefixIconData: Icons.location_pin,
+                  suffixIconData: null,
+                  onTap: null,
+                ),
+                SizedBox(height: 8.0),
+                CustomTextField(
+                  controller: userProvider.address,
+                  obscureText: false,
+                  textInputType: TextInputType.streetAddress,
+                  maxLines: 1,
+                  labelText: '住所',
+                  prefixIconData: Icons.location_city,
+                  suffixIconData: null,
+                  onTap: null,
+                ),
+                SizedBox(height: 8.0),
+                CustomTextField(
+                  controller: userProvider.tel,
+                  obscureText: false,
+                  textInputType: TextInputType.phone,
+                  maxLines: 1,
+                  labelText: '電話番号',
+                  prefixIconData: Icons.phone,
                   suffixIconData: null,
                   onTap: null,
                 ),
                 SizedBox(height: 16.0),
-                CustomTextField(
-                  controller: userProvider.email,
-                  obscureText: false,
-                  textInputType: TextInputType.emailAddress,
-                  maxLines: 1,
-                  labelText: 'メールアドレス',
-                  prefixIconData: Icons.mail,
-                  suffixIconData: null,
-                  onTap: null,
-                ),
-                SizedBox(height: 24.0),
                 FillRoundButton(
                   labelText: '変更を保存',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () async {
                     appProvider.changeLoading();
-                    if (!await userProvider.updateEmail()) {
+                    if (!await userProvider.updateAddress()) {
                       appProvider.changeLoading();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('変更に失敗しました')),

@@ -59,7 +59,7 @@ class UserProvider with ChangeNotifier {
         password: password.text.trim(),
       )
           .then((value) {
-        _userService.updateUser({
+        _userService.update({
           'id': value.user.uid,
           'token': token,
         });
@@ -78,7 +78,7 @@ class UserProvider with ChangeNotifier {
     if (code.text == null) {
       return false;
     } else {
-      _shopId = await _shopService.getShopCode(code: code.text.trim());
+      _shopId = await _shopService.selectCode(code: code.text.trim());
       if (_shopId == null) return false;
     }
     if (name.text == null) return false;
@@ -94,7 +94,7 @@ class UserProvider with ChangeNotifier {
         password: password.text.trim(),
       )
           .then((value) {
-        _userService.createUser({
+        _userService.create({
           'id': value.user.uid,
           'shopId': _shopId,
           'name': name.text.trim(),
@@ -123,7 +123,7 @@ class UserProvider with ChangeNotifier {
     if (email.text == null) return false;
     try {
       await _auth.currentUser.updateEmail(email.text.trim()).then((result) {
-        _userService.updateUser({
+        _userService.update({
           'id': _auth.currentUser.uid,
           'name': name.text.trim(),
           'email': email.text.trim(),
@@ -143,7 +143,7 @@ class UserProvider with ChangeNotifier {
       await _auth.currentUser
           .updatePassword(password.text.trim())
           .then((result) {
-        _userService.updateUser({
+        _userService.update({
           'id': _auth.currentUser.uid,
           'password': password.text.trim(),
         });
@@ -160,7 +160,7 @@ class UserProvider with ChangeNotifier {
     if (address.text == null) return false;
     if (tel.text == null) return false;
     try {
-      _userService.updateUser({
+      _userService.update({
         'id': _auth.currentUser.uid,
         'zip': zip.text.trim(),
         'address': address.text.trim(),
@@ -192,8 +192,8 @@ class UserProvider with ChangeNotifier {
   }
 
   Future reloadUserModel() async {
-    _user = await _userService.getUser(userId: _fUser.uid);
-    _shop = await _shopService.getShop(shopId: _user.shopId);
+    _user = await _userService.select(userId: _fUser.uid);
+    _shop = await _shopService.select(shopId: _user.shopId);
     notifyListeners();
   }
 
@@ -203,8 +203,8 @@ class UserProvider with ChangeNotifier {
     } else {
       _fUser = firebaseUser;
       _status = Status.Authenticated;
-      _user = await _userService.getUser(userId: _fUser.uid);
-      _shop = await _shopService.getShop(shopId: _user.shopId);
+      _user = await _userService.select(userId: _fUser.uid);
+      _shop = await _shopService.select(shopId: _user.shopId);
     }
     notifyListeners();
   }

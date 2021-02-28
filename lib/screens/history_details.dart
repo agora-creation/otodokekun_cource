@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/providers/home.dart';
@@ -20,23 +21,10 @@ class HistoryDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(''),
-        actions: [
-          TextButton(
-            onPressed: null,
-            child: order.shipping
-                ? Text(
-                    '配達完了',
-                    style: TextStyle(color: Colors.grey),
-                  )
-                : Text(
-                    '配達待ち',
-                    style: TextStyle(color: Colors.red),
-                  ),
-          ),
-        ],
+        title: Container(),
       ),
       body: homeProvider.isLoading
           ? LoadingWidget()
@@ -44,24 +32,9 @@ class HistoryDetailsScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               children: [
                 Text(
-                  '注文日時 : ${DateFormat('yyyy年MM月dd日 HH:mm').format(order.createdAt).toString()}',
+                  '注文商品',
+                  style: TextStyle(color: kSubColor),
                 ),
-                SizedBox(height: 8.0),
-                Text('注文金額 : ¥ ${order.totalPrice}'),
-                SizedBox(height: 8.0),
-                Text('お届け先 : 〒${order.zip} ${order.address}'),
-                SizedBox(height: 8.0),
-                Text(
-                  'お届け日 : ${DateFormat('yyyy年MM月dd日').format(order.deliveryAt).toString()}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8.0),
-                Text('備考 : ${order.remarks}'),
-                SizedBox(height: 8.0),
-                Divider(),
-                SizedBox(height: 8.0),
-                Text('注文商品'),
-                SizedBox(height: 8.0),
                 shopOrderProvider.tmpCart.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
@@ -98,14 +71,54 @@ class HistoryDetailsScreen extends StatelessWidget {
                           );
                         },
                       )
-                    : Center(child: Text('注文商品がありません')),
+                    : Container(),
+                SizedBox(height: 8.0),
+                Text(
+                  '注文日時',
+                  style: TextStyle(color: kSubColor),
+                ),
+                Text(
+                  '${DateFormat('yyyy年MM月dd日 HH:mm').format(order.createdAt)}',
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  '合計金額',
+                  style: TextStyle(color: kSubColor),
+                ),
+                Text('¥ ${order.totalPrice}'),
+                SizedBox(height: 8.0),
+                Text(
+                  'お届け先',
+                  style: TextStyle(color: kSubColor),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('〒 ${order.zip}'),
+                    Text('${order.address}'),
+                  ],
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  'お届け予定日',
+                  style: TextStyle(color: kSubColor),
+                ),
+                Text(
+                  '${DateFormat('yyyy年MM月dd日').format(order.deliveryAt)}',
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  '備考',
+                  style: TextStyle(color: kSubColor),
+                ),
+                Text('${order.remarks}'),
                 SizedBox(height: 8.0),
                 Divider(),
                 SizedBox(height: 8.0),
                 order.shipping
                     ? Container()
                     : FillRoundButton(
-                        labelText: '数量を変更',
+                        labelText: '注文内容を変更',
                         labelColor: Colors.white,
                         backgroundColor: Colors.blueAccent,
                         onPressed: () {
@@ -126,7 +139,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                         borderColor: Colors.blueGrey,
                         onPressed: () {
                           homeProvider.changeLoading();
-                          shopOrderProvider.deleteOrder(order: order);
+                          shopOrderProvider.delete(order: order);
                           homeProvider.changeLoading();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('注文をキャンセルしました')),

@@ -18,15 +18,13 @@ class NoticeDetailsScreen extends StatelessWidget {
         children: [
           Text(
             notice.title,
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18.0),
           ),
           SizedBox(height: 8.0),
           Text(notice.message, style: TextStyle(fontSize: 16.0)),
           SizedBox(height: 8.0),
-          Divider(),
+          Divider(height: 0.0),
+          SizedBox(height: 8.0),
           Align(
             alignment: Alignment.bottomRight,
             child: Text(

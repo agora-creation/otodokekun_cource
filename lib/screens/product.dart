@@ -35,7 +35,7 @@ class ProductScreen extends StatelessWidget {
         RemarksWidget(remarks: shop?.remarks ?? ''),
         LabelWidget(
           iconData: Icons.view_in_ar,
-          labelText: '注文する',
+          labelText: '個別注文',
         ),
         SizedBox(height: 8.0),
         StreamBuilder<QuerySnapshot>(

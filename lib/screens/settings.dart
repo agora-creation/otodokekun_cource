@@ -100,7 +100,7 @@ class SettingsScreen extends StatelessWidget {
                 title: 'プライバシーポリシー',
                 onTap: () => nextPage(context, PrivacyPolicyScreen()),
               ),
-              SizedBox(height: 16.0),
+              SizedBox(height: 24.0),
               BorderRoundButton(
                 labelText: 'ログアウト',
                 labelColor: Colors.redAccent,
@@ -112,7 +112,7 @@ class SettingsScreen extends StatelessWidget {
                   changePage(context, LoginScreen());
                 },
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 40.0),
             ],
           );
   }

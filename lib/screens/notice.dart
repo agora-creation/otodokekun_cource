@@ -7,7 +7,7 @@ import 'package:otodokekun_cource/models/user_notice.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/providers/user_notice.dart';
 import 'package:otodokekun_cource/screens/notice_details.dart';
-import 'package:otodokekun_cource/widgets/notice_list_tile.dart';
+import 'package:otodokekun_cource/widgets/custom_notice_list_tile.dart';
 import 'package:provider/provider.dart';
 
 class NoticeScreen extends StatelessWidget {
@@ -47,7 +47,7 @@ class NoticeScreen extends StatelessWidget {
               itemCount: notices.length,
               itemBuilder: (_, index) {
                 UserNoticeModel _notice = notices[index];
-                return NoticeListTile(
+                return CustomNoticeListTile(
                   createdAt:
                       '${DateFormat('yyyy年MM月dd日 HH:mm').format(_notice.createdAt)}',
                   title: _notice.title,

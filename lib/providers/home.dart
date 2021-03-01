@@ -6,7 +6,6 @@ class HomeProvider with ChangeNotifier {
   String _token;
   int tabsIndex = 1;
   bool isLoading = false;
-  int totalPrice = 0;
 
   String get token => _token;
 

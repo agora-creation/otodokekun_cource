@@ -100,7 +100,7 @@ class HomeScreen extends StatelessWidget {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.view_in_ar),
-            label: '注文する',
+            label: '個別注文',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt),

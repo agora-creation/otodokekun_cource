@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 
-class QuantityChangeButton extends StatelessWidget {
+class QuantityButton extends StatelessWidget {
   final String unit;
   final int quantity;
   final Function removeOnPressed;
   final Function addOnPressed;
 
-  QuantityChangeButton({
+  QuantityButton({
     this.unit,
     this.quantity,
     this.removeOnPressed,

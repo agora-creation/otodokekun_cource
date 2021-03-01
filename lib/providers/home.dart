@@ -1,14 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource/models/cart.dart';
-import 'package:otodokekun_cource/models/shop_product.dart';
 
 class HomeProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _token;
   int tabsIndex = 1;
   bool isLoading = false;
-  List<CartModel> cart = [];
   int totalPrice = 0;
 
   String get token => _token;
@@ -20,45 +17,6 @@ class HomeProvider with ChangeNotifier {
 
   void changeLoading() {
     isLoading = !isLoading;
-    notifyListeners();
-  }
-
-  void checkCart({ShopProductModel product}) {
-    var contain = cart.where((e) => e.id == product.id);
-    if (contain.isEmpty) {
-      Map cartMap = {
-        'id': product.id,
-        'name': product.name,
-        'image': product.image,
-        'unit': product.unit,
-        'price': product.price,
-        'quantity': 1,
-        'totalPrice': product.price * 1,
-      };
-      CartModel _cart = CartModel.fromMap(cartMap);
-      cart.add(_cart);
-    } else {
-      cart.removeWhere((e) => e.id == product.id);
-    }
-    notifyListeners();
-  }
-
-  void addQuantity({CartModel cartModel}) {
-    cartModel.quantity += 1;
-    cartModel.totalPrice = cartModel.price * cartModel.quantity;
-    notifyListeners();
-  }
-
-  void removeQuantity({CartModel cartModel}) {
-    if (cartModel.quantity != 1) {
-      cartModel.quantity -= 1;
-      cartModel.totalPrice = cartModel.price * cartModel.quantity;
-      notifyListeners();
-    }
-  }
-
-  void deleteCart({CartModel cartModel}) {
-    cart.removeWhere((e) => e.id == cartModel.id);
     notifyListeners();
   }
 

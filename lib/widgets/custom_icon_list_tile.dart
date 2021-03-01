@@ -18,8 +18,12 @@ class CustomIconListTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: kSubColor),
-          borderRadius: BorderRadius.circular(8.0),
+          border: Border(
+            bottom: BorderSide(
+              width: 1.0,
+              color: Colors.grey.shade300,
+            ),
+          ),
         ),
         child: ListTile(
           leading: Icon(iconData, color: kSubColor),

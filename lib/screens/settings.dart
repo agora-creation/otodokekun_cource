@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
+import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
@@ -35,8 +36,12 @@ class SettingsScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
             children: [
               RemarksWidget(remarks: shop?.remarks ?? ''),
-              Text('アカウント情報'),
+              Text(
+                'アカウント情報',
+                style: TextStyle(color: kSubColor),
+              ),
               SizedBox(height: 8.0),
+              Divider(height: 0.0, color: Colors.grey),
               CustomIconListTile(
                 iconData: Icons.person,
                 title: 'アカウント情報変更',
@@ -71,6 +76,7 @@ class SettingsScreen extends StatelessWidget {
               SizedBox(height: 24.0),
               Text('サポート情報'),
               SizedBox(height: 8.0),
+              Divider(height: 0.0, color: Colors.grey),
               CustomIconListTile(
                 iconData: Icons.business_outlined,
                 title: '運営会社',

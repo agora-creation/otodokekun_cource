@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
+import 'package:otodokekun_cource/models/shop_product.dart';
 import 'package:otodokekun_cource/services/shop_order.dart';
 
 class ShopOrderProvider with ChangeNotifier {
   ShopOrderService _shopOrderService = ShopOrderService();
 
-  List<CartModel> tmpCart = [];
+  String name = '';
+  String zip = '';
+  String address = '';
+  String tel = '';
+  List<CartModel> cart = [];
   DateTime deliveryAt = DateTime.now().add(Duration(days: 3));
   TextEditingController remarks = TextEditingController();
+  String staff = '';
 
-  void setDeliveryAt({DateTime dateTime}) {
-    deliveryAt = dateTime;
+  void setDeliveryAt(DateTime selected) {
+    deliveryAt = selected;
     notifyListeners();
   }
 
-  void create({
-    String shopId,
-    String userId,
-    String name,
-    String zip,
-    String address,
-    String tel,
-    List<CartModel> cart,
-  }) {
+  void create({String shopId, String userId}) {
     List<Map> convertedCart = [];
     int _totalPrice = 0;
     for (CartModel product in cart) {
@@ -43,7 +41,7 @@ class ShopOrderProvider with ChangeNotifier {
       'deliveryAt': deliveryAt,
       'remarks': remarks.text,
       'totalPrice': _totalPrice,
-      'staff': '',
+      'staff': staff,
       'shipping': false,
       'createdAt': DateTime.now(),
     });
@@ -59,7 +57,7 @@ class ShopOrderProvider with ChangeNotifier {
   void updateQuantity({ShopOrderModel order}) {
     List<Map> convertedCart = [];
     int _totalPrice = 0;
-    for (CartModel product in tmpCart) {
+    for (CartModel product in cart) {
       convertedCart.add(product.toMap());
       _totalPrice += product.price * product.quantity;
     }
@@ -76,7 +74,32 @@ class ShopOrderProvider with ChangeNotifier {
   }
 
   void setTmpCart({ShopOrderModel order}) {
-    tmpCart = order.cart;
+    cart = order.cart;
+  }
+
+  void checkCart({ShopProductModel product}) {
+    var contain = cart.where((e) => e.id == product.id);
+    if (contain.isEmpty) {
+      Map cartMap = {
+        'id': product.id,
+        'name': product.name,
+        'image': product.image,
+        'unit': product.unit,
+        'price': product.price,
+        'quantity': 1,
+        'totalPrice': product.price * 1,
+      };
+      CartModel _cart = CartModel.fromMap(cartMap);
+      cart.add(_cart);
+    } else {
+      cart.removeWhere((e) => e.id == product.id);
+    }
+    notifyListeners();
+  }
+
+  void deleteCart({CartModel cartModel}) {
+    cart.removeWhere((e) => e.id == cartModel.id);
+    notifyListeners();
   }
 
   void addQuantity({CartModel cartModel}) {

@@ -1,75 +1,77 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/models/shop.dart';
-import 'package:otodokekun_cource/models/shop_product.dart';
-import 'package:otodokekun_cource/providers/home.dart';
-import 'package:otodokekun_cource/widgets/product_list_tile.dart';
+import 'package:otodokekun_cource/models/shop_order.dart';
+import 'package:otodokekun_cource/models/user.dart';
+import 'package:otodokekun_cource/providers/shop_order.dart';
+import 'package:otodokekun_cource/screens/order_details.dart';
+import 'package:otodokekun_cource/widgets/custom_order_list_tile.dart';
+import 'package:otodokekun_cource/widgets/label.dart';
 import 'package:otodokekun_cource/widgets/remarks.dart';
+import 'package:provider/provider.dart';
 
 class OrderScreen extends StatelessWidget {
-  final HomeProvider homeProvider;
   final ShopModel shop;
+  final UserModel user;
 
   OrderScreen({
-    @required this.homeProvider,
     @required this.shop,
+    @required this.user,
   });
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> streamProduct = FirebaseFirestore.instance
+    final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+    final Stream<QuerySnapshot> streamOrder = FirebaseFirestore.instance
         .collection('shop')
         .doc(shop?.id)
-        .collection('product')
-        .where('published', isEqualTo: true)
-        .orderBy('createdAt', descending: true)
+        .collection('order')
+        .where('userId', isEqualTo: user?.id)
+        .orderBy('deliveryAt', descending: true)
         .snapshots();
 
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
         RemarksWidget(remarks: shop?.remarks ?? ''),
-        Row(
-          children: [
-            Icon(Icons.view_in_ar),
-            SizedBox(width: 4.0),
-            Text('注文する'),
-          ],
+        LabelWidget(
+          iconData: Icons.list_alt,
+          labelText: '注文履歴',
         ),
         SizedBox(height: 8.0),
+        Divider(height: 0.0, color: Colors.grey),
         StreamBuilder<QuerySnapshot>(
-          stream: streamProduct,
+          stream: streamOrder,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Center(child: Text('読み込み中'));
             }
-            List<ShopProductModel> products = [];
-            for (DocumentSnapshot product in snapshot.data.docs) {
-              products.add(ShopProductModel.fromSnapshot(product));
+            List<ShopOrderModel> orders = [];
+            for (DocumentSnapshot order in snapshot.data.docs) {
+              orders.add(ShopOrderModel.fromSnapshot(order));
             }
-            if (products.length > 0) {
+            if (orders.length > 0) {
               return ListView.builder(
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-                itemCount: products.length,
+                itemCount: orders.length,
                 itemBuilder: (_, index) {
-                  ShopProductModel _product = products[index];
-                  var contain =
-                      homeProvider.cart.where((e) => e.id == _product.id);
-                  return ProductListTile(
-                    name: _product.name,
-                    image: _product.image,
-                    unit: _product.unit,
-                    price: _product.price,
-                    value: contain.isNotEmpty,
-                    onChanged: (value) {
-                      homeProvider.checkCart(product: _product);
+                  ShopOrderModel _order = orders[index];
+                  return CustomOrderListTile(
+                    deliveryAt: DateFormat('MM/dd').format(_order.deliveryAt),
+                    name: _order.cart[0].name,
+                    shipping: _order.shipping,
+                    onTap: () {
+                      shopOrderProvider.setTmpCart(order: _order);
+                      nextPage(context, OrderDetailsScreen(order: _order));
                     },
                   );
                 },
               );
             } else {
-              return Center(child: Text('商品の登録がありません'));
+              return Center(child: Text('注文履歴はありません'));
             }
           },
         ),

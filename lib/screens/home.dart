@@ -6,11 +6,12 @@ import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/home.dart';
+import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
-import 'package:otodokekun_cource/screens/history.dart';
 import 'package:otodokekun_cource/screens/notice.dart';
 import 'package:otodokekun_cource/screens/order.dart';
-import 'package:otodokekun_cource/screens/order_product.dart';
+import 'package:otodokekun_cource/screens/product.dart';
+import 'package:otodokekun_cource/screens/product_cart.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
@@ -19,12 +20,20 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
+    final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     ShopModel _shop = userProvider.shop;
     UserModel _user = userProvider.user;
     final List<Widget> _tabs = [
-      OrderScreen(homeProvider: homeProvider, shop: _shop),
-      HistoryScreen(shop: _shop, user: _user),
+      ProductScreen(
+        shopOrderProvider: shopOrderProvider,
+        shop: _shop,
+        user: _user,
+      ),
+      OrderScreen(
+        shop: _shop,
+        user: _user,
+      ),
       SettingsScreen(
         homeProvider: homeProvider,
         userProvider: userProvider,
@@ -103,24 +112,33 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton:
-          homeProvider.tabsIndex == 0 && homeProvider.cart.length > 0
+      floatingActionButton: homeProvider.tabsIndex == 0 &&
+              shopOrderProvider.cart.length > 0
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                shopOrderProvider.name = _user.name;
+                shopOrderProvider.zip = _user.zip;
+                shopOrderProvider.address = _user.address;
+                shopOrderProvider.tel = _user.tel;
+                shopOrderProvider.deliveryAt =
+                    DateTime.now().add(Duration(days: 3));
+                shopOrderProvider.staff = _user.staff;
+                nextPage(context, ProductCartScreen(shop: _shop, user: _user));
+              },
+              icon: Icon(Icons.check),
+              label: Text('注文する'),
+              backgroundColor: Colors.blueAccent.withOpacity(0.8),
+              elevation: 0.0,
+            )
+          : homeProvider.tabsIndex == 1
               ? FloatingActionButton.extended(
-                  onPressed: () => nextPage(context, OrderProductScreen()),
-                  icon: Icon(Icons.check),
-                  label: Text('選択した商品を注文する'),
-                  backgroundColor: Colors.blueAccent.withOpacity(0.8),
+                  onPressed: null,
+                  icon: null,
+                  label: Text('請求金額を見る'),
+                  backgroundColor: Colors.redAccent.withOpacity(0.8),
                   elevation: 0.0,
                 )
-              : homeProvider.tabsIndex == 1
-                  ? FloatingActionButton.extended(
-                      onPressed: null,
-                      icon: null,
-                      label: Text('請求金額を見る'),
-                      backgroundColor: Colors.redAccent.withOpacity(0.8),
-                      elevation: 0.0,
-                    )
-                  : Container(),
+              : Container(),
     );
   }
 }

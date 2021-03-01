@@ -6,16 +6,16 @@ import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
+import 'package:otodokekun_cource/widgets/custom_cart_list_tile.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
-import 'package:otodokekun_cource/widgets/history_details_list_tile.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
-import 'package:otodokekun_cource/widgets/quantity_change_button.dart';
+import 'package:otodokekun_cource/widgets/quantity_button.dart';
 import 'package:provider/provider.dart';
 
-class HistoryDetailsScreen extends StatelessWidget {
+class OrderDetailsScreen extends StatelessWidget {
   final ShopOrderModel order;
 
-  HistoryDetailsScreen({@required this.order});
+  OrderDetailsScreen({@required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class HistoryDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Container(),
+        title: order.shipping ? Text('配達完了') : Text('配達待ち'),
       ),
       body: homeProvider.isLoading
           ? LoadingWidget()
@@ -35,38 +35,29 @@ class HistoryDetailsScreen extends StatelessWidget {
                   '注文商品',
                   style: TextStyle(color: kSubColor),
                 ),
-                shopOrderProvider.tmpCart.length > 0
+                shopOrderProvider.cart.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
-                        itemCount: shopOrderProvider.tmpCart.length,
+                        itemCount: shopOrderProvider.cart.length,
                         itemBuilder: (_, index) {
-                          CartModel _cart = shopOrderProvider.tmpCart[index];
-                          return HistoryDetailsListTile(
+                          CartModel _cart = shopOrderProvider.cart[index];
+                          return CustomCartListTile(
                             name: _cart.name,
                             image: _cart.image,
                             unit: _cart.unit,
                             price: _cart.price,
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: QuantityChangeButton(
-                                unit: _cart.unit,
-                                quantity: _cart.quantity,
-                                removeOnPressed: order.shipping
-                                    ? null
-                                    : () {
-                                        shopOrderProvider.removeQuantity(
-                                          cartModel: _cart,
-                                        );
-                                      },
-                                addOnPressed: order.shipping
-                                    ? null
-                                    : () {
-                                        shopOrderProvider.addQuantity(
-                                          cartModel: _cart,
-                                        );
-                                      },
-                              ),
+                            onTap: null,
+                            child: QuantityButton(
+                              unit: _cart.unit,
+                              quantity: _cart.quantity,
+                              removeOnPressed: () {
+                                shopOrderProvider.removeQuantity(
+                                    cartModel: _cart);
+                              },
+                              addOnPressed: () {
+                                shopOrderProvider.addQuantity(cartModel: _cart);
+                              },
                             ),
                           );
                         },
@@ -112,9 +103,9 @@ class HistoryDetailsScreen extends StatelessWidget {
                   style: TextStyle(color: kSubColor),
                 ),
                 Text('${order.remarks}'),
-                SizedBox(height: 8.0),
-                Divider(),
-                SizedBox(height: 8.0),
+                SizedBox(height: 16.0),
+                Divider(height: 0.0),
+                SizedBox(height: 16.0),
                 order.shipping
                     ? Container()
                     : FillRoundButton(
@@ -131,6 +122,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                           Navigator.pop(context, true);
                         },
                       ),
+                SizedBox(height: 8.0),
                 order.shipping
                     ? Container()
                     : BorderRoundButton(
@@ -147,7 +139,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                           Navigator.pop(context, true);
                         },
                       ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 40.0),
               ],
             ),
     );

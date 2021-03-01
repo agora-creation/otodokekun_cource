@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 
-class AddressListTile extends StatelessWidget {
+class AddressWidget extends StatelessWidget {
   final String zip;
   final String address;
   final String tel;
   final Function onTap;
 
-  AddressListTile({
+  AddressWidget({
     this.zip,
     this.address,
     this.tel,
@@ -24,10 +24,11 @@ class AddressListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Icon(Icons.edit, color: kSubColor),
+              SizedBox(width: 8.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -36,7 +37,6 @@ class AddressListTile extends StatelessWidget {
                   Text(tel, style: TextStyle(color: kMainColor)),
                 ],
               ),
-              Icon(Icons.edit, color: kSubColor),
             ],
           ),
         ),

@@ -40,7 +40,9 @@ class CustomOrderListTile extends StatelessWidget {
           ),
           title: ListTile(
             title: Text(name),
-            subtitle: shipping ? Text('配達完了') : Text('配達待ち'),
+            subtitle: shipping
+                ? Text('配達完了')
+                : Text('配達待ち', style: TextStyle(color: Colors.redAccent)),
             trailing: Icon(Icons.chevron_right),
           ),
         ),

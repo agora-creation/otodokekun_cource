@@ -59,17 +59,16 @@ class ProductCartScreen extends StatelessWidget {
                             unit: _cart.unit,
                             price: _cart.price,
                             onTap: () {
-                              shopOrderProvider.deleteCart(cartModel: _cart);
+                              shopOrderProvider.deleteCart(_cart);
                             },
                             child: QuantityButton(
                               unit: _cart.unit,
                               quantity: _cart.quantity,
                               removeOnPressed: () {
-                                shopOrderProvider.removeQuantity(
-                                    cartModel: _cart);
+                                shopOrderProvider.removeQuantity(_cart);
                               },
                               addOnPressed: () {
-                                shopOrderProvider.addQuantity(cartModel: _cart);
+                                shopOrderProvider.addQuantity(_cart);
                               },
                             ),
                           );

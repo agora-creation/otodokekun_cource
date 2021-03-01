@@ -9,14 +9,14 @@ import 'package:provider/provider.dart';
 class UserPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<HomeProvider>(context);
+    final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('パスワード変更'),
       ),
-      body: appProvider.isLoading
+      body: homeProvider.isLoading
           ? LoadingWidget()
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -35,7 +35,7 @@ class UserPasswordScreen extends StatelessWidget {
                     userProvider.changeHidden();
                   },
                 ),
-                SizedBox(height: 8.0),
+                SizedBox(height: 16.0),
                 CustomTextField(
                   controller: userProvider.cPassword,
                   obscureText: userProvider.isCHidden ? false : true,
@@ -50,15 +50,15 @@ class UserPasswordScreen extends StatelessWidget {
                     userProvider.changeCHidden();
                   },
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 24.0),
                 FillRoundButton(
-                  labelText: '変更を保存',
+                  labelText: '変更内容を保存する',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () async {
-                    appProvider.changeLoading();
+                    homeProvider.changeLoading();
                     if (!await userProvider.updatePassword()) {
-                      appProvider.changeLoading();
+                      homeProvider.changeLoading();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('変更に失敗しました')),
                       );
@@ -69,7 +69,7 @@ class UserPasswordScreen extends StatelessWidget {
                     );
                     userProvider.clearController();
                     userProvider.reloadUserModel();
-                    appProvider.changeLoading();
+                    homeProvider.changeLoading();
                     Navigator.pop(context, true);
                   },
                 ),

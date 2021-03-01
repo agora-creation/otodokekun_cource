@@ -62,7 +62,7 @@ class NoticeScreen extends StatelessWidget {
               },
             );
           } else {
-            return Center(child: Text('お知らせはありません'));
+            return Container();
           }
         },
       ),

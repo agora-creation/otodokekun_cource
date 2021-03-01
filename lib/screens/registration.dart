@@ -43,7 +43,7 @@ class RegistrationScreen extends StatelessWidget {
                             Text('BtoCサービス'),
                           ],
                         ),
-                        SizedBox(height: 32.0),
+                        SizedBox(height: 24.0),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -57,7 +57,7 @@ class RegistrationScreen extends StatelessWidget {
                               suffixIconData: null,
                               onTap: null,
                             ),
-                            SizedBox(height: 24.0),
+                            SizedBox(height: 16.0),
                             CustomTextField(
                               controller: userProvider.name,
                               obscureText: false,
@@ -68,7 +68,7 @@ class RegistrationScreen extends StatelessWidget {
                               suffixIconData: null,
                               onTap: null,
                             ),
-                            SizedBox(height: 24.0),
+                            SizedBox(height: 16.0),
                             CustomTextField(
                               controller: userProvider.email,
                               obscureText: false,
@@ -79,7 +79,7 @@ class RegistrationScreen extends StatelessWidget {
                               suffixIconData: null,
                               onTap: null,
                             ),
-                            SizedBox(height: 24.0),
+                            SizedBox(height: 16.0),
                             CustomTextField(
                               controller: userProvider.password,
                               obscureText: userProvider.isHidden ? false : true,
@@ -94,7 +94,7 @@ class RegistrationScreen extends StatelessWidget {
                                 userProvider.changeHidden();
                               },
                             ),
-                            SizedBox(height: 24.0),
+                            SizedBox(height: 16.0),
                             CustomTextField(
                               controller: userProvider.cPassword,
                               obscureText:
@@ -114,7 +114,7 @@ class RegistrationScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 24.0),
                         BorderRoundButton(
-                          labelText: '登録',
+                          labelText: '登録する',
                           labelColor: Colors.blueAccent,
                           borderColor: Colors.blueAccent,
                           onPressed: () async {
@@ -132,13 +132,13 @@ class RegistrationScreen extends StatelessWidget {
                             changePage(context, HomeScreen());
                           },
                         ),
-                        SizedBox(height: 32.0),
+                        SizedBox(height: 24.0),
                         Align(
                           alignment: Alignment.bottomLeft,
                           child: GestureDetector(
                             onTap: () => Navigator.pop(context, true),
                             child: Text(
-                              'ログインはコチラ',
+                              '登録済みの方はコチラ',
                               style: TextStyle(
                                 decoration: TextDecoration.underline,
                               ),

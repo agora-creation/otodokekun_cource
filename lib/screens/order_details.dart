@@ -24,7 +24,12 @@ class OrderDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: order.shipping ? Text('配達完了') : Text('配達待ち'),
+        title: order.shipping
+            ? Text('配達完了')
+            : Text(
+                '配達待ち',
+                style: TextStyle(color: Colors.redAccent),
+              ),
       ),
       body: homeProvider.isLoading
           ? LoadingWidget()
@@ -52,11 +57,10 @@ class OrderDetailsScreen extends StatelessWidget {
                               unit: _cart.unit,
                               quantity: _cart.quantity,
                               removeOnPressed: () {
-                                shopOrderProvider.removeQuantity(
-                                    cartModel: _cart);
+                                shopOrderProvider.removeQuantity(_cart);
                               },
                               addOnPressed: () {
-                                shopOrderProvider.addQuantity(cartModel: _cart);
+                                shopOrderProvider.addQuantity(_cart);
                               },
                             ),
                           );
@@ -85,8 +89,9 @@ class OrderDetailsScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('〒 ${order.zip}'),
+                    Text('〒${order.zip}'),
                     Text('${order.address}'),
+                    Text('${order.tel}'),
                   ],
                 ),
                 SizedBox(height: 8.0),
@@ -109,7 +114,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 order.shipping
                     ? Container()
                     : FillRoundButton(
-                        labelText: '注文内容を変更',
+                        labelText: '注文内容を変更する',
                         labelColor: Colors.white,
                         backgroundColor: Colors.blueAccent,
                         onPressed: () {
@@ -117,7 +122,7 @@ class OrderDetailsScreen extends StatelessWidget {
                           shopOrderProvider.updateQuantity(order: order);
                           homeProvider.changeLoading();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('注文数量を変更しました')),
+                            SnackBar(content: Text('注文内容を変更しました')),
                           );
                           Navigator.pop(context, true);
                         },
@@ -126,7 +131,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 order.shipping
                     ? Container()
                     : BorderRoundButton(
-                        labelText: 'キャンセル',
+                        labelText: 'キャンセルする',
                         labelColor: Colors.blueGrey,
                         borderColor: Colors.blueGrey,
                         onPressed: () {

@@ -36,10 +36,7 @@ class OrderScreen extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
         RemarksWidget(remarks: shop?.remarks ?? ''),
-        LabelWidget(
-          iconData: Icons.list_alt,
-          labelText: '注文履歴',
-        ),
+        LabelWidget(iconData: Icons.list_alt, labelText: '注文履歴'),
         SizedBox(height: 8.0),
         Divider(height: 0.0, color: Colors.grey),
         StreamBuilder<QuerySnapshot>(
@@ -64,18 +61,18 @@ class OrderScreen extends StatelessWidget {
                     name: _order.cart[0].name,
                     shipping: _order.shipping,
                     onTap: () {
-                      shopOrderProvider.setTmpCart(order: _order);
+                      shopOrderProvider.cart = _order.cart;
                       nextPage(context, OrderDetailsScreen(order: _order));
                     },
                   );
                 },
               );
             } else {
-              return Center(child: Text('注文履歴はありません'));
+              return Container();
             }
           },
         ),
-        SizedBox(height: 32.0),
+        SizedBox(height: 40.0),
       ],
     );
   }

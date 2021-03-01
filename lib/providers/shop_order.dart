@@ -73,10 +73,6 @@ class ShopOrderProvider with ChangeNotifier {
     remarks.text = '';
   }
 
-  void setTmpCart({ShopOrderModel order}) {
-    cart = order.cart;
-  }
-
   void checkCart({ShopProductModel product}) {
     var contain = cart.where((e) => e.id == product.id);
     if (contain.isEmpty) {
@@ -97,18 +93,18 @@ class ShopOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteCart({CartModel cartModel}) {
+  void deleteCart(CartModel cartModel) {
     cart.removeWhere((e) => e.id == cartModel.id);
     notifyListeners();
   }
 
-  void addQuantity({CartModel cartModel}) {
+  void addQuantity(CartModel cartModel) {
     cartModel.quantity += 1;
     cartModel.totalPrice = cartModel.price * cartModel.quantity;
     notifyListeners();
   }
 
-  void removeQuantity({CartModel cartModel}) {
+  void removeQuantity(CartModel cartModel) {
     if (cartModel.quantity != 1) {
       cartModel.quantity -= 1;
       cartModel.totalPrice = cartModel.price * cartModel.quantity;

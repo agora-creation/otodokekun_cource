@@ -38,6 +38,7 @@ class HomeScreen extends StatelessWidget {
         homeProvider: homeProvider,
         userProvider: userProvider,
         shop: _shop,
+        user: _user,
       ),
     ];
     final Stream<QuerySnapshot> streamNotice = FirebaseFirestore.instance
@@ -132,7 +133,7 @@ class HomeScreen extends StatelessWidget {
             )
           : homeProvider.tabsIndex == 1
               ? FloatingActionButton.extended(
-                  onPressed: null,
+                  onPressed: () {},
                   icon: null,
                   label: Text('請求金額を見る'),
                   backgroundColor: Colors.redAccent.withOpacity(0.8),

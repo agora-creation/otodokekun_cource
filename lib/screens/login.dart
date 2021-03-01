@@ -44,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                             Text('BtoCサービス'),
                           ],
                         ),
-                        SizedBox(height: 32.0),
+                        SizedBox(height: 24.0),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -58,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                               suffixIconData: null,
                               onTap: null,
                             ),
-                            SizedBox(height: 24.0),
+                            SizedBox(height: 16.0),
                             CustomTextField(
                               controller: userProvider.password,
                               obscureText: userProvider.isHidden ? false : true,
@@ -77,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 24.0),
                         FillRoundButton(
-                          labelText: 'ログイン',
+                          labelText: 'ログインする',
                           labelColor: Colors.white,
                           backgroundColor: Colors.blueAccent,
                           onPressed: () async {
@@ -95,7 +95,7 @@ class LoginScreen extends StatelessWidget {
                             changePage(context, HomeScreen());
                           },
                         ),
-                        SizedBox(height: 32.0),
+                        SizedBox(height: 24.0),
                         Align(
                           alignment: Alignment.bottomRight,
                           child: GestureDetector(

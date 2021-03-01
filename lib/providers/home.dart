@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class HomeProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _token;
-  int tabsIndex = 1;
+  int tabsIndex = 0;
   bool isLoading = false;
 
   String get token => _token;

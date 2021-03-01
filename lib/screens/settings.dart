@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
+import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/company.dart';
@@ -21,11 +22,13 @@ class SettingsScreen extends StatelessWidget {
   final HomeProvider homeProvider;
   final UserProvider userProvider;
   final ShopModel shop;
+  final UserModel user;
 
   SettingsScreen({
     @required this.homeProvider,
     @required this.userProvider,
     @required this.shop,
+    @required this.user,
   });
 
   @override
@@ -47,8 +50,8 @@ class SettingsScreen extends StatelessWidget {
                 title: 'アカウント情報変更',
                 onTap: () {
                   userProvider.clearController();
-                  userProvider.name.text = userProvider.user.name;
-                  userProvider.email.text = userProvider.user.email;
+                  userProvider.name.text = user.name;
+                  userProvider.email.text = user.email;
                   nextPage(context, UserEmailScreen());
                 },
               ),
@@ -67,9 +70,9 @@ class SettingsScreen extends StatelessWidget {
                 title: 'お届け先情報変更',
                 onTap: () {
                   userProvider.clearController();
-                  userProvider.zip.text = userProvider.user.zip;
-                  userProvider.address.text = userProvider.user.address;
-                  userProvider.tel.text = userProvider.user.tel;
+                  userProvider.zip.text = user.zip;
+                  userProvider.address.text = user.address;
+                  userProvider.tel.text = user.tel;
                   nextPage(context, UserAddressScreen());
                 },
               ),

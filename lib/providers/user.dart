@@ -105,6 +105,7 @@ class UserProvider with ChangeNotifier {
           'password': password.text.trim(),
           'blacklist': false,
           'staff': '',
+          'fixed': false,
           'token': token,
           'createdAt': DateTime.now(),
         });
@@ -165,6 +166,19 @@ class UserProvider with ChangeNotifier {
         'zip': zip.text.trim(),
         'address': address.text.trim(),
         'tel': tel.text.trim(),
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> updateFixed({bool fixed}) async {
+    try {
+      _userService.update({
+        'id': _auth.currentUser.uid,
+        'fixed': fixed,
       });
       return true;
     } catch (e) {

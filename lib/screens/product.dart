@@ -1,20 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
 import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/shop_order.dart';
+import 'package:otodokekun_cource/providers/home.dart';
+import 'package:otodokekun_cource/screens/product_cart.dart';
 import 'package:otodokekun_cource/widgets/custom_product_list_tile.dart';
 import 'package:otodokekun_cource/widgets/label.dart';
 import 'package:otodokekun_cource/widgets/remarks.dart';
 
 class ProductScreen extends StatelessWidget {
-  final ShopOrderProvider shopOrderProvider;
+  final HomeProvider homeProvider;
   final ShopModel shop;
   final UserModel user;
 
   ProductScreen({
-    @required this.shopOrderProvider,
+    @required this.homeProvider,
     @required this.shop,
     @required this.user,
   });
@@ -33,11 +35,24 @@ class ProductScreen extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
         RemarksWidget(remarks: shop?.remarks ?? ''),
-        LabelWidget(
-          iconData: Icons.view_in_ar,
-          labelText: '個別注文',
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            LabelWidget(iconData: Icons.view_in_ar, labelText: '個別注文'),
+            TextButton(
+              onPressed: () {
+                if (homeProvider.cart.length > 0) {
+                  homeProvider.deliveryAt =
+                      DateTime.now().add(Duration(days: shop.cancelLimit));
+                  nextPage(context, ProductCartScreen(shop: shop, user: user));
+                }
+              },
+              child: Text('注文する', style: TextStyle(color: Colors.white)),
+              style: TextButton.styleFrom(backgroundColor: Colors.blueAccent),
+            ),
+          ],
         ),
-        SizedBox(height: 8.0),
+        SizedBox(height: 4.0),
         StreamBuilder<QuerySnapshot>(
           stream: streamProduct,
           builder: (context, snapshot) {
@@ -56,7 +71,7 @@ class ProductScreen extends StatelessWidget {
                 itemBuilder: (_, index) {
                   ShopProductModel _product = products[index];
                   var contain =
-                      shopOrderProvider.cart.where((e) => e.id == _product.id);
+                      homeProvider.cart.where((e) => e.id == _product.id);
                   return CustomProductListTile(
                     name: _product.name,
                     image: _product.image,
@@ -65,7 +80,7 @@ class ProductScreen extends StatelessWidget {
                     description: _product.description,
                     value: contain.isNotEmpty,
                     onChanged: (value) {
-                      shopOrderProvider.checkCart(product: _product);
+                      homeProvider.checkCart(product: _product);
                     },
                   );
                 },

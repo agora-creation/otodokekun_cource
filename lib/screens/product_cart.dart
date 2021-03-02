@@ -46,29 +46,29 @@ class ProductCartScreen extends StatelessWidget {
                   '注文商品',
                   style: TextStyle(color: kSubColor),
                 ),
-                shopOrderProvider.cart.length > 0
+                homeProvider.cart.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
-                        itemCount: shopOrderProvider.cart.length,
+                        itemCount: homeProvider.cart.length,
                         itemBuilder: (_, index) {
-                          CartModel _cart = shopOrderProvider.cart[index];
+                          CartModel _cart = homeProvider.cart[index];
                           return CustomCartListTile(
                             name: _cart.name,
                             image: _cart.image,
                             unit: _cart.unit,
                             price: _cart.price,
                             onTap: () {
-                              shopOrderProvider.deleteCart(_cart);
+                              homeProvider.deleteCart(_cart);
                             },
                             child: QuantityButton(
                               unit: _cart.unit,
                               quantity: _cart.quantity,
                               removeOnPressed: () {
-                                shopOrderProvider.removeQuantity(_cart);
+                                homeProvider.removeQuantity(_cart);
                               },
                               addOnPressed: () {
-                                shopOrderProvider.addQuantity(_cart);
+                                homeProvider.addQuantity(_cart);
                               },
                             ),
                           );
@@ -80,16 +80,16 @@ class ProductCartScreen extends StatelessWidget {
                   '注文者名',
                   style: TextStyle(color: kSubColor),
                 ),
-                Text(shopOrderProvider.name),
+                Text(user?.name ?? ''),
                 SizedBox(height: 8.0),
                 Text(
                   'お届け先',
                   style: TextStyle(color: kSubColor),
                 ),
                 AddressWidget(
-                  zip: shopOrderProvider.zip,
-                  address: shopOrderProvider.address,
-                  tel: shopOrderProvider.tel,
+                  zip: user?.zip ?? '',
+                  address: user?.address ?? '',
+                  tel: user?.tel ?? '',
                   onTap: () {
                     userProvider.clearController();
                     userProvider.zip.text = user?.zip;
@@ -105,17 +105,18 @@ class ProductCartScreen extends StatelessWidget {
                 ),
                 DeliveryWidget(
                   deliveryAt:
-                      '${DateFormat('yyyy年MM月dd日').format(shopOrderProvider.deliveryAt)}',
+                      '${DateFormat('yyyy年MM月dd日').format(homeProvider.deliveryAt)}',
                   onTap: () async {
                     var selected = await showDatePicker(
                       locale: const Locale('ja'),
                       context: context,
-                      initialDate: shopOrderProvider.deliveryAt,
-                      firstDate: DateTime.now().add(Duration(days: 3)),
-                      lastDate: DateTime.now().add(Duration(days: 14)),
+                      initialDate: homeProvider.deliveryAt,
+                      firstDate:
+                          DateTime.now().add(Duration(days: shop.cancelLimit)),
+                      lastDate: DateTime.now().add(Duration(days: 365)),
                     );
                     if (selected != null) {
-                      shopOrderProvider.setDeliveryAt(selected);
+                      homeProvider.setDeliveryAt(selected);
                     }
                   },
                 ),
@@ -142,14 +143,16 @@ class ProductCartScreen extends StatelessWidget {
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () {
-                    if (shopOrderProvider.cart.length > 0) {
+                    if (homeProvider.cart.length > 0) {
                       homeProvider.changeLoading();
                       shopOrderProvider.create(
                         shopId: user.shopId,
-                        userId: user.id,
+                        user: user,
+                        cart: homeProvider.cart,
+                        deliveryAt: homeProvider.deliveryAt,
                       );
                       shopOrderProvider.clearController();
-                      shopOrderProvider.cart.clear();
+                      homeProvider.cart.clear();
                       homeProvider.changeLoading();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('注文が完了しました')),

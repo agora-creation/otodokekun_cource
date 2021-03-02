@@ -43,8 +43,6 @@ class SettingsScreen extends StatelessWidget {
                 'アカウント情報',
                 style: TextStyle(color: kSubColor),
               ),
-              SizedBox(height: 8.0),
-              Divider(height: 0.0, color: Colors.grey),
               CustomIconListTile(
                 iconData: Icons.person,
                 title: 'アカウント情報変更',
@@ -78,8 +76,6 @@ class SettingsScreen extends StatelessWidget {
               ),
               SizedBox(height: 24.0),
               Text('サポート情報'),
-              SizedBox(height: 8.0),
-              Divider(height: 0.0, color: Colors.grey),
               CustomIconListTile(
                 iconData: Icons.business_outlined,
                 title: '運営会社',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/cart.dart';
+import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
@@ -13,14 +14,23 @@ import 'package:otodokekun_cource/widgets/quantity_button.dart';
 import 'package:provider/provider.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
+  final ShopModel shop;
   final ShopOrderModel order;
 
-  OrderDetailsScreen({@required this.order});
+  OrderDetailsScreen({
+    @required this.shop,
+    @required this.order,
+  });
 
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+    bool _cancelLimit = false;
+    var diff = order.deliveryAt.difference(DateTime.now());
+    if (diff.inDays < shop.cancelLimit) {
+      _cancelLimit = true;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -111,7 +121,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 SizedBox(height: 16.0),
                 Divider(height: 0.0),
                 SizedBox(height: 16.0),
-                order.shipping
+                order.shipping || _cancelLimit
                     ? Container()
                     : FillRoundButton(
                         labelText: '注文内容を変更する',
@@ -128,7 +138,7 @@ class OrderDetailsScreen extends StatelessWidget {
                         },
                       ),
                 SizedBox(height: 8.0),
-                order.shipping
+                order.shipping || _cancelLimit
                     ? Container()
                     : BorderRoundButton(
                         labelText: 'キャンセルする',

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
+import 'package:otodokekun_cource/helpers/time_machine_util.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/models/user.dart';
@@ -25,13 +27,21 @@ class OrderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+    var monthMap =
+        TimeMachineUtil.getMonthDate(shopOrderProvider.selectMonth, 0);
+    final _startAt = Timestamp.fromMillisecondsSinceEpoch(
+      DateTime.parse('${monthMap['endDate']}').millisecondsSinceEpoch,
+    );
+    final _endAt = Timestamp.fromMillisecondsSinceEpoch(
+      DateTime.parse('${monthMap['startDate']}').millisecondsSinceEpoch,
+    );
     final Stream<QuerySnapshot> streamOrder = FirebaseFirestore.instance
         .collection('shop')
         .doc(shop?.id)
         .collection('order')
         .where('userId', isEqualTo: user?.id)
         .orderBy('deliveryAt', descending: true)
-        .snapshots();
+        .startAt([_startAt]).endAt([_endAt]).snapshots();
 
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -41,17 +51,50 @@ class OrderScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             LabelWidget(iconData: Icons.list_alt, labelText: '注文履歴'),
-            TextButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) {
-                    return InvoiceDialog();
+            Row(
+              children: [
+                TextButton.icon(
+                  onPressed: () async {
+                    var selected = await showMonthPicker(
+                      context: context,
+                      initialDate: shopOrderProvider.selectMonth,
+                      firstDate: DateTime(DateTime.now().year - 1),
+                      lastDate: DateTime(DateTime.now().year + 1),
+                    );
+                    if (selected == null) return;
+                    shopOrderProvider.changeSelectMonth(selected);
                   },
-                );
-              },
-              child: Text('今月の請求金額', style: TextStyle(color: Colors.white)),
-              style: TextButton.styleFrom(backgroundColor: Colors.redAccent),
+                  icon: Icon(Icons.calendar_today, color: Colors.white),
+                  label: Text(
+                      '${DateFormat('yyyy年MM月').format(shopOrderProvider.selectMonth)}',
+                      style: TextStyle(color: Colors.white)),
+                  style:
+                      TextButton.styleFrom(backgroundColor: Colors.blueAccent),
+                ),
+                SizedBox(width: 4.0),
+                TextButton(
+                  onPressed: () async {
+                    int invoicePrice = await shopOrderProvider.selectInvoice(
+                      shopId: shop?.id,
+                      userId: user?.id,
+                      startAt: _startAt,
+                      endAt: _endAt,
+                    );
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return InvoiceDialog(
+                          selectMonth: shopOrderProvider.selectMonth,
+                          invoicePrice: invoicePrice,
+                        );
+                      },
+                    );
+                  },
+                  child: Text('注文金額を確認', style: TextStyle(color: Colors.white)),
+                  style:
+                      TextButton.styleFrom(backgroundColor: Colors.redAccent),
+                ),
+              ],
             ),
           ],
         ),
@@ -79,8 +122,10 @@ class OrderScreen extends StatelessWidget {
                     shipping: _order.shipping,
                     onTap: () {
                       shopOrderProvider.cart = _order.cart;
-                      nextPage(context,
-                          OrderDetailsScreen(shop: shop, order: _order));
+                      nextPage(
+                        context,
+                        OrderDetailsScreen(shop: shop, order: _order),
+                      );
                     },
                   );
                 },
@@ -97,15 +142,23 @@ class OrderScreen extends StatelessWidget {
 }
 
 class InvoiceDialog extends StatelessWidget {
+  final DateTime selectMonth;
+  final int invoicePrice;
+
+  InvoiceDialog({
+    @required this.selectMonth,
+    @required this.invoicePrice,
+  });
+
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '今月の請求金額',
+      title: '${DateFormat('yyyy年MM月').format(selectMonth)}の注文金額',
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('何円？'),
+          Center(child: Text('¥ $invoicePrice')),
         ],
       ),
       actions: [

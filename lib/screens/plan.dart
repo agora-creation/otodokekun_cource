@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_plan.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
+import 'package:otodokekun_cource/screens/terms_use.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource/widgets/custom_plan_list_tile.dart';
 import 'package:otodokekun_cource/widgets/label.dart';
@@ -32,7 +35,7 @@ class PlanScreen extends StatelessWidget {
         .doc(shop?.id)
         .collection('plan')
         .where('published', isEqualTo: true)
-        .orderBy('deliveryAt', descending: true)
+        .orderBy('deliveryAt', descending: false)
         .snapshots();
 
     return ListView(
@@ -43,28 +46,30 @@ class PlanScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             LabelWidget(iconData: Icons.view_in_ar, labelText: '定期注文'),
-            TextButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) {
-                    return PlanDialog(
-                      userProvider: userProvider,
-                      shop: shop,
-                      user: user,
-                    );
-                  },
-                );
-              },
-              child: Text(
-                user.fixed ? '契約解除' : '契約する',
-                style: TextStyle(color: Colors.white),
-              ),
-              style: TextButton.styleFrom(
-                backgroundColor:
-                    user.fixed ? Colors.redAccent : Colors.blueAccent,
-              ),
-            ),
+            user?.fixed != null
+                ? TextButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return PlanDialog(
+                            userProvider: userProvider,
+                            shop: shop,
+                            user: user,
+                          );
+                        },
+                      );
+                    },
+                    child: Text(
+                      user.fixed ? '契約解除' : '契約開始',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor:
+                          user.fixed ? Colors.redAccent : Colors.blueAccent,
+                    ),
+                  )
+                : Container(),
           ],
         ),
         SizedBox(height: 4.0),
@@ -107,7 +112,7 @@ class PlanScreen extends StatelessWidget {
   }
 }
 
-class PlanDialog extends StatelessWidget {
+class PlanDialog extends StatefulWidget {
   final UserProvider userProvider;
   final ShopModel shop;
   final UserModel user;
@@ -119,6 +124,13 @@ class PlanDialog extends StatelessWidget {
   });
 
   @override
+  _PlanDialogState createState() => _PlanDialogState();
+}
+
+class _PlanDialogState extends State<PlanDialog> {
+  bool _isFixed = false;
+
+  @override
   Widget build(BuildContext context) {
     return CustomDialog(
       title: '定期注文',
@@ -127,23 +139,80 @@ class PlanDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '定期注文は、注文を自動的に行います。翌週以降からのスタートになります。${shop.cancelLimit}日前の注文であれば、その注文をキャンセルできます。',
+            '注文を定期的に行います。',
+            style: TextStyle(color: Colors.black54, fontSize: 15.0),
+          ),
+          Text(
+            '契約開始後、翌週の月曜日から注文が開始されます。契約解除後、翌週の月曜日以降は注文されません。',
             style: TextStyle(color: Colors.black54, fontSize: 15.0),
           ),
           Divider(),
           Text(
+            '次回注文日',
+            style: TextStyle(color: kSubColor, fontSize: 14.0),
+          ),
+          Text(
+            '${DateFormat('yyyy/MM/dd').format(getNextMonday())}',
+            style: TextStyle(
+              color: Colors.redAccent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 4.0),
+          Text(
             '注文者名',
             style: TextStyle(color: kSubColor, fontSize: 14.0),
           ),
-          Text('${user?.name}'),
+          Text('${widget.user?.name}'),
           SizedBox(height: 4.0),
           Text(
             'お届け先',
             style: TextStyle(color: kSubColor, fontSize: 14.0),
           ),
-          Text('〒${user?.zip}'),
-          Text('${user?.address}'),
-          Text('${user?.tel}'),
+          Text('〒${widget.user?.zip}'),
+          Text('${widget.user?.address}'),
+          Text('${widget.user?.tel}'),
+          SizedBox(height: 4.0),
+          widget.user.fixed
+              ? Container()
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Checkbox(
+                      activeColor: Colors.blueAccent,
+                      value: _isFixed,
+                      onChanged: (value) {
+                        setState(() {
+                          _isFixed = value;
+                        });
+                      },
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '利用規約',
+                            style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontSize: 16.0,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                nextPage(context, TermsUseScreen());
+                              },
+                          ),
+                          TextSpan(
+                            text: 'に同意する',
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
         ],
       ),
       actions: [
@@ -153,7 +222,8 @@ class PlanDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () async {
-            if (!await userProvider.updateFixed(fixed: !user.fixed)) {
+            if (!await widget.userProvider
+                .updateFixed(fixed: !widget.user.fixed)) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('契約更新に失敗しました')),
               );
@@ -162,19 +232,33 @@ class PlanDialog extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('契約更新に成功しました')),
             );
-            userProvider.clearController();
-            userProvider.reloadUserModel();
+            widget.userProvider.clearController();
+            widget.userProvider.reloadUserModel();
             Navigator.pop(context);
           },
           child: Text(
-            user.fixed ? '契約解除' : '契約する',
+            widget.user.fixed ? '契約解除' : '契約開始',
             style: TextStyle(color: Colors.white),
           ),
           style: TextButton.styleFrom(
-            backgroundColor: user.fixed ? Colors.redAccent : Colors.blueAccent,
+            backgroundColor:
+                widget.user.fixed ? Colors.redAccent : Colors.blueAccent,
           ),
         ),
       ],
     );
   }
+}
+
+DateTime getNextMonday() {
+  DateTime ret = DateTime.now();
+  if (ret.weekday != DateTime.monday) {
+    for (int i = 0; i < 7; ++i) {
+      ret = ret.add(Duration(days: 1));
+      if (ret.weekday == DateTime.monday) {
+        break;
+      }
+    }
+  }
+  return ret;
 }

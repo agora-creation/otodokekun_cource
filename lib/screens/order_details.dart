@@ -66,12 +66,16 @@ class OrderDetailsScreen extends StatelessWidget {
                             child: QuantityButton(
                               unit: _cart.unit,
                               quantity: _cart.quantity,
-                              removeOnPressed: () {
-                                shopOrderProvider.removeQuantity(_cart);
-                              },
-                              addOnPressed: () {
-                                shopOrderProvider.addQuantity(_cart);
-                              },
+                              removeOnPressed: order.shipping || _cancelLimit
+                                  ? null
+                                  : () {
+                                      shopOrderProvider.removeQuantity(_cart);
+                                    },
+                              addOnPressed: order.shipping || _cancelLimit
+                                  ? null
+                                  : () {
+                                      shopOrderProvider.addQuantity(_cart);
+                                    },
                             ),
                           );
                         },

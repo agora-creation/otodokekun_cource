@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
@@ -9,6 +10,8 @@ class ShopOrderProvider with ChangeNotifier {
 
   List<CartModel> cart = [];
   TextEditingController remarks = TextEditingController();
+
+  DateTime selectMonth = DateTime.now();
 
   void create(
       {String shopId,
@@ -78,5 +81,24 @@ class ShopOrderProvider with ChangeNotifier {
       cartModel.totalPrice = cartModel.price * cartModel.quantity;
       notifyListeners();
     }
+  }
+
+  void changeSelectMonth(DateTime dateTime) {
+    selectMonth = dateTime;
+    notifyListeners();
+  }
+
+  Future<int> selectInvoice(
+      {String shopId,
+      String userId,
+      Timestamp startAt,
+      Timestamp endAt}) async {
+    int _totalPrice = await _shopOrderService.selectInvoice(
+      shopId: shopId,
+      userId: userId,
+      startAt: startAt,
+      endAt: endAt,
+    );
+    return _totalPrice;
   }
 }

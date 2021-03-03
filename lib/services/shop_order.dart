@@ -42,7 +42,11 @@ class ShopOrderService {
         .delete();
   }
 
-  Future<int> selectInvoice({String shopId, String userId}) async {
+  Future<int> selectInvoice(
+      {String shopId,
+      String userId,
+      Timestamp startAt,
+      Timestamp endAt}) async {
     int totalPrice = 0;
     await _firebaseFirestore
         .collection(_collection)
@@ -50,12 +54,14 @@ class ShopOrderService {
         .collection(_subCollection)
         .where('userId', isEqualTo: userId)
         .orderBy('deliveryAt', descending: true)
+        .startAt([startAt])
+        .endAt([endAt])
         .get()
         .then((result) {
-      result.docs.forEach((doc) {
-        totalPrice += doc.data()['totalPrice'];
-      });
-    });
+          result.docs.forEach((doc) {
+            totalPrice += doc.data()['totalPrice'];
+          });
+        });
     return totalPrice;
   }
 }

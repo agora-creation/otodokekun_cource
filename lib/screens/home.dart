@@ -5,6 +5,7 @@ import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/home.dart';
+import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/notice.dart';
 import 'package:otodokekun_cource/screens/order.dart';
@@ -18,6 +19,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
+    final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     ShopModel _shop = userProvider.shop;
     UserModel _user = userProvider.user;
@@ -36,6 +38,7 @@ class HomeScreen extends StatelessWidget {
       OrderScreen(
         shop: _shop,
         user: _user,
+        shopOrderProvider: shopOrderProvider,
       ),
       SettingsScreen(
         homeProvider: homeProvider,

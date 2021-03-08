@@ -11,7 +11,8 @@ class ShopOrderProvider with ChangeNotifier {
   List<CartModel> cart = [];
   TextEditingController remarks = TextEditingController();
 
-  DateTime selectMonth = DateTime.now();
+  DateTime selectOpenedAt = DateTime.now();
+  DateTime selectClosedAt = DateTime.now().add(Duration(days: 7));
 
   void create(
       {String shopId,
@@ -83,8 +84,9 @@ class ShopOrderProvider with ChangeNotifier {
     }
   }
 
-  void changeSelectMonth(DateTime dateTime) {
-    selectMonth = dateTime;
+  void changeSelectDateRage(DateTime openedAt, DateTime closedAt) {
+    selectOpenedAt = openedAt;
+    selectClosedAt = closedAt;
     notifyListeners();
   }
 

@@ -143,22 +143,10 @@ class _PlanDialogState extends State<PlanDialog> {
             style: TextStyle(color: Colors.black54, fontSize: 15.0),
           ),
           Text(
-            '契約開始後、翌週の月曜日から注文が開始されます。契約解除後、翌週の月曜日以降は注文されません。',
+            '契約開始後、3日後から注文が開始されます。',
             style: TextStyle(color: Colors.black54, fontSize: 15.0),
           ),
           Divider(),
-          Text(
-            '次回注文日',
-            style: TextStyle(color: kSubColor, fontSize: 14.0),
-          ),
-          Text(
-            '${DateFormat('yyyy/MM/dd').format(getNextMonday())}',
-            style: TextStyle(
-              color: Colors.redAccent,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 4.0),
           Text(
             '注文者名',
             style: TextStyle(color: kSubColor, fontSize: 14.0),
@@ -248,17 +236,4 @@ class _PlanDialogState extends State<PlanDialog> {
       ],
     );
   }
-}
-
-DateTime getNextMonday() {
-  DateTime ret = DateTime.now();
-  if (ret.weekday != DateTime.monday) {
-    for (int i = 0; i < 7; ++i) {
-      ret = ret.add(Duration(days: 1));
-      if (ret.weekday == DateTime.monday) {
-        break;
-      }
-    }
-  }
-  return ret;
 }

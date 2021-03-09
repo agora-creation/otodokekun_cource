@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/models/shop.dart';
+import 'package:otodokekun_cource/models/shop_invoice.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
@@ -28,6 +29,15 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  List<ShopInvoiceModel> _invoices = [];
+  void _init() async {
+    await widget.shopOrderProvider
+        .selectListInvoice(shopId: widget.shop?.id)
+        .then((value) {
+      _invoices = value;
+    });
+  }
+
   @override
   void initState() {
     super.initState();

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/cart.dart';
+import 'package:otodokekun_cource/models/shop_invoice.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/services/shop_invoice.dart';
@@ -106,7 +107,11 @@ class ShopOrderProvider with ChangeNotifier {
     return _totalPrice;
   }
 
-  Future<List<ShopInvoiceModel>> selectLitInvoice({String shopId}) async {
-    
+  Future<List<ShopInvoiceModel>> selectListInvoice({String shopId}) async {
+    List<ShopInvoiceModel> _invoices = [];
+    await _shopInvoiceService.selectList(shopId: shopId).then((value) {
+      _invoices = value;
+    });
+    return _invoices;
   }
 }

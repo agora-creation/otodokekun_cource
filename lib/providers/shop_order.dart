@@ -93,7 +93,7 @@ class ShopOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int> selectInvoice(
+  Future<int> selectTotalPrice(
       {String shopId,
       String userId,
       Timestamp startAt,

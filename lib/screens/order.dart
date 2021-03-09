@@ -35,22 +35,31 @@ class _OrderScreenState extends State<OrderScreen> {
         .selectListInvoice(shopId: widget.shop?.id)
         .then((value) {
       _invoices = value;
+      DateTime _now = DateTime.now();
+      for (ShopInvoiceModel _invoice in _invoices) {
+        if (_now.isAfter(_invoice.openedAt) &&
+            _now.isBefore(_invoice.closedAt)) {
+          widget.shopOrderProvider.searchOpenedAt = _invoice.openedAt;
+          widget.shopOrderProvider.searchClosedAt = _invoice.closedAt;
+        }
+      }
     });
   }
 
   @override
   void initState() {
     super.initState();
-    widget.shopOrderProvider.selectOpenedAt = widget.shop.openedAt;
-    widget.shopOrderProvider.selectClosedAt = widget.shop.closedAt;
+    _init();
   }
 
   @override
   Widget build(BuildContext context) {
     final _startAt = Timestamp.fromMillisecondsSinceEpoch(
-        widget.shopOrderProvider.selectClosedAt.millisecondsSinceEpoch);
+        DateTime.parse(widget.shopOrderProvider.searchClosedAt.toString())
+            .millisecondsSinceEpoch);
     final _endAt = Timestamp.fromMillisecondsSinceEpoch(
-        widget.shopOrderProvider.selectOpenedAt.millisecondsSinceEpoch);
+        DateTime.parse(widget.shopOrderProvider.searchOpenedAt.toString())
+            .millisecondsSinceEpoch);
     final Stream<QuerySnapshot> streamOrder = FirebaseFirestore.instance
         .collection('shop')
         .doc(widget.shop?.id)
@@ -68,27 +77,22 @@ class _OrderScreenState extends State<OrderScreen> {
           children: [
             LabelWidget(iconData: Icons.list_alt, labelText: '注文履歴'),
             TextButton.icon(
-              onPressed: () async {
-                final List<DateTime> selected =
-                    await DateRagePicker.showDatePicker(
+              onPressed: () {
+                showDialog(
                   context: context,
-                  initialFirstDate: widget.shopOrderProvider.selectOpenedAt,
-                  initialLastDate: widget.shopOrderProvider.selectClosedAt,
-                  firstDate: DateTime(DateTime.now().year - 1),
-                  lastDate: DateTime(DateTime.now().year + 1),
+                  builder: (_) {
+                    return SearchInvoiceDialog(
+                      shopOrderProvider: widget.shopOrderProvider,
+                      invoices: _invoices,
+                    );
+                  },
                 );
-                if (selected != null && selected.length == 2) {
-                  setState(() {
-                    widget.shopOrderProvider.selectOpenedAt = selected.first;
-                    widget.shopOrderProvider.selectClosedAt = selected.last;
-                  });
-                }
               },
               icon: Icon(Icons.calendar_today, color: Colors.white),
               label: Text(
-                  '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.selectOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.selectClosedAt)}',
+                  '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
                   style: TextStyle(color: Colors.white)),
-              style: TextButton.styleFrom(backgroundColor: Colors.blueAccent),
+              style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
             ),
           ],
         ),
@@ -98,7 +102,8 @@ class _OrderScreenState extends State<OrderScreen> {
             Container(),
             TextButton(
               onPressed: () async {
-                int invoicePrice = await widget.shopOrderProvider.selectInvoice(
+                int _totalPrice =
+                    await widget.shopOrderProvider.selectTotalPrice(
                   shopId: widget.shop?.id,
                   userId: widget.user?.id,
                   startAt: _startAt,
@@ -107,10 +112,10 @@ class _OrderScreenState extends State<OrderScreen> {
                 showDialog(
                   context: context,
                   builder: (_) {
-                    return InvoiceDialog(
-                      selectOpenedAt: widget.shopOrderProvider.selectOpenedAt,
-                      selectClosedAt: widget.shopOrderProvider.selectClosedAt,
-                      invoicePrice: invoicePrice,
+                    return TotalPriceDialog(
+                      searchOpenedAt: widget.shopOrderProvider.searchOpenedAt,
+                      searchClosedAt: widget.shopOrderProvider.searchClosedAt,
+                      totalPrice: _totalPrice,
                     );
                   },
                 );
@@ -163,22 +168,123 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 }
 
-class InvoiceDialog extends StatelessWidget {
-  final DateTime selectOpenedAt;
-  final DateTime selectClosedAt;
-  final int invoicePrice;
+class SearchInvoiceDialog extends StatefulWidget {
+  final ShopOrderProvider shopOrderProvider;
+  final List<ShopInvoiceModel> invoices;
 
-  InvoiceDialog({
-    @required this.selectOpenedAt,
-    @required this.selectClosedAt,
-    @required this.invoicePrice,
+  SearchInvoiceDialog({
+    @required this.shopOrderProvider,
+    @required this.invoices,
+  });
+
+  @override
+  _SearchInvoiceDialogState createState() => _SearchInvoiceDialogState();
+}
+
+class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
+  final ScrollController _scrollController = ScrollController();
+  ShopInvoiceModel _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    for (ShopInvoiceModel _invoice in widget.invoices) {
+      if (widget.shopOrderProvider.searchOpenedAt
+              .isAtSameMomentAs(_invoice.openedAt) &&
+          widget.shopOrderProvider.searchClosedAt
+              .isAtSameMomentAs(_invoice.closedAt)) {
+        _selected = _invoice;
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '締め日で検索',
+      content: Container(
+        width: 300.0,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Container(
+              height: 250.0,
+              child: Scrollbar(
+                isAlwaysShown: true,
+                controller: _scrollController,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  controller: _scrollController,
+                  itemCount: widget.invoices.length,
+                  itemBuilder: (context, index) {
+                    ShopInvoiceModel _invoice = widget.invoices[index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1.0,
+                            color: Colors.grey.shade300,
+                          ),
+                        ),
+                      ),
+                      child: RadioListTile(
+                        title: Text(
+                            '${DateFormat('yyyy/MM/dd').format(_invoice.openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(_invoice.closedAt)}'),
+                        value: _invoice,
+                        groupValue: _selected,
+                        activeColor: Colors.blueAccent,
+                        onChanged: (value) {
+                          setState(() {
+                            _selected = value;
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Divider(height: 0.0),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('閉じる'),
+        ),
+        TextButton.icon(
+          onPressed: () {
+            widget.shopOrderProvider
+                .changeSelectDateRage(_selected.openedAt, _selected.closedAt);
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.search, color: Colors.white),
+          label: Text('検索する', style: TextStyle(color: Colors.white)),
+          style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
+        ),
+      ],
+    );
+  }
+}
+
+class TotalPriceDialog extends StatelessWidget {
+  final DateTime searchOpenedAt;
+  final DateTime searchClosedAt;
+  final int totalPrice;
+
+  TotalPriceDialog({
+    @required this.searchOpenedAt,
+    @required this.searchClosedAt,
+    @required this.totalPrice,
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
       title:
-          '${DateFormat('yyyy/MM/dd').format(selectOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(selectClosedAt)}',
+          '${DateFormat('yyyy/MM/dd').format(searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(searchClosedAt)}',
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,7 +293,7 @@ class InvoiceDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text('注文金額'),
-              Text('¥ $invoicePrice'),
+              Text('¥ $totalPrice'),
             ],
           ),
         ],

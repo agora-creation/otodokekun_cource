@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/models/user.dart';
+import 'package:otodokekun_cource/services/shop_invoice.dart';
 import 'package:otodokekun_cource/services/shop_order.dart';
 
 class ShopOrderProvider with ChangeNotifier {
+  ShopInvoiceService _shopInvoiceService = ShopInvoiceService();
   ShopOrderService _shopOrderService = ShopOrderService();
 
   List<CartModel> cart = [];
   TextEditingController remarks = TextEditingController();
 
-  DateTime selectOpenedAt = DateTime.now();
-  DateTime selectClosedAt = DateTime.now().add(Duration(days: 7));
+  DateTime searchOpenedAt = DateTime.now();
+  DateTime searchClosedAt = DateTime.now().add(Duration(days: 7));
 
   void create(
       {String shopId,
@@ -85,8 +87,8 @@ class ShopOrderProvider with ChangeNotifier {
   }
 
   void changeSelectDateRage(DateTime openedAt, DateTime closedAt) {
-    selectOpenedAt = openedAt;
-    selectClosedAt = closedAt;
+    searchOpenedAt = openedAt;
+    searchClosedAt = closedAt;
     notifyListeners();
   }
 
@@ -102,5 +104,9 @@ class ShopOrderProvider with ChangeNotifier {
       endAt: endAt,
     );
     return _totalPrice;
+  }
+
+  Future<List<ShopInvoiceModel>> selectLitInvoice({String shopId}) async {
+    
   }
 }

@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/shop.dart';
+import 'package:otodokekun_cource/models/shop_plan.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/services/shop.dart';
+import 'package:otodokekun_cource/services/shop_order.dart';
 import 'package:otodokekun_cource/services/user.dart';
 
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
@@ -12,6 +14,7 @@ class UserProvider with ChangeNotifier {
   User _fUser;
   Status _status = Status.Uninitialized;
   ShopService _shopService = ShopService();
+  ShopOrderService _shopOrderService = ShopOrderService();
   UserService _userService = UserService();
   ShopModel _shop;
   UserModel _user;
@@ -174,11 +177,53 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateFixed({bool fixed}) async {
+  Future<bool> updateFixedTrue({List<ShopPlanModel> plans}) async {
     try {
       _userService.update({
         'id': _auth.currentUser.uid,
-        'fixed': fixed,
+        'fixed': true,
+      });
+      for (ShopPlanModel _plan in plans) {
+        String id = _shopOrderService.newId(shopId: _user.shopId);
+        List<Map> cart = [];
+        cart.add({
+          'id': _plan.id,
+          'name': _plan.name,
+          'image': _plan.image,
+          'unit': _plan.unit,
+          'price': _plan.price,
+          'quantity': 1,
+          'totalPrice': _plan.price,
+        });
+        _shopOrderService.create({
+          'id': id,
+          'shopId': _user.shopId,
+          'userId': _user.id,
+          'name': _user.name,
+          'zip': _user.zip,
+          'address': _user.address,
+          'tel': _user.tel,
+          'cart': cart,
+          'deliveryAt': _plan.deliveryAt,
+          'remarks': '',
+          'totalPrice': _plan.price,
+          'staff': _user.staff,
+          'shipping': false,
+          'createdAt': _plan.deliveryAt,
+        });
+      }
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> updateFixedFalse() async {
+    try {
+      _userService.update({
+        'id': _auth.currentUser.uid,
+        'fixed': false,
       });
       return true;
     } catch (e) {

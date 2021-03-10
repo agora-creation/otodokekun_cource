@@ -37,6 +37,7 @@ class PlanScreen extends StatelessWidget {
         .where('published', isEqualTo: true)
         .orderBy('deliveryAt', descending: false)
         .snapshots();
+    List<ShopPlanModel> plans = [];
 
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -56,6 +57,7 @@ class PlanScreen extends StatelessWidget {
                             userProvider: userProvider,
                             shop: shop,
                             user: user,
+                            plans: plans,
                           );
                         },
                       );
@@ -79,7 +81,6 @@ class PlanScreen extends StatelessWidget {
             if (!snapshot.hasData) {
               return Center(child: Text('読み込み中'));
             }
-            List<ShopPlanModel> plans = [];
             for (DocumentSnapshot plan in snapshot.data.docs) {
               plans.add(ShopPlanModel.fromSnapshot(plan));
             }
@@ -116,11 +117,13 @@ class PlanDialog extends StatefulWidget {
   final UserProvider userProvider;
   final ShopModel shop;
   final UserModel user;
+  final List<ShopPlanModel> plans;
 
   PlanDialog({
     @required this.userProvider,
     @required this.shop,
     @required this.user,
+    @required this.plans,
   });
 
   @override
@@ -210,17 +213,34 @@ class _PlanDialogState extends State<PlanDialog> {
         ),
         TextButton(
           onPressed: () async {
-            if (!await widget.userProvider
-                .updateFixed(fixed: !widget.user.fixed)) {
+            if (widget.user.fixed) {
+              if (!await widget.userProvider.updateFixedFalse()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('契約の解除に失敗しました')),
+                );
+                return;
+              }
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('契約更新に失敗しました')),
+                SnackBar(content: Text('契約を解除いたしました')),
               );
-              return;
+            } else {
+              if (!_isFixed) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('利用規約に同意してください')),
+                );
+                return;
+              }
+              if (!await widget.userProvider
+                  .updateFixedTrue(plans: widget.plans)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('契約の開始に失敗しました')),
+                );
+                return;
+              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('契約を開始いたしました')),
+              );
             }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('契約更新に成功しました')),
-            );
-            widget.userProvider.clearController();
             widget.userProvider.reloadUserModel();
             Navigator.pop(context);
           },

@@ -201,7 +201,7 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '締め日で検索',
+      title: '締め日で表示',
       content: Container(
         width: 300.0,
         child: ListView(
@@ -261,7 +261,7 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
             Navigator.pop(context);
           },
           icon: Icon(Icons.search, color: Colors.white),
-          label: Text('検索する', style: TextStyle(color: Colors.white)),
+          label: Text('表示する', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
         ),
       ],

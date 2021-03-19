@@ -48,17 +48,6 @@ class RegistrationScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomTextField(
-                              controller: userProvider.code,
-                              obscureText: false,
-                              textInputType: null,
-                              maxLines: 1,
-                              labelText: ' 店舗コード',
-                              prefixIconData: Icons.store,
-                              suffixIconData: null,
-                              onTap: null,
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomTextField(
                               controller: userProvider.name,
                               obscureText: false,
                               textInputType: TextInputType.name,
@@ -110,11 +99,44 @@ class RegistrationScreen extends StatelessWidget {
                                 userProvider.changeCHidden();
                               },
                             ),
+                            SizedBox(height: 16.0),
+                            CustomTextField(
+                              controller: userProvider.zip,
+                              obscureText: false,
+                              textInputType: null,
+                              maxLines: 1,
+                              labelText: '郵便番号',
+                              prefixIconData: Icons.location_pin,
+                              suffixIconData: null,
+                              onTap: null,
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomTextField(
+                              controller: userProvider.address,
+                              obscureText: false,
+                              textInputType: TextInputType.streetAddress,
+                              maxLines: 1,
+                              labelText: '住所',
+                              prefixIconData: Icons.location_city,
+                              suffixIconData: null,
+                              onTap: null,
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomTextField(
+                              controller: userProvider.tel,
+                              obscureText: false,
+                              textInputType: TextInputType.phone,
+                              maxLines: 1,
+                              labelText: '電話番号',
+                              prefixIconData: Icons.phone,
+                              suffixIconData: null,
+                              onTap: null,
+                            ),
                           ],
                         ),
                         SizedBox(height: 24.0),
                         BorderRoundButton(
-                          labelText: '登録する',
+                          labelText: '登録',
                           labelColor: Colors.blueAccent,
                           borderColor: Colors.blueAccent,
                           onPressed: () async {
@@ -125,9 +147,6 @@ class RegistrationScreen extends StatelessWidget {
                               );
                               return;
                             }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('登録に成功しました')),
-                            );
                             userProvider.clearController();
                             changePage(context, HomeScreen());
                           },

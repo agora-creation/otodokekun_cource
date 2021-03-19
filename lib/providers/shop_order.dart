@@ -15,7 +15,7 @@ class ShopOrderProvider with ChangeNotifier {
   TextEditingController remarks = TextEditingController();
 
   DateTime searchOpenedAt = DateTime.now();
-  DateTime searchClosedAt = DateTime.now().add(Duration(days: 7));
+  DateTime searchClosedAt = DateTime.now().add(Duration(days: 14));
 
   void create(
       {String shopId,

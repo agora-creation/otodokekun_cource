@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class UserModel {
   String _id;
   String _shopId;
+  List<String> _shopList;
   String _name;
   String _zip;
   String _address;
@@ -17,6 +18,7 @@ class UserModel {
 
   String get id => _id;
   String get shopId => _shopId;
+  List<String> get shopList => _shopList;
   String get name => _name;
   String get zip => _zip;
   String get address => _address;
@@ -32,6 +34,7 @@ class UserModel {
   UserModel.fromSnapshot(DocumentSnapshot snapshot) {
     _id = snapshot.data()['id'];
     _shopId = snapshot.data()['shopId'];
+    _shopList = _convertList(list: snapshot.data()['shopList']) ?? [];
     _name = snapshot.data()['name'];
     _zip = snapshot.data()['zip'];
     _address = snapshot.data()['address'];
@@ -43,5 +46,13 @@ class UserModel {
     _fixed = snapshot.data()['fixed'];
     _token = snapshot.data()['token'];
     _createdAt = snapshot.data()['createdAt'].toDate();
+  }
+
+  List<String> _convertList({List list}) {
+    List<String> convertedList = [];
+    for (String id in list) {
+      convertedList.add(id);
+    }
+    return convertedList;
   }
 }

@@ -56,8 +56,10 @@ class CustomPlanListTile extends StatelessWidget {
             description != ''
                 ? Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text(description,
-                        style: TextStyle(color: Colors.black54)),
+                    child: Text(
+                      description,
+                      style: TextStyle(color: Colors.black54),
+                    ),
                   )
                 : Container(),
           ],

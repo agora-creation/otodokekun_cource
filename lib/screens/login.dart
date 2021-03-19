@@ -77,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 24.0),
                         FillRoundButton(
-                          labelText: 'ログインする',
+                          labelText: 'ログイン',
                           labelColor: Colors.white,
                           backgroundColor: Colors.blueAccent,
                           onPressed: () async {
@@ -88,9 +88,6 @@ class LoginScreen extends StatelessWidget {
                               );
                               return;
                             }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('ログインに成功しました')),
-                            );
                             userProvider.clearController();
                             changePage(context, HomeScreen());
                           },

@@ -15,10 +15,7 @@ class SplashScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'お届けくん',
-                  style: kTitleTextStyle,
-                ),
+                Text('お届けくん', style: kTitleTextStyle),
                 SizedBox(height: 8.0),
                 Text('BtoCサービス'),
                 SizedBox(height: 24.0),

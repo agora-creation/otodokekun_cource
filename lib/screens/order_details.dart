@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
-import 'package:otodokekun_cource/models/cart.dart';
+import 'package:otodokekun_cource/models/products.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
-import 'package:otodokekun_cource/widgets/custom_cart_list_tile.dart';
+import 'package:otodokekun_cource/widgets/custom_products_list_tile.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:otodokekun_cource/widgets/quantity_button.dart';
@@ -36,45 +36,41 @@ class OrderDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: order.shipping
             ? Text('配達完了')
-            : Text(
-                '配達待ち',
-                style: TextStyle(color: Colors.redAccent),
-              ),
+            : Text('配達待ち', style: TextStyle(color: Colors.redAccent)),
       ),
       body: homeProvider.isLoading
           ? LoadingWidget()
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               children: [
-                Text(
-                  '注文商品',
-                  style: TextStyle(color: kSubColor),
-                ),
-                shopOrderProvider.cart.length > 0
+                Text('注文商品', style: TextStyle(color: kSubColor)),
+                shopOrderProvider.products.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
-                        itemCount: shopOrderProvider.cart.length,
+                        itemCount: shopOrderProvider.products.length,
                         itemBuilder: (_, index) {
-                          CartModel _cart = shopOrderProvider.cart[index];
-                          return CustomCartListTile(
-                            name: _cart.name,
-                            image: _cart.image,
-                            unit: _cart.unit,
-                            price: _cart.price,
+                          ProductsModel _products =
+                              shopOrderProvider.products[index];
+                          return CustomProductsListTile(
+                            name: _products.name,
+                            image: _products.image,
+                            unit: _products.unit,
+                            price: _products.price,
                             onTap: null,
                             child: QuantityButton(
-                              unit: _cart.unit,
-                              quantity: _cart.quantity,
+                              unit: _products.unit,
+                              quantity: _products.quantity,
                               removeOnPressed: order.shipping || _cancelLimit
                                   ? null
                                   : () {
-                                      shopOrderProvider.removeQuantity(_cart);
+                                      shopOrderProvider
+                                          .removeQuantity(_products);
                                     },
                               addOnPressed: order.shipping || _cancelLimit
                                   ? null
                                   : () {
-                                      shopOrderProvider.addQuantity(_cart);
+                                      shopOrderProvider.addQuantity(_products);
                                     },
                             ),
                           );
@@ -82,24 +78,14 @@ class OrderDetailsScreen extends StatelessWidget {
                       )
                     : Container(),
                 SizedBox(height: 8.0),
+                Text('注文日時', style: TextStyle(color: kSubColor)),
                 Text(
-                  '注文日時',
-                  style: TextStyle(color: kSubColor),
-                ),
-                Text(
-                  '${DateFormat('yyyy年MM月dd日 HH:mm').format(order.createdAt)}',
-                ),
+                    '${DateFormat('yyyy年MM月dd日 HH:mm').format(order.createdAt)}'),
                 SizedBox(height: 8.0),
-                Text(
-                  '合計金額',
-                  style: TextStyle(color: kSubColor),
-                ),
+                Text('合計金額', style: TextStyle(color: kSubColor)),
                 Text('¥ ${order.totalPrice}'),
                 SizedBox(height: 8.0),
-                Text(
-                  'お届け先',
-                  style: TextStyle(color: kSubColor),
-                ),
+                Text('お届け先', style: TextStyle(color: kSubColor)),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -109,18 +95,10 @@ class OrderDetailsScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.0),
-                Text(
-                  'お届け予定日',
-                  style: TextStyle(color: kSubColor),
-                ),
-                Text(
-                  '${DateFormat('yyyy年MM月dd日').format(order.deliveryAt)}',
-                ),
+                Text('お届け予定日', style: TextStyle(color: kSubColor)),
+                Text('${DateFormat('yyyy年MM月dd日').format(order.deliveryAt)}'),
                 SizedBox(height: 8.0),
-                Text(
-                  '備考',
-                  style: TextStyle(color: kSubColor),
-                ),
+                Text('備考', style: TextStyle(color: kSubColor)),
                 Text('${order.remarks}'),
                 SizedBox(height: 16.0),
                 Divider(height: 0.0),
@@ -128,7 +106,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 order.shipping || _cancelLimit
                     ? Container()
                     : FillRoundButton(
-                        labelText: '注文内容を変更する',
+                        labelText: '注文内容を変更',
                         labelColor: Colors.white,
                         backgroundColor: Colors.blueAccent,
                         onPressed: () {
@@ -145,7 +123,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 order.shipping || _cancelLimit
                     ? Container()
                     : BorderRoundButton(
-                        labelText: 'キャンセルする',
+                        labelText: 'キャンセル',
                         labelColor: Colors.blueGrey,
                         borderColor: Colors.blueGrey,
                         onPressed: () {

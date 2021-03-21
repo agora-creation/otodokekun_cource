@@ -7,18 +7,20 @@ class RemarksWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(remarks),
-        ),
-      ),
-    );
+    return remarks != null
+        ? Padding(
+            padding: EdgeInsets.only(bottom: 16.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(remarks),
+              ),
+            ),
+          )
+        : Container();
   }
 }

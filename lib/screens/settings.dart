@@ -38,11 +38,8 @@ class SettingsScreen extends StatelessWidget {
         : ListView(
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
             children: [
-              RemarksWidget(remarks: shop?.remarks ?? ''),
-              Text(
-                'アカウント情報',
-                style: TextStyle(color: kSubColor),
-              ),
+              RemarksWidget(remarks: shop?.remarks ?? null),
+              Text('アカウント情報', style: TextStyle(color: kSubColor)),
               CustomIconListTile(
                 iconData: Icons.person,
                 title: 'アカウント情報変更',

@@ -7,6 +7,7 @@ import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/home.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
 import 'package:otodokekun_cource/widgets/custom_text_field.dart';
+import 'package:otodokekun_cource/widgets/link_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
@@ -35,10 +36,7 @@ class RegistrationScreen extends StatelessWidget {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'お届けくん',
-                              style: kTitleTextStyle,
-                            ),
+                            Text('お届けくん', style: kTitleTextStyle),
                             SizedBox(height: 8.0),
                             Text('BtoCサービス'),
                           ],
@@ -56,48 +54,6 @@ class RegistrationScreen extends StatelessWidget {
                               prefixIconData: Icons.person,
                               suffixIconData: null,
                               onTap: null,
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomTextField(
-                              controller: userProvider.email,
-                              obscureText: false,
-                              textInputType: TextInputType.emailAddress,
-                              maxLines: 1,
-                              labelText: 'メールアドレス',
-                              prefixIconData: Icons.mail,
-                              suffixIconData: null,
-                              onTap: null,
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomTextField(
-                              controller: userProvider.password,
-                              obscureText: userProvider.isHidden ? false : true,
-                              textInputType: null,
-                              maxLines: 1,
-                              labelText: 'パスワード',
-                              prefixIconData: Icons.lock,
-                              suffixIconData: userProvider.isHidden
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              onTap: () {
-                                userProvider.changeHidden();
-                              },
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomTextField(
-                              controller: userProvider.cPassword,
-                              obscureText:
-                                  userProvider.isCHidden ? false : true,
-                              textInputType: null,
-                              maxLines: 1,
-                              labelText: 'パスワードの再入力',
-                              prefixIconData: Icons.lock_outline,
-                              suffixIconData: userProvider.isCHidden
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              onTap: () {
-                                userProvider.changeCHidden();
-                              },
                             ),
                             SizedBox(height: 16.0),
                             CustomTextField(
@@ -132,6 +88,48 @@ class RegistrationScreen extends StatelessWidget {
                               suffixIconData: null,
                               onTap: null,
                             ),
+                            SizedBox(height: 16.0),
+                            CustomTextField(
+                              controller: userProvider.email,
+                              obscureText: false,
+                              textInputType: TextInputType.emailAddress,
+                              maxLines: 1,
+                              labelText: 'メールアドレス',
+                              prefixIconData: Icons.email,
+                              suffixIconData: null,
+                              onTap: null,
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomTextField(
+                              controller: userProvider.password,
+                              obscureText: userProvider.isHidden ? false : true,
+                              textInputType: null,
+                              maxLines: 1,
+                              labelText: 'パスワード',
+                              prefixIconData: Icons.lock,
+                              suffixIconData: userProvider.isHidden
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              onTap: () {
+                                userProvider.changeHidden();
+                              },
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomTextField(
+                              controller: userProvider.cPassword,
+                              obscureText:
+                                  userProvider.isCHidden ? false : true,
+                              textInputType: null,
+                              maxLines: 1,
+                              labelText: 'パスワードの再入力',
+                              prefixIconData: Icons.lock_outline,
+                              suffixIconData: userProvider.isCHidden
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              onTap: () {
+                                userProvider.changeCHidden();
+                              },
+                            ),
                           ],
                         ),
                         SizedBox(height: 24.0),
@@ -148,20 +146,16 @@ class RegistrationScreen extends StatelessWidget {
                               return;
                             }
                             userProvider.clearController();
+                            userProvider.reloadUserModel();
                             changePage(context, HomeScreen());
                           },
                         ),
                         SizedBox(height: 24.0),
                         Align(
                           alignment: Alignment.bottomLeft,
-                          child: GestureDetector(
-                            onTap: () => Navigator.pop(context, true),
-                            child: Text(
-                              '登録済みの方はコチラ',
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
+                          child: LinkButton(
+                            onTap: () => Navigator.pop(context),
+                            labelText: '登録済みの方はコチラ',
                           ),
                         ),
                       ],

@@ -1,32 +1,26 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource/models/cart.dart';
+import 'package:otodokekun_cource/models/products.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
 
 class HomeProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _token;
-  int tabsIndex = 1;
   bool isLoading = false;
-  List<CartModel> cart = [];
+  List<ProductsModel> products = [];
   DateTime deliveryAt;
 
   String get token => _token;
-
-  void changeTabs(int index) {
-    tabsIndex = index;
-    notifyListeners();
-  }
 
   void changeLoading() {
     isLoading = !isLoading;
     notifyListeners();
   }
 
-  void checkCart({ShopProductModel product}) {
-    var contain = cart.where((e) => e.id == product.id);
+  void checkProducts({ShopProductModel product}) {
+    var contain = products.where((e) => e.id == product.id);
     if (contain.isEmpty) {
-      Map cartMap = {
+      Map data = {
         'id': product.id,
         'name': product.name,
         'image': product.image,
@@ -35,29 +29,29 @@ class HomeProvider with ChangeNotifier {
         'quantity': 1,
         'totalPrice': product.price * 1,
       };
-      CartModel _cart = CartModel.fromMap(cartMap);
-      cart.add(_cart);
+      ProductsModel _products = ProductsModel.fromMap(data);
+      products.add(_products);
     } else {
-      cart.removeWhere((e) => e.id == product.id);
+      products.removeWhere((e) => e.id == product.id);
     }
     notifyListeners();
   }
 
-  void deleteCart(CartModel cartModel) {
-    cart.removeWhere((e) => e.id == cartModel.id);
+  void deleteProducts(ProductsModel productsModel) {
+    products.removeWhere((e) => e.id == productsModel.id);
     notifyListeners();
   }
 
-  void addQuantity(CartModel cartModel) {
-    cartModel.quantity += 1;
-    cartModel.totalPrice = cartModel.price * cartModel.quantity;
+  void addQuantity(ProductsModel productsModel) {
+    productsModel.quantity += 1;
+    productsModel.totalPrice = productsModel.price * productsModel.quantity;
     notifyListeners();
   }
 
-  void removeQuantity(CartModel cartModel) {
-    if (cartModel.quantity != 1) {
-      cartModel.quantity -= 1;
-      cartModel.totalPrice = cartModel.price * cartModel.quantity;
+  void removeQuantity(ProductsModel productsModel) {
+    if (productsModel.quantity != 1) {
+      productsModel.quantity -= 1;
+      productsModel.totalPrice = productsModel.price * productsModel.quantity;
       notifyListeners();
     }
   }

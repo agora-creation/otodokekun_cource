@@ -18,7 +18,7 @@ ThemeData theme() {
     appBarTheme: AppBarTheme(
       color: Colors.white,
       elevation: 0.0,
-      centerTitle: true,
+      centerTitle: false,
       brightness: Brightness.light,
       textTheme: TextTheme(
         headline6: TextStyle(
@@ -26,17 +26,11 @@ ThemeData theme() {
           fontSize: 18.0,
         ),
       ),
-      iconTheme: IconThemeData(
-        color: kMainColor,
-      ),
+      iconTheme: IconThemeData(color: kMainColor),
     ),
     textTheme: TextTheme(
-      bodyText1: TextStyle(
-        color: kMainTextColor,
-      ),
-      bodyText2: TextStyle(
-        color: kMainTextColor,
-      ),
+      bodyText1: TextStyle(color: kMainTextColor),
+      bodyText2: TextStyle(color: kMainTextColor),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );

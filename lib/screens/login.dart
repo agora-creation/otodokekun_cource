@@ -8,6 +8,7 @@ import 'package:otodokekun_cource/screens/home.dart';
 import 'package:otodokekun_cource/screens/registration.dart';
 import 'package:otodokekun_cource/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
+import 'package:otodokekun_cource/widgets/link_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
@@ -36,10 +37,7 @@ class LoginScreen extends StatelessWidget {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'お届けくん',
-                              style: kTitleTextStyle,
-                            ),
+                            Text('お届けくん', style: kTitleTextStyle),
                             SizedBox(height: 8.0),
                             Text('BtoCサービス'),
                           ],
@@ -54,7 +52,7 @@ class LoginScreen extends StatelessWidget {
                               textInputType: TextInputType.emailAddress,
                               maxLines: 1,
                               labelText: 'メールアドレス',
-                              prefixIconData: Icons.mail,
+                              prefixIconData: Icons.email,
                               suffixIconData: null,
                               onTap: null,
                             ),
@@ -89,21 +87,18 @@ class LoginScreen extends StatelessWidget {
                               return;
                             }
                             userProvider.clearController();
+                            userProvider.reloadUserModel();
                             changePage(context, HomeScreen());
                           },
                         ),
                         SizedBox(height: 24.0),
                         Align(
                           alignment: Alignment.bottomRight,
-                          child: GestureDetector(
-                            onTap: () =>
-                                nextPage(context, RegistrationScreen()),
-                            child: Text(
-                              '初めての方はコチラ',
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
+                          child: LinkButton(
+                            onTap: () {
+                              nextPage(context, RegistrationScreen());
+                            },
+                            labelText: '初めての方はコチラ',
                           ),
                         ),
                       ],

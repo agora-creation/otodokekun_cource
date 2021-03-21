@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource/models/cart.dart';
+import 'package:otodokekun_cource/models/products.dart';
 import 'package:otodokekun_cource/models/shop_invoice.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/models/user.dart';
@@ -11,7 +11,7 @@ class ShopOrderProvider with ChangeNotifier {
   ShopInvoiceService _shopInvoiceService = ShopInvoiceService();
   ShopOrderService _shopOrderService = ShopOrderService();
 
-  List<CartModel> cart = [];
+  List<ProductsModel> products = [];
   TextEditingController remarks = TextEditingController();
 
   DateTime searchOpenedAt = DateTime.now();
@@ -20,12 +20,12 @@ class ShopOrderProvider with ChangeNotifier {
   void create(
       {String shopId,
       UserModel user,
-      List<CartModel> cart,
+      List<ProductsModel> products,
       DateTime deliveryAt}) {
-    List<Map> convertedCart = [];
+    List<Map> convertedProducts = [];
     int _totalPrice = 0;
-    for (CartModel product in cart) {
-      convertedCart.add(product.toMap());
+    for (ProductsModel product in products) {
+      convertedProducts.add(product.toMap());
       _totalPrice += product.price * product.quantity;
     }
     String id = _shopOrderService.newId(shopId: shopId);
@@ -37,7 +37,7 @@ class ShopOrderProvider with ChangeNotifier {
       'zip': user.zip,
       'address': user.address,
       'tel': user.tel,
-      'cart': convertedCart,
+      'products': convertedProducts,
       'deliveryAt': deliveryAt,
       'remarks': remarks.text,
       'totalPrice': _totalPrice,
@@ -55,16 +55,16 @@ class ShopOrderProvider with ChangeNotifier {
   }
 
   void updateQuantity({ShopOrderModel order}) {
-    List<Map> convertedCart = [];
+    List<Map> convertedProducts = [];
     int _totalPrice = 0;
-    for (CartModel product in cart) {
-      convertedCart.add(product.toMap());
+    for (ProductsModel product in products) {
+      convertedProducts.add(product.toMap());
       _totalPrice += product.price * product.quantity;
     }
     _shopOrderService.update({
       'id': order.id,
       'shopId': order.shopId,
-      'cart': convertedCart,
+      'products': convertedProducts,
       'totalPrice': _totalPrice,
     });
   }
@@ -73,16 +73,16 @@ class ShopOrderProvider with ChangeNotifier {
     remarks.text = '';
   }
 
-  void addQuantity(CartModel cartModel) {
-    cartModel.quantity += 1;
-    cartModel.totalPrice = cartModel.price * cartModel.quantity;
+  void addQuantity(ProductsModel productsModel) {
+    productsModel.quantity += 1;
+    productsModel.totalPrice = productsModel.price * productsModel.quantity;
     notifyListeners();
   }
 
-  void removeQuantity(CartModel cartModel) {
-    if (cartModel.quantity != 1) {
-      cartModel.quantity -= 1;
-      cartModel.totalPrice = cartModel.price * cartModel.quantity;
+  void removeQuantity(ProductsModel productsModel) {
+    if (productsModel.quantity != 1) {
+      productsModel.quantity -= 1;
+      productsModel.totalPrice = productsModel.price * productsModel.quantity;
       notifyListeners();
     }
   }

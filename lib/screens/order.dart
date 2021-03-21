@@ -71,7 +71,7 @@ class _OrderScreenState extends State<OrderScreen> {
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
-        RemarksWidget(remarks: widget.shop?.remarks ?? ''),
+        RemarksWidget(remarks: widget.shop?.remarks ?? null),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -145,10 +145,10 @@ class _OrderScreenState extends State<OrderScreen> {
                   ShopOrderModel _order = orders[index];
                   return CustomOrderListTile(
                     deliveryAt: DateFormat('MM/dd').format(_order.deliveryAt),
-                    name: _order.cart[0].name,
+                    name: _order.products[0].name,
                     shipping: _order.shipping,
                     onTap: () {
-                      widget.shopOrderProvider.cart = _order.cart;
+                      widget.shopOrderProvider.products = _order.products;
                       nextPage(
                         context,
                         OrderDetailsScreen(shop: widget.shop, order: _order),

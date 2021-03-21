@@ -19,18 +19,18 @@ class UserProvider with ChangeNotifier {
   ShopModel _shop;
   UserModel _user;
 
+  User get fUser => _fUser;
+  Status get status => _status;
   ShopModel get shop => _shop;
   UserModel get user => _user;
-  Status get status => _status;
-  User get fUser => _fUser;
 
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
-  TextEditingController cPassword = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController zip = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController tel = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController cPassword = TextEditingController();
 
   bool isHidden = false;
   bool isCHidden = false;
@@ -77,6 +77,9 @@ class UserProvider with ChangeNotifier {
 
   Future<bool> signUp({String token}) async {
     if (name.text == null) return false;
+    if (zip.text == null) return false;
+    if (address.text == null) return false;
+    if (tel.text == null) return false;
     if (email.text == null) return false;
     if (password.text == null) return false;
     if (password.text != cPassword.text) return false;
@@ -92,13 +95,13 @@ class UserProvider with ChangeNotifier {
         _userService.create({
           'id': value.user.uid,
           'shopId': '',
-          'shopList': [],
           'name': name.text.trim(),
-          'zip': '',
-          'address': '',
-          'tel': '',
+          'zip': zip.text.trim(),
+          'address': address.text.trim(),
+          'tel': tel.text.trim(),
           'email': email.text.trim(),
           'password': password.text.trim(),
+          'locations': [],
           'blacklist': false,
           'staff': '',
           'fixed': false,
@@ -178,8 +181,8 @@ class UserProvider with ChangeNotifier {
       });
       for (ShopPlanModel _plan in plans) {
         String id = _shopOrderService.newId(shopId: _user.shopId);
-        List<Map> cart = [];
-        cart.add({
+        List<Map> products = [];
+        products.add({
           'id': _plan.id,
           'name': _plan.name,
           'image': _plan.image,
@@ -196,7 +199,7 @@ class UserProvider with ChangeNotifier {
           'zip': _user.zip,
           'address': _user.address,
           'tel': _user.tel,
-          'cart': cart,
+          'products': products,
           'deliveryAt': _plan.deliveryAt,
           'remarks': '',
           'totalPrice': _plan.price,
@@ -233,18 +236,20 @@ class UserProvider with ChangeNotifier {
   }
 
   void clearController() {
-    email.text = '';
-    password.text = '';
-    cPassword.text = '';
     name.text = '';
     zip.text = '';
     address.text = '';
     tel.text = '';
+    email.text = '';
+    password.text = '';
+    cPassword.text = '';
   }
 
   Future reloadUserModel() async {
     _user = await _userService.select(userId: _fUser.uid);
-    _shop = await _shopService.select(shopId: _user.shopId);
+    if (_user.shopId != '') {
+      _shop = await _shopService.select(shopId: _user.shopId);
+    }
     notifyListeners();
   }
 
@@ -255,7 +260,9 @@ class UserProvider with ChangeNotifier {
       _fUser = firebaseUser;
       _status = Status.Authenticated;
       _user = await _userService.select(userId: _fUser.uid);
-      _shop = await _shopService.select(shopId: _user.shopId);
+      if (_user.shopId != '') {
+        _shop = await _shopService.select(shopId: _user.shopId);
+      }
     }
     notifyListeners();
   }

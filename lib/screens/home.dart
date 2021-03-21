@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
@@ -12,10 +12,19 @@ import 'package:otodokekun_cource/screens/order.dart';
 import 'package:otodokekun_cource/screens/plan.dart';
 import 'package:otodokekun_cource/screens/product.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
+import 'package:otodokekun_cource/screens/shop.dart';
+import 'package:otodokekun_cource/widgets/custom_app_title.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _tabsIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
@@ -56,27 +65,13 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Container(),
-        title: GestureDetector(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (_) {
-                return ShopDialog(shop: _shop, user: _user);
-              },
-            );
-          },
-          child: Text(_shop?.name ?? ''),
+        title: CustomAppTitle(
+          onTap: () => overlayPage(context, ShopScreen()),
+          title: _shop?.name ?? '店舗を選択してください',
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              showMaterialModalBottomSheet(
-                expand: true,
-                context: context,
-                builder: (context) => NoticeScreen(),
-              );
-            },
+            onPressed: () => overlayPage(context, NoticeScreen()),
             icon: StreamBuilder<QuerySnapshot>(
               stream: streamNotice,
               builder: (context, snapshot) {
@@ -97,31 +92,42 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: _tabs[homeProvider.tabsIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) => homeProvider.changeTabs(index),
-        currentIndex: homeProvider.tabsIndex,
-        fixedColor: kMainColor,
-        type: BottomNavigationBarType.fixed,
-        elevation: 0.0,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.view_in_ar),
-            label: '個別注文',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.view_in_ar),
-            label: '定期注文',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt),
-            label: '注文履歴',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: _user?.name ?? '',
-          ),
-        ],
+      body: _tabs[_tabsIndex],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(color: Colors.black26, blurRadius: 4.0),
+          ],
+        ),
+        child: BottomNavigationBar(
+          onTap: (index) {
+            setState(() {
+              _tabsIndex = index;
+            });
+          },
+          currentIndex: _tabsIndex,
+          backgroundColor: Colors.white,
+          fixedColor: Colors.blueAccent,
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.view_in_ar),
+              label: '個別注文',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.view_in_ar),
+              label: '定期注文',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt),
+              label: '注文履歴',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: _user?.name ?? '',
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -25,11 +25,15 @@ class NoticeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
-        ),
+        centerTitle: true,
+        leading: Container(),
         title: Text('お知らせ'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: streamNotice,

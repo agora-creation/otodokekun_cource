@@ -42,7 +42,7 @@ class PlanScreen extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
       children: [
-        RemarksWidget(remarks: shop?.remarks ?? ''),
+        RemarksWidget(remarks: shop?.remarks ?? null),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -141,10 +141,8 @@ class _PlanDialogState extends State<PlanDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '注文を定期的に行います。',
-            style: TextStyle(color: Colors.black54, fontSize: 15.0),
-          ),
+          Text('注文を定期的に行います。',
+              style: TextStyle(color: Colors.black54, fontSize: 15.0)),
           Text(
             '契約開始後、注文が開始されます。',
             style: TextStyle(color: Colors.black54, fontSize: 15.0),

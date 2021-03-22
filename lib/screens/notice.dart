@@ -47,7 +47,7 @@ class NoticeScreen extends StatelessWidget {
           }
           if (notices.length > 0) {
             return ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               itemCount: notices.length,
               itemBuilder: (_, index) {
                 UserNoticeModel _notice = notices[index];
@@ -66,7 +66,7 @@ class NoticeScreen extends StatelessWidget {
               },
             );
           } else {
-            return Container();
+            return Center(child: Text('お知らせはありません'));
           }
         },
       ),

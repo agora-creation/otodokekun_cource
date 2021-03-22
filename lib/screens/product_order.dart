@@ -27,12 +27,13 @@ class ProductOrderScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('注文確認'),
       ),
       body: shopOrderProvider.isLoading
           ? LoadingWidget()
           : ListView(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               children: [
                 Text('注文商品', style: TextStyle(color: kSubColor)),
                 shopOrderProvider.products.length > 0

@@ -6,12 +6,12 @@ import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
+import 'package:otodokekun_cource/screens/locations.dart';
 import 'package:otodokekun_cource/screens/notice.dart';
 import 'package:otodokekun_cource/screens/order.dart';
 import 'package:otodokekun_cource/screens/plan.dart';
 import 'package:otodokekun_cource/screens/product.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
-import 'package:otodokekun_cource/screens/shop.dart';
 import 'package:otodokekun_cource/widgets/custom_app_title.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _tabsIndex = 0;
+  int _tabsIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -53,30 +53,35 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: CustomAppTitle(
-          onTap: () => overlayPage(context, ShopScreen()),
+          onTap: () {
+            userProvider.shopId = _user?.shopId;
+            overlayPage(context, LocationsScreen());
+          },
           title: _shop?.name ?? '店舗を選択してください',
         ),
         actions: [
-          IconButton(
-            onPressed: () => overlayPage(context, NoticeScreen()),
-            icon: StreamBuilder<QuerySnapshot>(
-              stream: streamNotice,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Icon(Icons.notifications_off_outlined);
-                }
-                List<DocumentSnapshot> docs = snapshot.data.docs;
-                if (docs.length == 0) {
-                  return Icon(Icons.notifications_none);
-                } else {
-                  return Icon(
-                    Icons.notifications_active,
-                    color: Colors.redAccent,
-                  );
-                }
-              },
-            ),
-          ),
+          _shop != null
+              ? IconButton(
+                  onPressed: () => overlayPage(context, NoticeScreen()),
+                  icon: StreamBuilder<QuerySnapshot>(
+                    stream: streamNotice,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Icon(Icons.notifications_off_outlined);
+                      }
+                      List<DocumentSnapshot> docs = snapshot.data.docs;
+                      if (docs.length == 0) {
+                        return Icon(Icons.notifications_none);
+                      } else {
+                        return Icon(
+                          Icons.notifications_active,
+                          color: Colors.redAccent,
+                        );
+                      }
+                    },
+                  ),
+                )
+              : Container(),
         ],
       ),
       body: _tabs[_tabsIndex],

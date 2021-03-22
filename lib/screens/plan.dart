@@ -35,16 +35,17 @@ class PlanScreen extends StatelessWidget {
         .orderBy('deliveryAt', descending: false)
         .snapshots();
     List<ShopPlanModel> plans = [];
+    plans.clear();
 
     return ListView(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       children: [
         RemarksWidget(remarks: shop?.remarks ?? null),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             LabelWidget(iconData: Icons.view_in_ar, labelText: '定期注文'),
-            user?.fixed != null
+            shop != null
                 ? TextButton(
                     onPressed: () {
                       showDialog(
@@ -72,39 +73,40 @@ class PlanScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 4.0),
-        StreamBuilder<QuerySnapshot>(
-          stream: streamPlan,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: Text('読み込み中'));
-            }
-            for (DocumentSnapshot plan in snapshot.data.docs) {
-              plans.add(ShopPlanModel.fromSnapshot(plan));
-            }
-            if (plans.length > 0) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemCount: plans.length,
-                itemBuilder: (_, index) {
-                  ShopPlanModel _plan = plans[index];
-                  return CustomPlanListTile(
-                    deliveryAt:
-                        '${DateFormat('MM/dd').format(_plan.deliveryAt)}',
-                    name: _plan.name,
-                    image: _plan.image,
-                    unit: _plan.unit,
-                    price: _plan.price,
-                    description: _plan.description,
-                  );
+        shop != null
+            ? StreamBuilder<QuerySnapshot>(
+                stream: streamPlan,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: Text('読み込み中'));
+                  }
+                  for (DocumentSnapshot plan in snapshot.data.docs) {
+                    plans.add(ShopPlanModel.fromSnapshot(plan));
+                  }
+                  if (plans.length > 0) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      itemCount: plans.length,
+                      itemBuilder: (_, index) {
+                        ShopPlanModel _plan = plans[index];
+                        return CustomPlanListTile(
+                          deliveryAt:
+                              '${DateFormat('MM/dd').format(_plan.deliveryAt)}',
+                          name: _plan.name,
+                          image: _plan.image,
+                          unit: _plan.unit,
+                          price: _plan.price,
+                          description: _plan.description,
+                        );
+                      },
+                    );
+                  } else {
+                    return Center(child: Text('商品がありません'));
+                  }
                 },
-              );
-            } else {
-              return Container();
-            }
-          },
-        ),
-        SizedBox(height: 24.0),
+              )
+            : Center(child: Text('商品がありません')),
       ],
     );
   }

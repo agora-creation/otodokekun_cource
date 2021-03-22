@@ -5,8 +5,8 @@ class ShopService {
   String _collection = 'shop';
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  Future<String> selectCode({String code}) async {
-    String shopId = '';
+  Future<ShopModel> selectCode({String code}) async {
+    ShopModel _shop;
     await _firebaseFirestore
         .collection(_collection)
         .where('code', isEqualTo: code)
@@ -14,11 +14,10 @@ class ShopService {
         .then((value) {
       if (value.docs.length > 0) {
         QueryDocumentSnapshot snapshot = value.docs.first;
-        ShopModel shop = ShopModel.fromSnapshot(snapshot);
-        shopId = shop.id;
+        _shop = ShopModel.fromSnapshot(snapshot);
       }
     });
-    return shopId;
+    return _shop;
   }
 
   Future<ShopModel> select({String shopId}) async {

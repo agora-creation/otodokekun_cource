@@ -17,7 +17,7 @@ ThemeData theme() {
     fontFamily: 'NotoSansJP',
     appBarTheme: AppBarTheme(
       color: Colors.white,
-      elevation: 0.0,
+      elevation: 4.0,
       centerTitle: false,
       brightness: Brightness.light,
       textTheme: TextTheme(
@@ -43,4 +43,13 @@ const BoxDecoration kNavigationDecoration = BoxDecoration(
       blurRadius: 4.0,
     ),
   ],
+);
+
+const BoxDecoration kBottomBorderDecoration = BoxDecoration(
+  border: Border(
+    bottom: BorderSide(
+      width: 1.0,
+      color: Color(0xFFE0E0E0),
+    ),
+  ),
 );

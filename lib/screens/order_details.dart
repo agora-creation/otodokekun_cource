@@ -31,6 +31,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: order.shipping
             ? Text('配達完了')
             : Text('配達待ち', style: TextStyle(color: Colors.redAccent)),

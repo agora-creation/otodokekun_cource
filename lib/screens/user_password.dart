@@ -17,7 +17,7 @@ class UserPasswordScreen extends StatelessWidget {
       body: userProvider.isLoading
           ? LoadingWidget()
           : ListView(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               children: [
                 CustomTextField(
                   controller: userProvider.password,

@@ -33,7 +33,7 @@ class SettingsScreen extends StatelessWidget {
     return userProvider.isLoading
         ? LoadingWidget()
         : ListView(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             children: [
               RemarksWidget(remarks: shop?.remarks ?? null),
               Text('アカウント情報', style: TextStyle(color: kSubColor)),
@@ -69,7 +69,7 @@ class SettingsScreen extends StatelessWidget {
                 },
               ),
               SizedBox(height: 24.0),
-              Text('サポート情報'),
+              Text('サポート情報', style: TextStyle(color: kSubColor)),
               CustomIconListTile(
                 iconData: Icons.business_outlined,
                 title: '運営会社',
@@ -105,7 +105,6 @@ class SettingsScreen extends StatelessWidget {
                   changePage(context, LoginScreen());
                 },
               ),
-              SizedBox(height: 40.0),
             ],
           );
   }

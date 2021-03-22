@@ -69,98 +69,75 @@ class _OrderScreenState extends State<OrderScreen> {
         .startAt([_startAt]).endAt([_endAt]).snapshots();
 
     return ListView(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       children: [
         RemarksWidget(remarks: widget.shop?.remarks ?? null),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             LabelWidget(iconData: Icons.list_alt, labelText: '注文履歴'),
-            TextButton.icon(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) {
-                    return SearchInvoiceDialog(
-                      shopOrderProvider: widget.shopOrderProvider,
-                      invoices: _invoices,
-                    );
-                  },
-                );
-              },
-              icon: Icon(Icons.calendar_today, color: Colors.white),
-              label: Text(
-                  '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
-                  style: TextStyle(color: Colors.white)),
-              style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(),
-            TextButton(
-              onPressed: () async {
-                int _totalPrice =
-                    await widget.shopOrderProvider.selectTotalPrice(
-                  shopId: widget.shop?.id,
-                  userId: widget.user?.id,
-                  startAt: _startAt,
-                  endAt: _endAt,
-                );
-                showDialog(
-                  context: context,
-                  builder: (_) {
-                    return TotalPriceDialog(
-                      searchOpenedAt: widget.shopOrderProvider.searchOpenedAt,
-                      searchClosedAt: widget.shopOrderProvider.searchClosedAt,
-                      totalPrice: _totalPrice,
-                    );
-                  },
-                );
-              },
-              child: Text('注文金額を確認', style: TextStyle(color: Colors.white)),
-              style: TextButton.styleFrom(backgroundColor: Colors.redAccent),
-            ),
+            widget.shop != null
+                ? TextButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return SearchInvoiceDialog(
+                            shopOrderProvider: widget.shopOrderProvider,
+                            invoices: _invoices,
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.calendar_today, color: Colors.white),
+                    label: Text(
+                        '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
+                        style: TextStyle(color: Colors.white)),
+                    style:
+                        TextButton.styleFrom(backgroundColor: Colors.lightBlue),
+                  )
+                : Container(),
           ],
         ),
         SizedBox(height: 4.0),
-        StreamBuilder<QuerySnapshot>(
-          stream: streamOrder,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: Text('読み込み中'));
-            }
-            List<ShopOrderModel> orders = [];
-            for (DocumentSnapshot order in snapshot.data.docs) {
-              orders.add(ShopOrderModel.fromSnapshot(order));
-            }
-            if (orders.length > 0) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemCount: orders.length,
-                itemBuilder: (_, index) {
-                  ShopOrderModel _order = orders[index];
-                  return CustomOrderListTile(
-                    deliveryAt: DateFormat('MM/dd').format(_order.deliveryAt),
-                    name: _order.products[0].name,
-                    shipping: _order.shipping,
-                    onTap: () {
-                      widget.shopOrderProvider.products.clear();
-                      widget.shopOrderProvider.products = _order.products;
-                      nextPage(context, OrderDetailsScreen(order: _order));
-                    },
-                  );
+        widget.shop != null
+            ? StreamBuilder<QuerySnapshot>(
+                stream: streamOrder,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: Text('読み込み中'));
+                  }
+                  List<ShopOrderModel> orders = [];
+                  for (DocumentSnapshot order in snapshot.data.docs) {
+                    orders.add(ShopOrderModel.fromSnapshot(order));
+                  }
+                  if (orders.length > 0) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      itemCount: orders.length,
+                      itemBuilder: (_, index) {
+                        ShopOrderModel _order = orders[index];
+                        return CustomOrderListTile(
+                          deliveryAt:
+                              DateFormat('MM/dd').format(_order.deliveryAt),
+                          name: _order.products[0].name,
+                          shipping: _order.shipping,
+                          onTap: () {
+                            widget.shopOrderProvider.products.clear();
+                            widget.shopOrderProvider.products = _order.products;
+                            nextPage(
+                                context, OrderDetailsScreen(order: _order));
+                          },
+                        );
+                      },
+                    );
+                  } else {
+                    return Center(child: Text('注文がありません'));
+                  }
                 },
-              );
-            } else {
-              return Container();
-            }
-          },
-        ),
-        SizedBox(height: 24.0),
+              )
+            : Center(child: Text('注文がありません')),
       ],
     );
   }

@@ -11,10 +11,11 @@ class NoticeDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('お知らせ詳細'),
       ),
       body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         children: [
           Text(
             notice.title,

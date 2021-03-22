@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:otodokekun_cource/models/locations.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_plan.dart';
 import 'package:otodokekun_cource/models/user.dart';
@@ -31,10 +32,12 @@ class UserProvider with ChangeNotifier {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController cPassword = TextEditingController();
+  TextEditingController shopCode = TextEditingController();
 
   bool isHidden = false;
   bool isCHidden = false;
   bool isLoading = false;
+  String shopId = '';
 
   UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -52,6 +55,11 @@ class UserProvider with ChangeNotifier {
 
   void changeLoading() {
     isLoading = !isLoading;
+    notifyListeners();
+  }
+
+  void changeShopId(String value) {
+    shopId = value;
     notifyListeners();
   }
 
@@ -234,9 +242,51 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> addLocations({List<LocationsModel> locations}) async {
+    if (shopCode.text == null) return false;
+    try {
+      ShopModel _shopModel =
+          await _shopService.selectCode(code: shopCode.text.trim());
+      for (LocationsModel _shop in locations) {
+        if (_shopModel.id == _shop.id) {
+          return false;
+        }
+      }
+      List<Map> _locations = [];
+      _locations.add({
+        'id': _shopModel.id,
+        'name': _shopModel.name,
+      });
+      _userService.update({
+        'id': _auth.currentUser.uid,
+        'locations': _locations,
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> updateShopId() async {
+    if (shopId == '') return false;
+    try {
+      _userService.update({
+        'id': _auth.currentUser.uid,
+        'shopId': shopId,
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
   Future signOut() async {
     _auth.signOut();
     _status = Status.Unauthenticated;
+    _shop = null;
+    _user = null;
     notifyListeners();
     return Future.delayed(Duration.zero);
   }
@@ -249,6 +299,7 @@ class UserProvider with ChangeNotifier {
     email.text = '';
     password.text = '';
     cPassword.text = '';
+    shopCode.text = '';
   }
 
   Future reloadUserModel() async {

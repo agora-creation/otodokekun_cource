@@ -14,14 +14,14 @@ import 'package:otodokekun_cource/widgets/label.dart';
 import 'package:otodokekun_cource/widgets/remarks.dart';
 
 class OrderScreen extends StatefulWidget {
+  final ShopOrderProvider shopOrderProvider;
   final ShopModel shop;
   final UserModel user;
-  final ShopOrderProvider shopOrderProvider;
 
   OrderScreen({
+    @required this.shopOrderProvider,
     @required this.shop,
     @required this.user,
-    @required this.shopOrderProvider,
   });
 
   @override
@@ -148,11 +148,9 @@ class _OrderScreenState extends State<OrderScreen> {
                     name: _order.products[0].name,
                     shipping: _order.shipping,
                     onTap: () {
+                      widget.shopOrderProvider.products.clear();
                       widget.shopOrderProvider.products = _order.products;
-                      nextPage(
-                        context,
-                        OrderDetailsScreen(shop: widget.shop, order: _order),
-                      );
+                      nextPage(context, OrderDetailsScreen(order: _order));
                     },
                   );
                 },

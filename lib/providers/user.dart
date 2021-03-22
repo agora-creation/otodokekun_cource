@@ -34,6 +34,7 @@ class UserProvider with ChangeNotifier {
 
   bool isHidden = false;
   bool isCHidden = false;
+  bool isLoading = false;
 
   UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -46,6 +47,11 @@ class UserProvider with ChangeNotifier {
 
   void changeCHidden() {
     isCHidden = !isCHidden;
+    notifyListeners();
+  }
+
+  void changeLoading() {
+    isLoading = !isLoading;
     notifyListeners();
   }
 

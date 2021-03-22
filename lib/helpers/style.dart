@@ -35,3 +35,12 @@ ThemeData theme() {
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 }
+
+const BoxDecoration kNavigationDecoration = BoxDecoration(
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black26,
+      blurRadius: 4.0,
+    ),
+  ],
+);

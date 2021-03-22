@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
-import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/providers/user_notice.dart';
@@ -22,10 +21,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: HomeProvider()..initFCM()),
         ChangeNotifierProvider.value(value: ShopOrderProvider()),
         ChangeNotifierProvider.value(value: UserProvider.initialize()),
-        ChangeNotifierProvider.value(value: UserNoticeProvider()),
+        ChangeNotifierProvider.value(value: UserNoticeProvider()..initFCM()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

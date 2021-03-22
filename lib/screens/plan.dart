@@ -7,7 +7,6 @@ import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_plan.dart';
 import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/terms_use.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
@@ -16,13 +15,11 @@ import 'package:otodokekun_cource/widgets/label.dart';
 import 'package:otodokekun_cource/widgets/remarks.dart';
 
 class PlanScreen extends StatelessWidget {
-  final HomeProvider homeProvider;
   final UserProvider userProvider;
   final ShopModel shop;
   final UserModel user;
 
   PlanScreen({
-    @required this.homeProvider,
     @required this.userProvider,
     @required this.shop,
     @required this.user,
@@ -63,7 +60,7 @@ class PlanScreen extends StatelessWidget {
                       );
                     },
                     child: Text(
-                      user.fixed ? '契約解除' : '契約開始',
+                      user.fixed ? '契約解除' : '契約する',
                       style: TextStyle(color: Colors.white),
                     ),
                     style: TextButton.styleFrom(
@@ -243,7 +240,7 @@ class _PlanDialogState extends State<PlanDialog> {
             Navigator.pop(context);
           },
           child: Text(
-            widget.user.fixed ? '契約解除' : '契約開始',
+            widget.user.fixed ? '契約解除' : '契約する',
             style: TextStyle(color: Colors.white),
           ),
           style: TextButton.styleFrom(

@@ -4,19 +4,19 @@ import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
 import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/home.dart';
+import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/screens/product_order.dart';
 import 'package:otodokekun_cource/widgets/custom_product_list_tile.dart';
 import 'package:otodokekun_cource/widgets/label.dart';
 import 'package:otodokekun_cource/widgets/remarks.dart';
 
 class ProductScreen extends StatelessWidget {
-  final HomeProvider homeProvider;
+  final ShopOrderProvider shopOrderProvider;
   final ShopModel shop;
   final UserModel user;
 
   ProductScreen({
-    @required this.homeProvider,
+    @required this.shopOrderProvider,
     @required this.shop,
     @required this.user,
   });
@@ -41,10 +41,10 @@ class ProductScreen extends StatelessWidget {
             LabelWidget(iconData: Icons.view_in_ar, labelText: '個別注文'),
             TextButton(
               onPressed: () {
-                if (homeProvider.products.length > 0) {
-                  homeProvider.deliveryAt =
+                if (shopOrderProvider.products.length > 0) {
+                  shopOrderProvider.deliveryAt =
                       DateTime.now().add(Duration(days: shop.cancelLimit));
-                  nextPage(context, ProductOrderScreen(shop: shop, user: user));
+                  nextPage(context, ProductOrderScreen());
                 }
               },
               child: Text('注文する', style: TextStyle(color: Colors.white)),
@@ -70,8 +70,8 @@ class ProductScreen extends StatelessWidget {
                 itemCount: products.length,
                 itemBuilder: (_, index) {
                   ShopProductModel _product = products[index];
-                  var contain =
-                      homeProvider.products.where((e) => e.id == _product.id);
+                  var contain = shopOrderProvider.products
+                      .where((e) => e.id == _product.id);
                   return CustomProductListTile(
                     name: _product.name,
                     image: _product.image,
@@ -80,7 +80,7 @@ class ProductScreen extends StatelessWidget {
                     description: _product.description,
                     value: contain.isNotEmpty,
                     onChanged: (value) {
-                      homeProvider.checkProducts(product: _product);
+                      shopOrderProvider.checkProducts(product: _product);
                     },
                   );
                 },

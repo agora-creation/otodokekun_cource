@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
@@ -9,14 +8,13 @@ import 'package:provider/provider.dart';
 class UserAddressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final homeProvider = Provider.of<HomeProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('お届け先情報変更'),
       ),
-      body: homeProvider.isLoading
+      body: userProvider.isLoading
           ? LoadingWidget()
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -59,9 +57,9 @@ class UserAddressScreen extends StatelessWidget {
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () async {
-                    homeProvider.changeLoading();
+                    userProvider.changeLoading();
                     if (!await userProvider.updateAddress()) {
-                      homeProvider.changeLoading();
+                      userProvider.changeLoading();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('変更に失敗しました')),
                       );
@@ -72,8 +70,8 @@ class UserAddressScreen extends StatelessWidget {
                     );
                     userProvider.clearController();
                     userProvider.reloadUserModel();
-                    homeProvider.changeLoading();
-                    Navigator.pop(context, true);
+                    userProvider.changeLoading();
+                    Navigator.pop(context);
                   },
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/models/products.dart';
 import 'package:otodokekun_cource/models/shop_invoice.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
+import 'package:otodokekun_cource/models/shop_product.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/services/shop_invoice.dart';
 import 'package:otodokekun_cource/services/shop_order.dart';
@@ -12,26 +13,29 @@ class ShopOrderProvider with ChangeNotifier {
   ShopOrderService _shopOrderService = ShopOrderService();
 
   List<ProductsModel> products = [];
+  DateTime deliveryAt = DateTime.now();
   TextEditingController remarks = TextEditingController();
-
   DateTime searchOpenedAt = DateTime.now();
   DateTime searchClosedAt = DateTime.now().add(Duration(days: 14));
 
-  void create(
-      {String shopId,
-      UserModel user,
-      List<ProductsModel> products,
-      DateTime deliveryAt}) {
+  bool isLoading = false;
+
+  void changeLoading() {
+    isLoading = !isLoading;
+    notifyListeners();
+  }
+
+  void create({UserModel user, List<ProductsModel> products}) {
     List<Map> convertedProducts = [];
     int _totalPrice = 0;
     for (ProductsModel product in products) {
       convertedProducts.add(product.toMap());
       _totalPrice += product.price * product.quantity;
     }
-    String id = _shopOrderService.newId(shopId: shopId);
+    String id = _shopOrderService.newId(shopId: user.shopId);
     _shopOrderService.create({
       'id': id,
-      'shopId': shopId,
+      'shopId': user.shopId,
       'userId': user.id,
       'name': user.name,
       'zip': user.zip,
@@ -73,6 +77,31 @@ class ShopOrderProvider with ChangeNotifier {
     remarks.text = '';
   }
 
+  void checkProducts({ShopProductModel product}) {
+    var contain = products.where((e) => e.id == product.id);
+    if (contain.isEmpty) {
+      Map data = {
+        'id': product.id,
+        'name': product.name,
+        'image': product.image,
+        'unit': product.unit,
+        'price': product.price,
+        'quantity': 1,
+        'totalPrice': product.price * 1,
+      };
+      ProductsModel _products = ProductsModel.fromMap(data);
+      products.add(_products);
+    } else {
+      products.removeWhere((e) => e.id == product.id);
+    }
+    notifyListeners();
+  }
+
+  void deleteProducts(ProductsModel productsModel) {
+    products.removeWhere((e) => e.id == productsModel.id);
+    notifyListeners();
+  }
+
   void addQuantity(ProductsModel productsModel) {
     productsModel.quantity += 1;
     productsModel.totalPrice = productsModel.price * productsModel.quantity;
@@ -90,6 +119,11 @@ class ShopOrderProvider with ChangeNotifier {
   void changeSelectDateRage(DateTime openedAt, DateTime closedAt) {
     searchOpenedAt = openedAt;
     searchClosedAt = closedAt;
+    notifyListeners();
+  }
+
+  void setDeliveryAt(DateTime selected) {
+    deliveryAt = selected;
     notifyListeners();
   }
 

@@ -4,7 +4,6 @@ import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/notice.dart';
@@ -14,7 +13,6 @@ import 'package:otodokekun_cource/screens/product.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
 import 'package:otodokekun_cource/screens/shop.dart';
 import 'package:otodokekun_cource/widgets/custom_app_title.dart';
-import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,34 +25,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final homeProvider = Provider.of<HomeProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     ShopModel _shop = userProvider.shop;
     UserModel _user = userProvider.user;
     final List<Widget> _tabs = [
       ProductScreen(
-        homeProvider: homeProvider,
-        shop: _shop,
-        user: _user,
-      ),
-      PlanScreen(
-        homeProvider: homeProvider,
-        userProvider: userProvider,
-        shop: _shop,
-        user: _user,
-      ),
-      OrderScreen(
-        shop: _shop,
-        user: _user,
         shopOrderProvider: shopOrderProvider,
-      ),
-      SettingsScreen(
-        homeProvider: homeProvider,
-        userProvider: userProvider,
         shop: _shop,
         user: _user,
       ),
+      PlanScreen(userProvider: userProvider, shop: _shop, user: _user),
+      OrderScreen(
+        shopOrderProvider: shopOrderProvider,
+        shop: _shop,
+        user: _user,
+      ),
+      SettingsScreen(userProvider: userProvider, shop: _shop, user: _user),
     ];
     final Stream<QuerySnapshot> streamNotice = FirebaseFirestore.instance
         .collection('user')
@@ -94,16 +81,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _tabs[_tabsIndex],
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(color: Colors.black26, blurRadius: 4.0),
-          ],
-        ),
+        decoration: kNavigationDecoration,
         child: BottomNavigationBar(
           onTap: (index) {
-            setState(() {
-              _tabsIndex = index;
-            });
+            setState(() => _tabsIndex = index);
           },
           currentIndex: _tabsIndex,
           backgroundColor: Colors.white,
@@ -129,48 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class ShopDialog extends StatelessWidget {
-  final ShopModel shop;
-  final UserModel user;
-
-  ShopDialog({
-    @required this.shop,
-    @required this.user,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomDialog(
-      title: '${shop?.name}',
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '住所',
-            style: TextStyle(color: kSubColor, fontSize: 14.0),
-          ),
-          Text('〒${shop?.zip}'),
-          Text('${shop?.address}'),
-          Text('${shop?.tel}'),
-          SizedBox(height: 4.0),
-          Text(
-            '担当者',
-            style: TextStyle(color: kSubColor, fontSize: 14.0),
-          ),
-          Text('${user?.staff}'),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('閉じる'),
-        ),
-      ],
     );
   }
 }

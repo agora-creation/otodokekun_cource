@@ -5,7 +5,6 @@ import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/products.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/user_address.dart';
@@ -19,54 +18,47 @@ import 'package:otodokekun_cource/widgets/quantity_button.dart';
 import 'package:provider/provider.dart';
 
 class ProductOrderScreen extends StatelessWidget {
-  final ShopModel shop;
-  final UserModel user;
-
-  ProductOrderScreen({
-    @required this.shop,
-    @required this.user,
-  });
-
   @override
   Widget build(BuildContext context) {
-    final homeProvider = Provider.of<HomeProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
+    ShopModel _shop = userProvider.shop;
+    UserModel _user = userProvider.user;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('注文確認'),
       ),
-      body: homeProvider.isLoading
+      body: shopOrderProvider.isLoading
           ? LoadingWidget()
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               children: [
                 Text('注文商品', style: TextStyle(color: kSubColor)),
-                homeProvider.products.length > 0
+                shopOrderProvider.products.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
-                        itemCount: homeProvider.products.length,
+                        itemCount: shopOrderProvider.products.length,
                         itemBuilder: (_, index) {
                           ProductsModel _products =
-                              homeProvider.products[index];
+                              shopOrderProvider.products[index];
                           return CustomProductsListTile(
                             name: _products.name,
                             image: _products.image,
                             unit: _products.unit,
                             price: _products.price,
                             onTap: () {
-                              homeProvider.deleteProducts(_products);
+                              shopOrderProvider.deleteProducts(_products);
                             },
                             child: QuantityButton(
                               unit: _products.unit,
                               quantity: _products.quantity,
                               removeOnPressed: () {
-                                homeProvider.removeQuantity(_products);
+                                shopOrderProvider.removeQuantity(_products);
                               },
                               addOnPressed: () {
-                                homeProvider.addQuantity(_products);
+                                shopOrderProvider.addQuantity(_products);
                               },
                             ),
                           );
@@ -75,18 +67,18 @@ class ProductOrderScreen extends StatelessWidget {
                     : Container(),
                 SizedBox(height: 8.0),
                 Text('注文者名', style: TextStyle(color: kSubColor)),
-                Text(user?.name ?? ''),
+                Text(_user?.name ?? ''),
                 SizedBox(height: 8.0),
                 Text('お届け先', style: TextStyle(color: kSubColor)),
                 AddressWidget(
-                  zip: user?.zip ?? '',
-                  address: user?.address ?? '',
-                  tel: user?.tel ?? '',
+                  zip: _user?.zip ?? '',
+                  address: _user?.address ?? '',
+                  tel: _user?.tel ?? '',
                   onTap: () {
                     userProvider.clearController();
-                    userProvider.zip.text = user?.zip;
-                    userProvider.address.text = user?.address;
-                    userProvider.tel.text = user?.tel;
+                    userProvider.zip.text = _user?.zip;
+                    userProvider.address.text = _user?.address;
+                    userProvider.tel.text = _user?.tel;
                     nextPage(context, UserAddressScreen());
                   },
                 ),
@@ -94,18 +86,18 @@ class ProductOrderScreen extends StatelessWidget {
                 Text('お届け指定日', style: TextStyle(color: kSubColor)),
                 DeliveryWidget(
                   deliveryAt:
-                      '${DateFormat('yyyy年MM月dd日').format(homeProvider.deliveryAt)}',
+                      '${DateFormat('yyyy年MM月dd日').format(shopOrderProvider.deliveryAt)}',
                   onTap: () async {
                     var selected = await showDatePicker(
                       locale: const Locale('ja'),
                       context: context,
-                      initialDate: homeProvider.deliveryAt,
+                      initialDate: shopOrderProvider.deliveryAt,
                       firstDate:
-                          DateTime.now().add(Duration(days: shop.cancelLimit)),
+                          DateTime.now().add(Duration(days: _shop.cancelLimit)),
                       lastDate: DateTime.now().add(Duration(days: 365)),
                     );
                     if (selected != null) {
-                      homeProvider.setDeliveryAt(selected);
+                      shopOrderProvider.setDeliveryAt(selected);
                     }
                   },
                 ),
@@ -129,21 +121,19 @@ class ProductOrderScreen extends StatelessWidget {
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () {
-                    if (homeProvider.products.length > 0) {
-                      homeProvider.changeLoading();
+                    if (shopOrderProvider.products.length > 0) {
+                      shopOrderProvider.changeLoading();
                       shopOrderProvider.create(
-                        shopId: user.shopId,
-                        user: user,
-                        products: homeProvider.products,
-                        deliveryAt: homeProvider.deliveryAt,
+                        user: _user,
+                        products: shopOrderProvider.products,
                       );
                       shopOrderProvider.clearController();
-                      homeProvider.products.clear();
-                      homeProvider.changeLoading();
+                      shopOrderProvider.products.clear();
+                      shopOrderProvider.changeLoading();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('注文が完了しました')),
                       );
-                      Navigator.pop(context, true);
+                      Navigator.pop(context);
                     }
                   },
                 ),

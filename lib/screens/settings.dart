@@ -3,7 +3,6 @@ import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
-import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/company.dart';
 import 'package:otodokekun_cource/screens/login.dart';
@@ -19,13 +18,11 @@ import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:otodokekun_cource/widgets/remarks.dart';
 
 class SettingsScreen extends StatelessWidget {
-  final HomeProvider homeProvider;
   final UserProvider userProvider;
   final ShopModel shop;
   final UserModel user;
 
   SettingsScreen({
-    @required this.homeProvider,
     @required this.userProvider,
     @required this.shop,
     @required this.user,
@@ -33,7 +30,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return homeProvider.isLoading
+    return userProvider.isLoading
         ? LoadingWidget()
         : ListView(
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -102,9 +99,9 @@ class SettingsScreen extends StatelessWidget {
                 labelColor: Colors.redAccent,
                 borderColor: Colors.redAccent,
                 onPressed: () {
-                  homeProvider.changeLoading();
+                  userProvider.changeLoading();
                   userProvider.signOut();
-                  homeProvider.changeLoading();
+                  userProvider.changeLoading();
                   changePage(context, LoginScreen());
                 },
               ),

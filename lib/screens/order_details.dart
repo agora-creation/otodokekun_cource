@@ -4,8 +4,8 @@ import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/products.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
-import 'package:otodokekun_cource/providers/home.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
+import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
 import 'package:otodokekun_cource/widgets/custom_products_list_tile.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
@@ -14,21 +14,18 @@ import 'package:otodokekun_cource/widgets/quantity_button.dart';
 import 'package:provider/provider.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
-  final ShopModel shop;
   final ShopOrderModel order;
 
-  OrderDetailsScreen({
-    @required this.shop,
-    @required this.order,
-  });
+  OrderDetailsScreen({@required this.order});
 
   @override
   Widget build(BuildContext context) {
-    final homeProvider = Provider.of<HomeProvider>(context);
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
+    ShopModel _shop = userProvider.shop;
     bool _cancelLimit = false;
     var diff = order.deliveryAt.difference(DateTime.now());
-    if (diff.inDays < shop.cancelLimit) {
+    if (diff.inDays < _shop.cancelLimit) {
       _cancelLimit = true;
     }
 
@@ -38,7 +35,7 @@ class OrderDetailsScreen extends StatelessWidget {
             ? Text('配達完了')
             : Text('配達待ち', style: TextStyle(color: Colors.redAccent)),
       ),
-      body: homeProvider.isLoading
+      body: shopOrderProvider.isLoading
           ? LoadingWidget()
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
@@ -110,13 +107,13 @@ class OrderDetailsScreen extends StatelessWidget {
                         labelColor: Colors.white,
                         backgroundColor: Colors.blueAccent,
                         onPressed: () {
-                          homeProvider.changeLoading();
+                          shopOrderProvider.changeLoading();
                           shopOrderProvider.updateQuantity(order: order);
-                          homeProvider.changeLoading();
+                          shopOrderProvider.changeLoading();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('注文内容を変更しました')),
                           );
-                          Navigator.pop(context, true);
+                          Navigator.pop(context);
                         },
                       ),
                 SizedBox(height: 8.0),
@@ -127,13 +124,13 @@ class OrderDetailsScreen extends StatelessWidget {
                         labelColor: Colors.blueGrey,
                         borderColor: Colors.blueGrey,
                         onPressed: () {
-                          homeProvider.changeLoading();
+                          shopOrderProvider.changeLoading();
                           shopOrderProvider.delete(order: order);
-                          homeProvider.changeLoading();
+                          shopOrderProvider.changeLoading();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('注文をキャンセルしました')),
                           );
-                          Navigator.pop(context, true);
+                          Navigator.pop(context);
                         },
                       ),
                 SizedBox(height: 40.0),

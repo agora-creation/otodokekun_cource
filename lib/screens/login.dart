@@ -87,7 +87,6 @@ class LoginScreen extends StatelessWidget {
                               return;
                             }
                             userProvider.clearController();
-                            userProvider.reloadUserModel();
                             changePage(context, HomeScreen());
                           },
                         ),

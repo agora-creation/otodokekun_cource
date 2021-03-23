@@ -19,6 +19,7 @@ class UserEmailScreen extends StatelessWidget {
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               children: [
+                SizedBox(height: 8.0),
                 CustomTextField(
                   controller: userProvider.name,
                   obscureText: false,
@@ -42,7 +43,7 @@ class UserEmailScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 24.0),
                 FillRoundButton(
-                  labelText: '変更内容を保存する',
+                  labelText: '変更内容を保存',
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () async {

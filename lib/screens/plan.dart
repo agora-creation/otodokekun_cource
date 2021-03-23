@@ -35,7 +35,6 @@ class PlanScreen extends StatelessWidget {
         .orderBy('deliveryAt', descending: false)
         .snapshots();
     List<ShopPlanModel> plans = [];
-    plans.clear();
 
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -80,6 +79,7 @@ class PlanScreen extends StatelessWidget {
                   if (!snapshot.hasData) {
                     return Center(child: Text('読み込み中'));
                   }
+                  plans.clear();
                   for (DocumentSnapshot plan in snapshot.data.docs) {
                     plans.add(ShopPlanModel.fromSnapshot(plan));
                   }

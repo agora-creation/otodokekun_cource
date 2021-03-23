@@ -138,7 +138,6 @@ class ProductOrderScreen extends StatelessWidget {
                     }
                   },
                 ),
-                SizedBox(height: 40.0),
               ],
             ),
     );

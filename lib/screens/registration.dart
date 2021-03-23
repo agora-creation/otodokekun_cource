@@ -146,7 +146,6 @@ class RegistrationScreen extends StatelessWidget {
                               return;
                             }
                             userProvider.clearController();
-                            userProvider.reloadUserModel();
                             changePage(context, HomeScreen());
                           },
                         ),

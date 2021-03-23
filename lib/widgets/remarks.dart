@@ -7,7 +7,7 @@ class RemarksWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return remarks != null
+    return remarks != null && remarks != ''
         ? Padding(
             padding: EdgeInsets.only(bottom: 16.0),
             child: Container(

@@ -34,7 +34,7 @@ class UserPasswordScreen extends StatelessWidget {
                     userProvider.changeHidden();
                   },
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 8.0),
                 CustomTextField(
                   controller: userProvider.cPassword,
                   obscureText: userProvider.isCHidden ? false : true,
@@ -49,7 +49,7 @@ class UserPasswordScreen extends StatelessWidget {
                     userProvider.changeCHidden();
                   },
                 ),
-                SizedBox(height: 24.0),
+                SizedBox(height: 16.0),
                 FillRoundButton(
                   labelText: '変更内容を保存',
                   labelColor: Colors.white,

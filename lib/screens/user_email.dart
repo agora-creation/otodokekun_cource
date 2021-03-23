@@ -30,7 +30,7 @@ class UserEmailScreen extends StatelessWidget {
                   suffixIconData: null,
                   onTap: null,
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 8.0),
                 CustomTextField(
                   controller: userProvider.email,
                   obscureText: false,
@@ -41,7 +41,7 @@ class UserEmailScreen extends StatelessWidget {
                   suffixIconData: null,
                   onTap: null,
                 ),
-                SizedBox(height: 24.0),
+                SizedBox(height: 16.0),
                 FillRoundButton(
                   labelText: '変更内容を保存',
                   labelColor: Colors.white,

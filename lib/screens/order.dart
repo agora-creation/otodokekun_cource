@@ -10,6 +10,7 @@ import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/screens/order_details.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource/widgets/custom_order_list_tile.dart';
+import 'package:otodokekun_cource/widgets/custom_total_price_list_tile.dart';
 import 'package:otodokekun_cource/widgets/label.dart';
 import 'package:otodokekun_cource/widgets/remarks.dart';
 
@@ -71,7 +72,6 @@ class _OrderScreenState extends State<OrderScreen> {
         .orderBy('deliveryAt', descending: true)
         .startAt([_startAt]).endAt([_endAt]).snapshots();
     List<ShopOrderModel> orders = [];
-    int _totalPrice = 0;
 
     return Column(
       children: [
@@ -126,7 +126,6 @@ class _OrderScreenState extends State<OrderScreen> {
                             itemCount: orders.length,
                             itemBuilder: (_, index) {
                               ShopOrderModel _order = orders[index];
-                              _totalPrice = _totalPrice + _order.totalPrice;
                               return CustomOrderListTile(
                                 deliveryAt: DateFormat('MM/dd')
                                     .format(_order.deliveryAt),
@@ -150,35 +149,23 @@ class _OrderScreenState extends State<OrderScreen> {
             ],
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (_) {
-                return TotalPriceDialog(
-                  title:
-                      '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
-                  totalPrice: _totalPrice,
-                );
-              },
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.orangeAccent,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black38,
-                  blurRadius: 5.0,
-                ),
-              ],
-            ),
-            child: ListTile(
-              title: Text('注文金額の合計を表示'),
-              trailing: Icon(Icons.arrow_drop_up),
-            ),
-          ),
-        ),
+        widget.shop != null
+            ? CustomTotalPriceListTile(
+                labelText: '注文金額の合計を表示',
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      return TotalPriceDialog(
+                        title:
+                            '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
+                        orders: orders,
+                      );
+                    },
+                  );
+                },
+              )
+            : Container(),
       ],
     );
   }
@@ -285,19 +272,34 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
   }
 }
 
-class TotalPriceDialog extends StatelessWidget {
+class TotalPriceDialog extends StatefulWidget {
   final String title;
-  final int totalPrice;
+  final List<ShopOrderModel> orders;
 
   TotalPriceDialog({
     @required this.title,
-    @required this.totalPrice,
+    @required this.orders,
   });
+
+  @override
+  _TotalPriceDialogState createState() => _TotalPriceDialogState();
+}
+
+class _TotalPriceDialogState extends State<TotalPriceDialog> {
+  int _totalPrice = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    for (ShopOrderModel order in widget.orders) {
+      _totalPrice += order.totalPrice;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: title,
+      title: widget.title,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +308,7 @@ class TotalPriceDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text('注文金額'),
-              Text('¥ $totalPrice'),
+              Text('¥ $_totalPrice'),
             ],
           ),
         ],

@@ -249,14 +249,13 @@ class UserProvider with ChangeNotifier {
       ShopModel _shopModel =
           await _shopService.selectCode(code: shopCode.text.trim());
       for (LocationsModel _shop in locations) {
-        if (_shopModel.id == _shop.id) {
-          return false;
-        }
+        if (_shopModel.id == _shop.id) return false;
         _locations.add(_shop.toMap());
       }
       _locations.add({
         'id': _shopModel.id,
         'name': _shopModel.name,
+        'target': false,
       });
       _userService.update({
         'id': _auth.currentUser.uid,
@@ -269,12 +268,17 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateShopId() async {
+  Future<bool> updateShopId({List<LocationsModel> locations}) async {
     if (shopId == '') return false;
     try {
+      List<Map> _locations = [];
+      for (LocationsModel _shop in locations) {
+        if (shopId == _shop.id) _shop.target = true;
+        _locations.add(_shop.toMap());
+      }
       _userService.update({
         'id': _auth.currentUser.uid,
-        'shopId': shopId,
+        'locations': _locations,
       });
       return true;
     } catch (e) {

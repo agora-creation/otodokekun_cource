@@ -20,6 +20,7 @@ class NoticeScreen extends StatelessWidget {
         .collection('user')
         .doc(_user?.id)
         .collection('notice')
+        .where('shopId', isEqualTo: _user?.shopId)
         .orderBy('createdAt', descending: true)
         .snapshots();
 

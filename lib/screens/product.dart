@@ -40,7 +40,7 @@ class ProductScreen extends StatelessWidget {
           children: [
             LabelWidget(iconData: Icons.view_in_ar, labelText: '個別注文'),
             shop != null
-                ? TextButton(
+                ? TextButton.icon(
                     onPressed: () {
                       if (shopOrderProvider.products.length > 0) {
                         shopOrderProvider.deliveryAt = DateTime.now()
@@ -48,7 +48,8 @@ class ProductScreen extends StatelessWidget {
                         nextPage(context, ProductOrderScreen());
                       }
                     },
-                    child: Text('注文する', style: TextStyle(color: Colors.white)),
+                    icon: Icon(Icons.check, color: Colors.white),
+                    label: Text('注文する', style: TextStyle(color: Colors.white)),
                     style: TextButton.styleFrom(
                         backgroundColor: Colors.blueAccent),
                   )

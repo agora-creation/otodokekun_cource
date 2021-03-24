@@ -45,7 +45,7 @@ class PlanScreen extends StatelessWidget {
           children: [
             LabelWidget(iconData: Icons.view_in_ar, labelText: '定期注文'),
             shop != null
-                ? TextButton(
+                ? TextButton.icon(
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -59,7 +59,8 @@ class PlanScreen extends StatelessWidget {
                         },
                       );
                     },
-                    child: Text(
+                    icon: Icon(Icons.cached, color: Colors.white),
+                    label: Text(
                       user.fixed ? '契約解除' : '契約する',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -204,12 +205,13 @@ class _PlanDialogState extends State<PlanDialog> {
         ],
       ),
       actions: [
-        TextButton(
+        TextButton.icon(
           onPressed: () => Navigator.pop(context),
-          child: Text('やめる', style: TextStyle(color: Colors.white)),
+          icon: Icon(Icons.close, color: Colors.white),
+          label: Text('やめる', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.grey),
         ),
-        TextButton(
+        TextButton.icon(
           onPressed: () async {
             if (widget.user.fixed) {
               if (!await widget.userProvider.updateFixedFalse()) {
@@ -242,7 +244,8 @@ class _PlanDialogState extends State<PlanDialog> {
             widget.userProvider.reloadUserModel();
             Navigator.pop(context);
           },
-          child: Text(
+          icon: Icon(Icons.cached, color: Colors.white),
+          label: Text(
             widget.user.fixed ? '契約解除' : '契約する',
             style: TextStyle(color: Colors.white),
           ),

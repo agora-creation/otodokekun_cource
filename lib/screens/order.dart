@@ -230,7 +230,9 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
                       ),
                       child: RadioListTile(
                         title: Text(
-                            '${DateFormat('yyyy/MM/dd').format(_invoice.openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(_invoice.closedAt)}'),
+                          '${DateFormat('yyyy/MM/dd').format(_invoice.openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(_invoice.closedAt)}',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
                         value: _invoice,
                         groupValue: _selected,
                         activeColor: Colors.blueAccent,
@@ -250,18 +252,20 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
         ),
       ),
       actions: [
-        TextButton(
+        TextButton.icon(
           onPressed: () => Navigator.pop(context),
-          child: Text('閉じる', style: TextStyle(color: Colors.white)),
+          icon: Icon(Icons.close, color: Colors.white),
+          label: Text('閉じる', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.grey),
         ),
-        TextButton(
+        TextButton.icon(
           onPressed: () {
             widget.shopOrderProvider
                 .changeSelectDateRage(_selected.openedAt, _selected.closedAt);
             Navigator.pop(context);
           },
-          child: Text('表示する', style: TextStyle(color: Colors.white)),
+          icon: Icon(Icons.search, color: Colors.white),
+          label: Text('表示する', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
         ),
       ],
@@ -313,9 +317,10 @@ class _TotalPriceDialogState extends State<TotalPriceDialog> {
         ],
       ),
       actions: [
-        TextButton(
+        TextButton.icon(
           onPressed: () => Navigator.pop(context),
-          child: Text('閉じる', style: TextStyle(color: Colors.white)),
+          icon: Icon(Icons.close, color: Colors.white),
+          label: Text('閉じる', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.grey),
         ),
       ],

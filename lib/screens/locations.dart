@@ -40,6 +40,12 @@ class LocationsScreen extends StatelessWidget {
                       decoration: kBottomBorderDecoration,
                       child: RadioListTile(
                         title: Text(_user.locations[index].name),
+                        subtitle: _user.shopId == _user.locations[index].id
+                            ? Text('設定中')
+                            : _user.locations[index].target == true
+                                ? Text('切替予定',
+                                    style: TextStyle(color: Colors.redAccent))
+                                : null,
                         value: _user.locations[index].id,
                         groupValue: userProvider.shopId,
                         activeColor: Colors.blueAccent,
@@ -57,7 +63,8 @@ class LocationsScreen extends StatelessWidget {
             children: [
               TextButton.icon(
                 onPressed: () async {
-                  if (!await userProvider.updateShopId()) {
+                  if (!await userProvider.updateShopId(
+                      locations: _user.locations)) {
                     return;
                   }
                   userProvider.reloadUserModel();
@@ -123,12 +130,13 @@ class AddLocationsDialog extends StatelessWidget {
         ],
       ),
       actions: [
-        TextButton(
+        TextButton.icon(
           onPressed: () => Navigator.pop(context),
-          child: Text('やめる', style: TextStyle(color: Colors.white)),
+          icon: Icon(Icons.close, color: Colors.white),
+          label: Text('やめる', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.grey),
         ),
-        TextButton(
+        TextButton.icon(
           onPressed: () async {
             if (!await userProvider.addLocations(locations: locations)) {
               return;
@@ -137,7 +145,8 @@ class AddLocationsDialog extends StatelessWidget {
             userProvider.reloadUserModel();
             Navigator.pop(context);
           },
-          child: Text('追加する', style: TextStyle(color: Colors.white)),
+          icon: Icon(Icons.add, color: Colors.white),
+          label: Text('追加する', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.blueAccent),
         ),
       ],

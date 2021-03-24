@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class CustomTotalPriceListTile extends StatelessWidget {
+class CustomInvoicesListTile extends StatelessWidget {
   final String labelText;
   final Function onTap;
 
-  CustomTotalPriceListTile({
+  CustomInvoicesListTile({
     this.labelText,
     this.onTap,
   });
@@ -15,7 +15,7 @@ class CustomTotalPriceListTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.orange,
+          color: Colors.lightBlue,
           boxShadow: [
             BoxShadow(
               color: Colors.black38,
@@ -24,8 +24,8 @@ class CustomTotalPriceListTile extends StatelessWidget {
           ],
         ),
         child: ListTile(
+          leading: Icon(Icons.calendar_today, color: Colors.white),
           title: Text(labelText, style: TextStyle(color: Colors.white)),
-          trailing: Icon(Icons.arrow_drop_up, color: Colors.white),
         ),
       ),
     );

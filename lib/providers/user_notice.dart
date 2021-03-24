@@ -6,9 +6,11 @@ import 'package:otodokekun_cource/services/user_notice.dart';
 class UserNoticeProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _token;
+  String _message;
   UserNoticeService _userNoticeService = UserNoticeService();
 
   String get token => _token;
+  String get message => _message;
 
   void updateRead({UserNoticeModel notice}) {
     _userNoticeService.update({
@@ -26,12 +28,25 @@ class UserNoticeProvider with ChangeNotifier {
     //FCM tokenの取得
     _firebaseMessaging.getToken().then((token) {
       _token = token;
+      notifyListeners();
       print("token: $_token");
     });
     //メッセージ受信時の処理
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
+        _message = 'onMessage: $message';
+        notifyListeners();
         print("onMessage: $message");
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        _message = 'onLaunch: $message';
+        notifyListeners();
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        _message = 'onResume: $message';
+        notifyListeners();
+        print("onResume: $message");
       },
     );
   }

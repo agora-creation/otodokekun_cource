@@ -9,6 +9,7 @@ import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/screens/order_details.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
+import 'package:otodokekun_cource/widgets/custom_invoices_list_tile.dart';
 import 'package:otodokekun_cource/widgets/custom_order_list_tile.dart';
 import 'package:otodokekun_cource/widgets/custom_total_price_list_tile.dart';
 import 'package:otodokekun_cource/widgets/label.dart';
@@ -75,6 +76,23 @@ class _OrderScreenState extends State<OrderScreen> {
 
     return Column(
       children: [
+        widget.shop != null
+            ? CustomInvoicesListTile(
+                labelText:
+                    '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      return SearchInvoiceDialog(
+                        shopOrderProvider: widget.shopOrderProvider,
+                        invoices: _invoices,
+                      );
+                    },
+                  );
+                },
+              )
+            : Container(),
         Expanded(
           child: ListView(
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -84,27 +102,6 @@ class _OrderScreenState extends State<OrderScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   LabelWidget(iconData: Icons.list_alt, labelText: '注文履歴'),
-                  widget.shop != null
-                      ? TextButton.icon(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) {
-                                return SearchInvoiceDialog(
-                                  shopOrderProvider: widget.shopOrderProvider,
-                                  invoices: _invoices,
-                                );
-                              },
-                            );
-                          },
-                          icon: Icon(Icons.calendar_today, color: Colors.white),
-                          label: Text(
-                              '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
-                              style: TextStyle(color: Colors.white)),
-                          style: TextButton.styleFrom(
-                              backgroundColor: Colors.lightBlue),
-                        )
-                      : Container(),
                 ],
               ),
               SizedBox(height: 4.0),
@@ -255,16 +252,16 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('閉じる'),
+          child: Text('閉じる', style: TextStyle(color: Colors.white)),
+          style: TextButton.styleFrom(backgroundColor: Colors.grey),
         ),
-        TextButton.icon(
+        TextButton(
           onPressed: () {
             widget.shopOrderProvider
                 .changeSelectDateRage(_selected.openedAt, _selected.closedAt);
             Navigator.pop(context);
           },
-          icon: Icon(Icons.search, color: Colors.white),
-          label: Text('表示する', style: TextStyle(color: Colors.white)),
+          child: Text('表示する', style: TextStyle(color: Colors.white)),
           style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
         ),
       ],
@@ -299,15 +296,17 @@ class _TotalPriceDialogState extends State<TotalPriceDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: widget.title,
+      title: '注文金額',
       content: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Text(widget.title),
+          Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text('注文金額'),
+              Text('合計'),
               Text('¥ $_totalPrice'),
             ],
           ),
@@ -316,7 +315,8 @@ class _TotalPriceDialogState extends State<TotalPriceDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('閉じる'),
+          child: Text('閉じる', style: TextStyle(color: Colors.white)),
+          style: TextButton.styleFrom(backgroundColor: Colors.grey),
         ),
       ],
     );

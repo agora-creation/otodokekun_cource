@@ -206,7 +206,8 @@ class _PlanDialogState extends State<PlanDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('閉じる'),
+          child: Text('やめる', style: TextStyle(color: Colors.white)),
+          style: TextButton.styleFrom(backgroundColor: Colors.grey),
         ),
         TextButton(
           onPressed: () async {

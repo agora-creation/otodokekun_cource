@@ -245,14 +245,15 @@ class UserProvider with ChangeNotifier {
   Future<bool> addLocations({List<LocationsModel> locations}) async {
     if (shopCode.text == null) return false;
     try {
+      List<Map> _locations = [];
       ShopModel _shopModel =
           await _shopService.selectCode(code: shopCode.text.trim());
       for (LocationsModel _shop in locations) {
         if (_shopModel.id == _shop.id) {
           return false;
         }
+        _locations.add(_shop.toMap());
       }
-      List<Map> _locations = [];
       _locations.add({
         'id': _shopModel.id,
         'name': _shopModel.name,

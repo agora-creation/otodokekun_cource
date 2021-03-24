@@ -28,6 +28,8 @@ class LocationsScreen extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         children: [
+          Text('店舗切替は、締め日に自動で行われます。'),
+          SizedBox(height: 4.0),
           _user.locations.length > 0
               ? ListView.builder(
                   shrinkWrap: true,

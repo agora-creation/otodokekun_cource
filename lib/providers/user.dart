@@ -268,18 +268,26 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateShopId({List<LocationsModel> locations}) async {
+  Future<bool> updateShopId(
+      {String shopIdDefault, List<LocationsModel> locations}) async {
     if (shopId == '') return false;
     try {
-      List<Map> _locations = [];
-      for (LocationsModel _shop in locations) {
-        if (shopId == _shop.id) _shop.target = true;
-        _locations.add(_shop.toMap());
+      if (shopIdDefault != '') {
+        List<Map> _locations = [];
+        for (LocationsModel _shop in locations) {
+          if (shopId == _shop.id) _shop.target = true;
+          _locations.add(_shop.toMap());
+        }
+        _userService.update({
+          'id': _auth.currentUser.uid,
+          'locations': _locations,
+        });
+      } else {
+        _userService.update({
+          'id': _auth.currentUser.uid,
+          'shopId': shopId,
+        });
       }
-      _userService.update({
-        'id': _auth.currentUser.uid,
-        'locations': _locations,
-      });
       return true;
     } catch (e) {
       print(e.toString());

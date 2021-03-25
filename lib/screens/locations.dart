@@ -64,6 +64,7 @@ class LocationsScreen extends StatelessWidget {
               TextButton.icon(
                 onPressed: () async {
                   if (!await userProvider.updateShopId(
+                      shopIdDefault: _user.shopId,
                       locations: _user.locations)) {
                     return;
                   }

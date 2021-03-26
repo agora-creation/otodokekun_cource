@@ -8,7 +8,7 @@ import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_plan.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/user.dart';
-import 'package:otodokekun_cource/screens/terms_use.dart';
+import 'package:otodokekun_cource/screens/terms.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource/widgets/custom_plan_list_tile.dart';
 import 'package:otodokekun_cource/widgets/label.dart';
@@ -187,7 +187,7 @@ class _PlanDialogState extends State<PlanDialog> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                nextPage(context, TermsUseScreen());
+                                nextPage(context, TermsScreen());
                               },
                           ),
                           TextSpan(

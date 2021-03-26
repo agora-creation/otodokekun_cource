@@ -1,4 +1,5 @@
 package com.agoracreation.otodokekun_cource
+
 import io.flutter.app.FlutterApplication
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback

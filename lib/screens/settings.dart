@@ -7,7 +7,7 @@ import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/company.dart';
 import 'package:otodokekun_cource/screens/login.dart';
 import 'package:otodokekun_cource/screens/privacy_policy.dart';
-import 'package:otodokekun_cource/screens/terms_use.dart';
+import 'package:otodokekun_cource/screens/terms.dart';
 import 'package:otodokekun_cource/screens/tokushoho.dart';
 import 'package:otodokekun_cource/screens/user_address.dart';
 import 'package:otodokekun_cource/screens/user_email.dart';
@@ -79,7 +79,7 @@ class SettingsScreen extends StatelessWidget {
               CustomIconListTile(
                 iconData: Icons.description_outlined,
                 title: '利用規約',
-                onTap: () => nextPage(context, TermsUseScreen()),
+                onTap: () => nextPage(context, TermsScreen()),
               ),
               SizedBox(height: 8.0),
               CustomIconListTile(

@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.agoracreation.otodokekun_cource">
    <application
+        android:name=".Application"
         android:label="お届けくん(BtoC)"
         android:icon="@mipmap/launcher_icon">
         <activity

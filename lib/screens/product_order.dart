@@ -17,7 +17,14 @@ import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:otodokekun_cource/widgets/quantity_button.dart';
 import 'package:provider/provider.dart';
 
-class ProductOrderScreen extends StatelessWidget {
+class ProductOrderScreen extends StatefulWidget {
+  @override
+  _ProductOrderScreenState createState() => _ProductOrderScreenState();
+}
+
+class _ProductOrderScreenState extends State<ProductOrderScreen> {
+  bool _isFixed = false;
+
   @override
   Widget build(BuildContext context) {
     final shopOrderProvider = Provider.of<ShopOrderProvider>(context);
@@ -125,6 +132,24 @@ class ProductOrderScreen extends StatelessWidget {
                 ),
                 Divider(height: 0.0, color: Colors.black),
                 SizedBox(height: 8.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Checkbox(
+                      activeColor: Colors.blueAccent,
+                      value: _isFixed,
+                      onChanged: (value) {
+                        setState(() {
+                          _isFixed = value;
+                        });
+                      },
+                    ),
+                    Text(
+                      '利用規約に同意する',
+                      style: TextStyle(color: Colors.black54, fontSize: 16.0),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 16.0),
                 Divider(height: 0.0),
                 SizedBox(height: 16.0),
@@ -133,6 +158,12 @@ class ProductOrderScreen extends StatelessWidget {
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () {
+                    if (!_isFixed) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('利用規約に同意してください')),
+                      );
+                      return;
+                    }
                     if (shopOrderProvider.products.length > 0) {
                       shopOrderProvider.changeLoading();
                       shopOrderProvider.create(
@@ -149,6 +180,7 @@ class ProductOrderScreen extends StatelessWidget {
                     }
                   },
                 ),
+                SizedBox(height: 40.0),
               ],
             ),
     );

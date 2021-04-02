@@ -154,7 +154,6 @@ class TermsDialog extends StatelessWidget {
           Container(
             height: 250.0,
             child: Scrollbar(
-              isAlwaysShown: true,
               controller: _scrollController,
               child: WebView(
                 initialUrl: 'https://agora-c.com/otodokekun/terms_use.html',

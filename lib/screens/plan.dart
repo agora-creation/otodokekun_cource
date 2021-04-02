@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_plan.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/user.dart';
-import 'package:otodokekun_cource/screens/terms.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource/widgets/custom_plan_list_tile.dart';
 import 'package:otodokekun_cource/widgets/label.dart';
@@ -141,13 +138,6 @@ class _PlanDialogState extends State<PlanDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('注文を定期的に行います。',
-              style: TextStyle(color: Colors.black54, fontSize: 15.0)),
-          Text(
-            '契約開始後、注文が開始されます。',
-            style: TextStyle(color: Colors.black54, fontSize: 15.0),
-          ),
-          Divider(),
           Text(
             '注文者名',
             style: TextStyle(color: kSubColor, fontSize: 14.0),
@@ -161,7 +151,17 @@ class _PlanDialogState extends State<PlanDialog> {
           Text('〒${widget.user?.zip}'),
           Text('${widget.user?.address}'),
           Text('${widget.user?.tel}'),
-          SizedBox(height: 4.0),
+          SizedBox(height: 16.0),
+          Divider(height: 0.0, color: Colors.black),
+          Expanded(
+            flex: 1,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Text('${widget.shop.terms}'),
+            ),
+          ),
+          Divider(height: 0.0, color: Colors.black),
+          SizedBox(height: 8.0),
           widget.user.fixed
               ? Container()
               : Row(
@@ -176,29 +176,9 @@ class _PlanDialogState extends State<PlanDialog> {
                         });
                       },
                     ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '利用規約',
-                            style: TextStyle(
-                              color: Colors.blueAccent,
-                              fontSize: 16.0,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                nextPage(context, TermsScreen());
-                              },
-                          ),
-                          TextSpan(
-                            text: 'に同意する',
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      '利用規約に同意する',
+                      style: TextStyle(color: Colors.black54, fontSize: 16.0),
                     ),
                   ],
                 ),

@@ -13,6 +13,7 @@ import 'package:otodokekun_cource/screens/plan.dart';
 import 'package:otodokekun_cource/screens/product.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
 import 'package:otodokekun_cource/widgets/custom_app_title.dart';
+import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -61,6 +62,17 @@ class _HomeScreenState extends State<HomeScreen> {
           title: _shop?.name ?? '店舗を選択してください',
         ),
         actions: [
+          _shop != null
+              ? IconButton(
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) {
+                      return ShopDialog(shop: _shop);
+                    },
+                  ),
+                  icon: Icon(Icons.store_outlined),
+                )
+              : Container(),
           _shop != null
               ? IconButton(
                   onPressed: () => overlayPage(context, NoticeScreen()),
@@ -116,6 +128,63 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ShopDialog extends StatelessWidget {
+  final ShopModel shop;
+
+  ShopDialog({@required this.shop});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomDialog(
+      title: '店舗情報',
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '店舗名',
+            style: TextStyle(color: kSubColor, fontSize: 14.0),
+          ),
+          Text('${shop.name}'),
+          SizedBox(height: 4.0),
+          Text(
+            '住所',
+            style: TextStyle(color: kSubColor, fontSize: 14.0),
+          ),
+          Text('${shop.zip}'),
+          Text('${shop.address}'),
+          SizedBox(height: 4.0),
+          Text(
+            '電話番号',
+            style: TextStyle(color: kSubColor, fontSize: 14.0),
+          ),
+          Text('${shop.tel}'),
+          SizedBox(height: 4.0),
+          Text(
+            'メールアドレス',
+            style: TextStyle(color: kSubColor, fontSize: 14.0),
+          ),
+          Text('${shop.email}'),
+          SizedBox(height: 4.0),
+          Text(
+            '注文のキャンセル期限日',
+            style: TextStyle(color: kSubColor, fontSize: 14.0),
+          ),
+          Text('${shop.cancelLimit}日前まで'),
+        ],
+      ),
+      actions: [
+        TextButton.icon(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.close, color: Colors.white),
+          label: Text('閉じる', style: TextStyle(color: Colors.white)),
+          style: TextButton.styleFrom(backgroundColor: Colors.grey),
+        ),
+      ],
     );
   }
 }

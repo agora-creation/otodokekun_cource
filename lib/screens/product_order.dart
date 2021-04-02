@@ -114,6 +114,17 @@ class ProductOrderScreen extends StatelessWidget {
                   suffixIconData: null,
                   onTap: null,
                 ),
+                SizedBox(height: 24.0),
+                Divider(height: 0.0, color: Colors.black),
+                Container(
+                  height: 250.0,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Text('${_shop?.terms}'),
+                  ),
+                ),
+                Divider(height: 0.0, color: Colors.black),
+                SizedBox(height: 8.0),
                 SizedBox(height: 16.0),
                 Divider(height: 0.0),
                 SizedBox(height: 16.0),

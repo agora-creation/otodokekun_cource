@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
-import 'package:otodokekun_cource/models/shop_plan.dart';
+import 'package:otodokekun_cource/models/shop_product_regular.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
-import 'package:otodokekun_cource/widgets/custom_plan_list_tile.dart';
+import 'package:otodokekun_cource/widgets/custom_product_regular_list_tile.dart';
 import 'package:otodokekun_cource/widgets/label.dart';
 import 'package:otodokekun_cource/widgets/remarks.dart';
 
-class PlanScreen extends StatelessWidget {
+class ProductRegularScreen extends StatelessWidget {
   final UserProvider userProvider;
   final ShopModel shop;
   final UserModel user;
 
-  PlanScreen({
+  ProductRegularScreen({
     @required this.userProvider,
     @required this.shop,
     @required this.user,
@@ -27,11 +27,10 @@ class PlanScreen extends StatelessWidget {
     final Stream<QuerySnapshot> streamPlan = FirebaseFirestore.instance
         .collection('shop')
         .doc(shop?.id)
-        .collection('plan')
-        .where('published', isEqualTo: true)
+        .collection('productRegular')
         .orderBy('deliveryAt', descending: false)
         .snapshots();
-    List<ShopPlanModel> plans = [];
+    List<ShopProductRegularModel> productRegulars = [];
 
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -47,23 +46,23 @@ class PlanScreen extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (_) {
-                          return PlanDialog(
+                          return ProductRegularDialog(
                             userProvider: userProvider,
                             shop: shop,
                             user: user,
-                            plans: plans,
+                            productRegular: productRegulars,
                           );
                         },
                       );
                     },
                     icon: Icon(Icons.cached, color: Colors.white),
                     label: Text(
-                      user.fixed ? '契約解除' : '契約する',
+                      user.regular ? '契約中' : '契約する',
                       style: TextStyle(color: Colors.white),
                     ),
                     style: TextButton.styleFrom(
                       backgroundColor:
-                          user.fixed ? Colors.redAccent : Colors.blueAccent,
+                          user.regular ? Colors.redAccent : Colors.blueAccent,
                     ),
                   )
                 : Container(),
@@ -77,58 +76,61 @@ class PlanScreen extends StatelessWidget {
                   if (!snapshot.hasData) {
                     return Center(child: Text('読み込み中'));
                   }
-                  plans.clear();
-                  for (DocumentSnapshot plan in snapshot.data.docs) {
-                    plans.add(ShopPlanModel.fromSnapshot(plan));
+                  productRegulars.clear();
+                  for (DocumentSnapshot productRegular in snapshot.data.docs) {
+                    productRegulars.add(
+                        ShopProductRegularModel.fromSnapshot(productRegular));
                   }
-                  if (plans.length > 0) {
+                  if (productRegulars.length > 0) {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
-                      itemCount: plans.length,
+                      itemCount: productRegulars.length,
                       itemBuilder: (_, index) {
-                        ShopPlanModel _plan = plans[index];
-                        return CustomPlanListTile(
+                        ShopProductRegularModel _productRegular =
+                            productRegulars[index];
+                        return CustomProductRegularListTile(
                           deliveryAt:
-                              '${DateFormat('MM/dd').format(_plan.deliveryAt)}',
-                          name: _plan.name,
-                          image: _plan.image,
-                          unit: _plan.unit,
-                          price: _plan.price,
-                          description: _plan.description,
+                              '${DateFormat('MM/dd').format(_productRegular.deliveryAt)}',
+                          productName: _productRegular.productName,
+                          productImage: _productRegular.productImage,
+                          productUnit: _productRegular.productUnit,
+                          productPrice: _productRegular.productPrice,
+                          productDescription:
+                              _productRegular.productDescription,
                         );
                       },
                     );
                   } else {
-                    return Center(child: Text('商品がありません'));
+                    return Center(child: Text('定期便がありません'));
                   }
                 },
               )
-            : Center(child: Text('商品がありません')),
+            : Center(child: Text('定期便がありません')),
       ],
     );
   }
 }
 
-class PlanDialog extends StatefulWidget {
+class ProductRegularDialog extends StatefulWidget {
   final UserProvider userProvider;
   final ShopModel shop;
   final UserModel user;
-  final List<ShopPlanModel> plans;
+  final List<ShopProductRegularModel> productRegular;
 
-  PlanDialog({
+  ProductRegularDialog({
     @required this.userProvider,
     @required this.shop,
     @required this.user,
-    @required this.plans,
+    @required this.productRegular,
   });
 
   @override
-  _PlanDialogState createState() => _PlanDialogState();
+  _ProductRegularDialogState createState() => _ProductRegularDialogState();
 }
 
-class _PlanDialogState extends State<PlanDialog> {
-  bool _isFixed = false;
+class _ProductRegularDialogState extends State<ProductRegularDialog> {
+  bool _isRegular = false;
 
   @override
   Widget build(BuildContext context) {
@@ -162,18 +164,16 @@ class _PlanDialogState extends State<PlanDialog> {
           ),
           Divider(height: 0.0, color: Colors.black),
           SizedBox(height: 8.0),
-          widget.user.fixed
+          widget.user.regular
               ? Container()
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Checkbox(
                       activeColor: Colors.blueAccent,
-                      value: _isFixed,
+                      value: _isRegular,
                       onChanged: (value) {
-                        setState(() {
-                          _isFixed = value;
-                        });
+                        setState(() => _isRegular = value);
                       },
                     ),
                     Text(
@@ -193,8 +193,8 @@ class _PlanDialogState extends State<PlanDialog> {
         ),
         TextButton.icon(
           onPressed: () async {
-            if (widget.user.fixed) {
-              if (!await widget.userProvider.updateFixedFalse()) {
+            if (widget.user.regular) {
+              if (!await widget.userProvider.updateRegularFalse()) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('契約の解除に失敗しました')),
                 );
@@ -204,14 +204,14 @@ class _PlanDialogState extends State<PlanDialog> {
                 SnackBar(content: Text('契約を解除いたしました')),
               );
             } else {
-              if (!_isFixed) {
+              if (!_isRegular) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('利用規約に同意してください')),
                 );
                 return;
               }
               if (!await widget.userProvider
-                  .updateFixedTrue(plans: widget.plans)) {
+                  .updateRegularTrue(productRegulars: widget.productRegular)) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('契約の開始に失敗しました')),
                 );
@@ -226,12 +226,12 @@ class _PlanDialogState extends State<PlanDialog> {
           },
           icon: Icon(Icons.cached, color: Colors.white),
           label: Text(
-            widget.user.fixed ? '契約解除' : '契約する',
+            widget.user.regular ? '契約解除' : '契約する',
             style: TextStyle(color: Colors.white),
           ),
           style: TextButton.styleFrom(
             backgroundColor:
-                widget.user.fixed ? Colors.redAccent : Colors.blueAccent,
+                widget.user.regular ? Colors.redAccent : Colors.blueAccent,
           ),
         ),
       ],

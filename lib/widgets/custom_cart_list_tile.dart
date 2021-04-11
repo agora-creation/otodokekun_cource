@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomProductsListTile extends StatelessWidget {
+class CustomCartListTile extends StatelessWidget {
   final String name;
   final String image;
   final String unit;
@@ -8,7 +8,7 @@ class CustomProductsListTile extends StatelessWidget {
   final Function onTap;
   final Widget child;
 
-  CustomProductsListTile({
+  CustomCartListTile({
     this.name,
     this.image,
     this.unit,

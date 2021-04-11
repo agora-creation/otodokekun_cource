@@ -17,10 +17,7 @@ class NoticeDetailsScreen extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         children: [
-          Text(
-            notice.title,
-            style: TextStyle(fontSize: 18.0),
-          ),
+          Text(notice.title, style: TextStyle(fontSize: 18.0)),
           SizedBox(height: 8.0),
           Text(notice.message, style: TextStyle(fontSize: 16.0)),
           SizedBox(height: 8.0),

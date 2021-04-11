@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class CustomPlanListTile extends StatelessWidget {
+class CustomProductRegularListTile extends StatelessWidget {
   final String deliveryAt;
-  final String name;
-  final String image;
-  final String unit;
-  final int price;
-  final String description;
+  final String productName;
+  final String productImage;
+  final String productUnit;
+  final int productPrice;
+  final String productDescription;
 
-  CustomPlanListTile({
+  CustomProductRegularListTile({
     this.deliveryAt,
-    this.name,
-    this.image,
-    this.unit,
-    this.price,
-    this.description,
+    this.productName,
+    this.productImage,
+    this.productUnit,
+    this.productPrice,
+    this.productDescription,
   });
 
   @override
@@ -42,22 +42,22 @@ class CustomPlanListTile extends StatelessWidget {
                 ),
               ),
               title: ListTile(
-                leading: image != ''
+                leading: productImage != ''
                     ? Image.network(
-                        image,
+                        productImage,
                         fit: BoxFit.cover,
                       )
                     : null,
-                title: Text(name),
-                subtitle: Text('¥ $price / $unit'),
+                title: Text(productName),
+                subtitle: Text('¥ $productPrice / $productUnit'),
               ),
             ),
             Divider(height: 0.0),
-            description != ''
+            productDescription != ''
                 ? Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
-                      description,
+                      productDescription,
                       style: TextStyle(color: Colors.black54),
                     ),
                   )

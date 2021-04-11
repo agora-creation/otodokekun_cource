@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource/models/locations.dart';
 import 'package:otodokekun_cource/models/shop.dart';
-import 'package:otodokekun_cource/models/shop_plan.dart';
+import 'package:otodokekun_cource/models/shop_product_regular.dart';
+import 'package:otodokekun_cource/models/tmp.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/services/shop.dart';
 import 'package:otodokekun_cource/services/shop_order.dart';
@@ -115,10 +115,9 @@ class UserProvider with ChangeNotifier {
           'tel': tel.text.trim(),
           'email': email.text.trim(),
           'password': password.text.trim(),
-          'locations': [],
-          'blacklist': false,
+          'tmp': [],
           'staff': '',
-          'fixed': false,
+          'regular': false,
           'token': token,
           'createdAt': DateTime.now(),
         });
@@ -187,39 +186,40 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateFixedTrue({List<ShopPlanModel> plans}) async {
+  Future<bool> updateRegularTrue(
+      {List<ShopProductRegularModel> productRegulars}) async {
     try {
       _userService.update({
         'id': _auth.currentUser.uid,
-        'fixed': true,
+        'regular': true,
       });
-      for (ShopPlanModel _plan in plans) {
+      for (ShopProductRegularModel _productRegular in productRegulars) {
         String id = _shopOrderService.newId(shopId: _user.shopId);
-        List<Map> products = [];
-        products.add({
-          'id': _plan.id,
-          'name': _plan.name,
-          'image': _plan.image,
-          'unit': _plan.unit,
-          'price': _plan.price,
+        List<Map> cart = [];
+        cart.add({
+          'id': _productRegular.productId,
+          'name': _productRegular.productName,
+          'image': _productRegular.productImage,
+          'unit': _productRegular.productUnit,
+          'price': _productRegular.productPrice,
           'quantity': 1,
-          'totalPrice': _plan.price,
+          'totalPrice': _productRegular.productPrice,
         });
         _shopOrderService.create({
           'id': id,
           'shopId': _user.shopId,
           'userId': _user.id,
-          'name': _user.name,
-          'zip': _user.zip,
-          'address': _user.address,
-          'tel': _user.tel,
-          'products': products,
-          'deliveryAt': _plan.deliveryAt,
+          'userName': _user.name,
+          'userZip': _user.zip,
+          'userAddress': _user.address,
+          'userTel': _user.tel,
+          'cart': cart,
+          'deliveryAt': _productRegular.deliveryAt,
           'remarks': '',
-          'totalPrice': _plan.price,
+          'totalPrice': _productRegular.productPrice,
           'staff': _user.staff,
           'shipping': false,
-          'createdAt': _plan.deliveryAt,
+          'createdAt': _productRegular.deliveryAt,
         });
       }
       return true;
@@ -229,11 +229,11 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateFixedFalse() async {
+  Future<bool> updateRegularFalse() async {
     try {
       _userService.update({
         'id': _auth.currentUser.uid,
-        'fixed': false,
+        'regular': false,
       });
       return true;
     } catch (e) {
@@ -242,24 +242,24 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> addLocations({List<LocationsModel> locations}) async {
+  Future<bool> addTmp({List<TmpModel> tmp}) async {
     if (shopCode.text == null) return false;
     try {
-      List<Map> _locations = [];
+      List<Map> _tmp = [];
       ShopModel _shopModel =
           await _shopService.selectCode(code: shopCode.text.trim());
-      for (LocationsModel _shop in locations) {
+      for (TmpModel _shop in tmp) {
         if (_shopModel.id == _shop.id) return false;
-        _locations.add(_shop.toMap());
+        _tmp.add(_shop.toMap());
       }
-      _locations.add({
+      _tmp.add({
         'id': _shopModel.id,
         'name': _shopModel.name,
         'target': false,
       });
       _userService.update({
         'id': _auth.currentUser.uid,
-        'locations': _locations,
+        'tmp': _tmp,
       });
       return true;
     } catch (e) {
@@ -268,19 +268,18 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateShopId(
-      {String shopIdDefault, List<LocationsModel> locations}) async {
+  Future<bool> updateShopId({String shopIdDefault, List<TmpModel> tmp}) async {
     if (shopId == '') return false;
     try {
       if (shopIdDefault != '') {
-        List<Map> _locations = [];
-        for (LocationsModel _shop in locations) {
+        List<Map> _tmp = [];
+        for (TmpModel _shop in tmp) {
           if (shopId == _shop.id) _shop.target = true;
-          _locations.add(_shop.toMap());
+          _tmp.add(_shop.toMap());
         }
         _userService.update({
           'id': _auth.currentUser.uid,
-          'locations': _locations,
+          'tmp': _tmp,
         });
       } else {
         _userService.update({

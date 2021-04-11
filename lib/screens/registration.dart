@@ -110,9 +110,7 @@ class RegistrationScreen extends StatelessWidget {
                               suffixIconData: userProvider.isHidden
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              onTap: () {
-                                userProvider.changeHidden();
-                              },
+                              onTap: () => userProvider.changeHidden(),
                             ),
                             SizedBox(height: 16.0),
                             CustomTextField(
@@ -126,9 +124,7 @@ class RegistrationScreen extends StatelessWidget {
                               suffixIconData: userProvider.isCHidden
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              onTap: () {
-                                userProvider.changeCHidden();
-                              },
+                              onTap: () => userProvider.changeCHidden(),
                             ),
                           ],
                         ),

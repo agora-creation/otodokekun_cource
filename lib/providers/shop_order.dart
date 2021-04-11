@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:otodokekun_cource/models/products.dart';
+import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop_invoice.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/models/shop_product.dart';
@@ -12,7 +12,7 @@ class ShopOrderProvider with ChangeNotifier {
   ShopInvoiceService _shopInvoiceService = ShopInvoiceService();
   ShopOrderService _shopOrderService = ShopOrderService();
 
-  List<ProductsModel> products = [];
+  List<CartModel> cart = [];
   DateTime deliveryAt = DateTime.now();
   TextEditingController remarks = TextEditingController();
   DateTime searchOpenedAt = DateTime.now();
@@ -25,11 +25,11 @@ class ShopOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void create({UserModel user, List<ProductsModel> products}) {
-    List<Map> convertedProducts = [];
+  void create({UserModel user, List<CartModel> cart}) {
+    List<Map> convertedCart = [];
     int _totalPrice = 0;
-    for (ProductsModel product in products) {
-      convertedProducts.add(product.toMap());
+    for (CartModel product in cart) {
+      convertedCart.add(product.toMap());
       _totalPrice += product.price * product.quantity;
     }
     String id = _shopOrderService.newId(shopId: user.shopId);
@@ -37,11 +37,11 @@ class ShopOrderProvider with ChangeNotifier {
       'id': id,
       'shopId': user.shopId,
       'userId': user.id,
-      'name': user.name,
-      'zip': user.zip,
-      'address': user.address,
-      'tel': user.tel,
-      'products': convertedProducts,
+      'userName': user.name,
+      'userZip': user.zip,
+      'userAddress': user.address,
+      'userTel': user.tel,
+      'cart': convertedCart,
       'deliveryAt': deliveryAt,
       'remarks': remarks.text,
       'totalPrice': _totalPrice,
@@ -59,16 +59,16 @@ class ShopOrderProvider with ChangeNotifier {
   }
 
   void updateQuantity({ShopOrderModel order}) {
-    List<Map> convertedProducts = [];
+    List<Map> convertedCart = [];
     int _totalPrice = 0;
-    for (ProductsModel product in products) {
-      convertedProducts.add(product.toMap());
+    for (CartModel product in cart) {
+      convertedCart.add(product.toMap());
       _totalPrice += product.price * product.quantity;
     }
     _shopOrderService.update({
       'id': order.id,
       'shopId': order.shopId,
-      'products': convertedProducts,
+      'products': convertedCart,
       'totalPrice': _totalPrice,
     });
   }
@@ -77,8 +77,8 @@ class ShopOrderProvider with ChangeNotifier {
     remarks.text = '';
   }
 
-  void checkProducts({ShopProductModel product}) {
-    var contain = products.where((e) => e.id == product.id);
+  void checkCart({ShopProductModel product}) {
+    var contain = cart.where((e) => e.id == product.id);
     if (contain.isEmpty) {
       Map data = {
         'id': product.id,
@@ -89,29 +89,29 @@ class ShopOrderProvider with ChangeNotifier {
         'quantity': 1,
         'totalPrice': product.price * 1,
       };
-      ProductsModel _products = ProductsModel.fromMap(data);
-      products.add(_products);
+      CartModel _cart = CartModel.fromMap(data);
+      cart.add(_cart);
     } else {
-      products.removeWhere((e) => e.id == product.id);
+      cart.removeWhere((e) => e.id == product.id);
     }
     notifyListeners();
   }
 
-  void deleteProducts(ProductsModel productsModel) {
-    products.removeWhere((e) => e.id == productsModel.id);
+  void deleteCart(CartModel cartModel) {
+    cart.removeWhere((e) => e.id == cartModel.id);
     notifyListeners();
   }
 
-  void addQuantity(ProductsModel productsModel) {
-    productsModel.quantity += 1;
-    productsModel.totalPrice = productsModel.price * productsModel.quantity;
+  void addQuantity(CartModel cartModel) {
+    cartModel.quantity += 1;
+    cartModel.totalPrice = cartModel.price * cartModel.quantity;
     notifyListeners();
   }
 
-  void removeQuantity(ProductsModel productsModel) {
-    if (productsModel.quantity != 1) {
-      productsModel.quantity -= 1;
-      productsModel.totalPrice = productsModel.price * productsModel.quantity;
+  void removeQuantity(CartModel cartModel) {
+    if (cartModel.quantity != 1) {
+      cartModel.quantity -= 1;
+      cartModel.totalPrice = cartModel.price * cartModel.quantity;
       notifyListeners();
     }
   }

@@ -27,9 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) {
-          return TermsDialog();
-        },
+        builder: (_) => TermsDialog(),
       );
     }
   }
@@ -94,9 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               suffixIconData: userProvider.isHidden
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              onTap: () {
-                                userProvider.changeHidden();
-                              },
+                              onTap: () => userProvider.changeHidden(),
                             ),
                           ],
                         ),
@@ -121,9 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Align(
                           alignment: Alignment.bottomRight,
                           child: LinkButton(
-                            onTap: () {
-                              nextPage(context, RegistrationScreen());
-                            },
+                            onTap: () =>
+                                nextPage(context, RegistrationScreen()),
                             labelText: '初めての方はコチラ',
                           ),
                         ),

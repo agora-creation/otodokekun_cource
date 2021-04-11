@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
-import 'package:otodokekun_cource/models/products.dart';
+import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/widgets/border_round_button.dart';
-import 'package:otodokekun_cource/widgets/custom_products_list_tile.dart';
+import 'package:otodokekun_cource/widgets/custom_cart_list_tile.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
 import 'package:otodokekun_cource/widgets/loading.dart';
 import 'package:otodokekun_cource/widgets/quantity_button.dart';
@@ -42,34 +42,29 @@ class OrderDetailsScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               children: [
                 Text('注文商品', style: TextStyle(color: kSubColor)),
-                shopOrderProvider.products.length > 0
+                shopOrderProvider.cart.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
-                        itemCount: shopOrderProvider.products.length,
+                        itemCount: shopOrderProvider.cart.length,
                         itemBuilder: (_, index) {
-                          ProductsModel _products =
-                              shopOrderProvider.products[index];
-                          return CustomProductsListTile(
-                            name: _products.name,
-                            image: _products.image,
-                            unit: _products.unit,
-                            price: _products.price,
+                          CartModel _cart = shopOrderProvider.cart[index];
+                          return CustomCartListTile(
+                            name: _cart.name,
+                            image: _cart.image,
+                            unit: _cart.unit,
+                            price: _cart.price,
                             onTap: null,
                             child: QuantityButton(
-                              unit: _products.unit,
-                              quantity: _products.quantity,
+                              unit: _cart.unit,
+                              quantity: _cart.quantity,
                               removeOnPressed: order.shipping || _cancelLimit
                                   ? null
-                                  : () {
-                                      shopOrderProvider
-                                          .removeQuantity(_products);
-                                    },
+                                  : () =>
+                                      shopOrderProvider.removeQuantity(_cart),
                               addOnPressed: order.shipping || _cancelLimit
                                   ? null
-                                  : () {
-                                      shopOrderProvider.addQuantity(_products);
-                                    },
+                                  : () => shopOrderProvider.addQuantity(_cart),
                             ),
                           );
                         },
@@ -87,13 +82,13 @@ class OrderDetailsScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('〒${order.zip}'),
-                    Text('${order.address}'),
-                    Text('${order.tel}'),
+                    Text('〒${order.userZip}'),
+                    Text('${order.userAddress}'),
+                    Text('${order.userTel}'),
                   ],
                 ),
                 SizedBox(height: 8.0),
-                Text('お届け予定日', style: TextStyle(color: kSubColor)),
+                Text('お届け日', style: TextStyle(color: kSubColor)),
                 Text('${DateFormat('yyyy年MM月dd日').format(order.deliveryAt)}'),
                 SizedBox(height: 8.0),
                 Text('備考', style: TextStyle(color: kSubColor)),

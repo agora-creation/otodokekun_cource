@@ -42,7 +42,7 @@ class ProductScreen extends StatelessWidget {
             shop != null
                 ? TextButton.icon(
                     onPressed: () {
-                      if (shopOrderProvider.products.length > 0) {
+                      if (shopOrderProvider.cart.length > 0) {
                         shopOrderProvider.deliveryAt = DateTime.now()
                             .add(Duration(days: shop.cancelLimit));
                         nextPage(context, ProductOrderScreen());
@@ -75,7 +75,7 @@ class ProductScreen extends StatelessWidget {
                       itemCount: products.length,
                       itemBuilder: (_, index) {
                         ShopProductModel _product = products[index];
-                        var contain = shopOrderProvider.products
+                        var contain = shopOrderProvider.cart
                             .where((e) => e.id == _product.id);
                         return CustomProductListTile(
                           name: _product.name,
@@ -84,9 +84,8 @@ class ProductScreen extends StatelessWidget {
                           price: _product.price,
                           description: _product.description,
                           value: contain.isNotEmpty,
-                          onChanged: (value) {
-                            shopOrderProvider.checkProducts(product: _product);
-                          },
+                          onChanged: (value) =>
+                              shopOrderProvider.checkCart(product: _product),
                         );
                       },
                     );

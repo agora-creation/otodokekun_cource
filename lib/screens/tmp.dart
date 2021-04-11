@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
-import 'package:otodokekun_cource/models/locations.dart';
+import 'package:otodokekun_cource/models/tmp.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:otodokekun_cource/widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
 
-class LocationsScreen extends StatelessWidget {
+class TmpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -28,30 +28,30 @@ class LocationsScreen extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         children: [
-          Text('店舗切替は、締め日に自動で行われます。'),
+          Text('店舗切替は、現在選択されている店舗の締日に自動で切り替わります。'),
           SizedBox(height: 4.0),
-          _user.locations.length > 0
+          _user.tmp.length > 0
               ? ListView.builder(
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
-                  itemCount: _user.locations.length,
+                  itemCount: _user.tmp.length,
                   itemBuilder: (_, index) {
                     return Container(
                       decoration: kBottomBorderDecoration,
                       child: RadioListTile(
-                        title: Text(_user.locations[index].name),
-                        subtitle: _user.shopId == _user.locations[index].id
+                        title: Text(_user.tmp[index].name),
+                        subtitle: _user.shopId == _user.tmp[index].id
                             ? Text('設定中')
-                            : _user.locations[index].target == true
-                                ? Text('切替予定',
-                                    style: TextStyle(color: Colors.redAccent))
+                            : _user.tmp[index].target == true
+                                ? Text(
+                                    '切替予定',
+                                    style: TextStyle(color: Colors.redAccent),
+                                  )
                                 : null,
-                        value: _user.locations[index].id,
+                        value: _user.tmp[index].id,
                         groupValue: userProvider.shopId,
                         activeColor: Colors.blueAccent,
-                        onChanged: (value) {
-                          userProvider.changeShopId(value);
-                        },
+                        onChanged: (value) => userProvider.changeShopId(value),
                       ),
                     );
                   },
@@ -64,8 +64,7 @@ class LocationsScreen extends StatelessWidget {
               TextButton.icon(
                 onPressed: () async {
                   if (!await userProvider.updateShopId(
-                      shopIdDefault: _user.shopId,
-                      locations: _user.locations)) {
+                      shopIdDefault: _user.shopId, tmp: _user.tmp)) {
                     return;
                   }
                   userProvider.reloadUserModel();
@@ -81,12 +80,10 @@ class LocationsScreen extends StatelessWidget {
                   userProvider.clearController();
                   showDialog(
                     context: context,
-                    builder: (_) {
-                      return AddLocationsDialog(
-                        userProvider: userProvider,
-                        locations: _user.locations,
-                      );
-                    },
+                    builder: (_) => AddTmpDialog(
+                      userProvider: userProvider,
+                      tmp: _user.tmp,
+                    ),
                   );
                 },
                 icon: Icon(Icons.add, color: Colors.white),
@@ -101,13 +98,13 @@ class LocationsScreen extends StatelessWidget {
   }
 }
 
-class AddLocationsDialog extends StatelessWidget {
+class AddTmpDialog extends StatelessWidget {
   final UserProvider userProvider;
-  final List<LocationsModel> locations;
+  final List<TmpModel> tmp;
 
-  AddLocationsDialog({
+  AddTmpDialog({
     @required this.userProvider,
-    @required this.locations,
+    @required this.tmp,
   });
 
   @override
@@ -139,7 +136,7 @@ class AddLocationsDialog extends StatelessWidget {
         ),
         TextButton.icon(
           onPressed: () async {
-            if (!await userProvider.addLocations(locations: locations)) {
+            if (!await userProvider.addTmp(tmp: tmp)) {
               return;
             }
             userProvider.clearController();

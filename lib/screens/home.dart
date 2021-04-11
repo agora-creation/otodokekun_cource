@@ -6,12 +6,12 @@ import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
-import 'package:otodokekun_cource/screens/locations.dart';
 import 'package:otodokekun_cource/screens/notice.dart';
 import 'package:otodokekun_cource/screens/order.dart';
-import 'package:otodokekun_cource/screens/plan.dart';
 import 'package:otodokekun_cource/screens/product.dart';
+import 'package:otodokekun_cource/screens/product_regular.dart';
 import 'package:otodokekun_cource/screens/settings.dart';
+import 'package:otodokekun_cource/screens/tmp.dart';
 import 'package:otodokekun_cource/widgets/custom_app_title.dart';
 import 'package:otodokekun_cource/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
         shop: _shop,
         user: _user,
       ),
-      PlanScreen(userProvider: userProvider, shop: _shop, user: _user),
+      ProductRegularScreen(
+          userProvider: userProvider, shop: _shop, user: _user),
       OrderScreen(
         shopOrderProvider: shopOrderProvider,
         shop: _shop,
@@ -53,23 +54,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: null,
+        leading: Container(),
         title: CustomAppTitle(
           onTap: () {
             userProvider.shopId = _user?.shopId;
-            overlayPage(context, LocationsScreen());
+            overlayPage(context, TmpScreen());
           },
           title: _shop?.name ?? '店舗を選択してください',
         ),
         actions: [
           _shop != null
               ? IconButton(
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (_) {
-                      return ShopDialog(shop: _shop);
-                    },
-                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => ShopDialog(shop: _shop),
+                    );
+                  },
                   icon: Icon(Icons.store_outlined),
                 )
               : Container(),

@@ -1,4 +1,4 @@
-class ProductsModel {
+class CartModel {
   String _id;
   String _name;
   String _image;
@@ -13,7 +13,7 @@ class ProductsModel {
   String get unit => _unit;
   int get price => _price;
 
-  ProductsModel.fromMap(Map data) {
+  CartModel.fromMap(Map data) {
     _id = data['id'];
     _name = data['name'];
     _image = data['image'];

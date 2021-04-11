@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
 import 'package:otodokekun_cource/helpers/style.dart';
-import 'package:otodokekun_cource/models/products.dart';
+import 'package:otodokekun_cource/models/cart.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/user.dart';
 import 'package:otodokekun_cource/providers/shop_order.dart';
 import 'package:otodokekun_cource/providers/user.dart';
 import 'package:otodokekun_cource/screens/user_address.dart';
 import 'package:otodokekun_cource/widgets/address.dart';
-import 'package:otodokekun_cource/widgets/custom_products_list_tile.dart';
+import 'package:otodokekun_cource/widgets/custom_cart_list_tile.dart';
 import 'package:otodokekun_cource/widgets/custom_text_field.dart';
 import 'package:otodokekun_cource/widgets/delivery.dart';
 import 'package:otodokekun_cource/widgets/fill_round_button.dart';
@@ -23,7 +23,7 @@ class ProductOrderScreen extends StatefulWidget {
 }
 
 class _ProductOrderScreenState extends State<ProductOrderScreen> {
-  bool _isFixed = false;
+  bool _isTerms = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,31 +43,26 @@ class _ProductOrderScreenState extends State<ProductOrderScreen> {
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               children: [
                 Text('注文商品', style: TextStyle(color: kSubColor)),
-                shopOrderProvider.products.length > 0
+                shopOrderProvider.cart.length > 0
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
-                        itemCount: shopOrderProvider.products.length,
+                        itemCount: shopOrderProvider.cart.length,
                         itemBuilder: (_, index) {
-                          ProductsModel _products =
-                              shopOrderProvider.products[index];
-                          return CustomProductsListTile(
-                            name: _products.name,
-                            image: _products.image,
-                            unit: _products.unit,
-                            price: _products.price,
-                            onTap: () {
-                              shopOrderProvider.deleteProducts(_products);
-                            },
+                          CartModel _cart = shopOrderProvider.cart[index];
+                          return CustomCartListTile(
+                            name: _cart.name,
+                            image: _cart.image,
+                            unit: _cart.unit,
+                            price: _cart.price,
+                            onTap: () => shopOrderProvider.deleteCart(_cart),
                             child: QuantityButton(
-                              unit: _products.unit,
-                              quantity: _products.quantity,
-                              removeOnPressed: () {
-                                shopOrderProvider.removeQuantity(_products);
-                              },
-                              addOnPressed: () {
-                                shopOrderProvider.addQuantity(_products);
-                              },
+                              unit: _cart.unit,
+                              quantity: _cart.quantity,
+                              removeOnPressed: () =>
+                                  shopOrderProvider.removeQuantity(_cart),
+                              addOnPressed: () =>
+                                  shopOrderProvider.addQuantity(_cart),
                             ),
                           );
                         },
@@ -91,7 +86,7 @@ class _ProductOrderScreenState extends State<ProductOrderScreen> {
                   },
                 ),
                 SizedBox(height: 8.0),
-                Text('お届け指定日', style: TextStyle(color: kSubColor)),
+                Text('お届け日', style: TextStyle(color: kSubColor)),
                 DeliveryWidget(
                   deliveryAt:
                       '${DateFormat('yyyy年MM月dd日').format(shopOrderProvider.deliveryAt)}',
@@ -117,14 +112,14 @@ class _ProductOrderScreenState extends State<ProductOrderScreen> {
                   textInputType: TextInputType.multiline,
                   maxLines: null,
                   labelText: 'ご要望など',
-                  prefixIconData: Icons.message,
+                  prefixIconData: Icons.short_text,
                   suffixIconData: null,
                   onTap: null,
                 ),
                 SizedBox(height: 24.0),
                 Divider(height: 0.0, color: Colors.black),
                 Container(
-                  height: 250.0,
+                  height: 200.0,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Text('${_shop?.terms}'),
@@ -137,11 +132,9 @@ class _ProductOrderScreenState extends State<ProductOrderScreen> {
                   children: [
                     Checkbox(
                       activeColor: Colors.blueAccent,
-                      value: _isFixed,
+                      value: _isTerms,
                       onChanged: (value) {
-                        setState(() {
-                          _isFixed = value;
-                        });
+                        setState(() => _isTerms = value);
                       },
                     ),
                     Text(
@@ -158,20 +151,20 @@ class _ProductOrderScreenState extends State<ProductOrderScreen> {
                   labelColor: Colors.white,
                   backgroundColor: Colors.blueAccent,
                   onPressed: () {
-                    if (!_isFixed) {
+                    if (!_isTerms) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('利用規約に同意してください')),
                       );
                       return;
                     }
-                    if (shopOrderProvider.products.length > 0) {
+                    if (shopOrderProvider.cart.length > 0) {
                       shopOrderProvider.changeLoading();
                       shopOrderProvider.create(
                         user: _user,
-                        products: shopOrderProvider.products,
+                        cart: shopOrderProvider.cart,
                       );
                       shopOrderProvider.clearController();
-                      shopOrderProvider.products.clear();
+                      shopOrderProvider.cart.clear();
                       shopOrderProvider.changeLoading();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('注文が完了しました')),

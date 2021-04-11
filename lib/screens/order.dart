@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otodokekun_cource/helpers/navigation.dart';
+import 'package:otodokekun_cource/helpers/style.dart';
 import 'package:otodokekun_cource/models/shop.dart';
 import 'package:otodokekun_cource/models/shop_invoice.dart';
 import 'package:otodokekun_cource/models/shop_order.dart';
@@ -83,12 +84,10 @@ class _OrderScreenState extends State<OrderScreen> {
                 onTap: () {
                   showDialog(
                     context: context,
-                    builder: (_) {
-                      return SearchInvoiceDialog(
-                        shopOrderProvider: widget.shopOrderProvider,
-                        invoices: _invoices,
-                      );
-                    },
+                    builder: (_) => SearchInvoiceDialog(
+                      shopOrderProvider: widget.shopOrderProvider,
+                      invoices: _invoices,
+                    ),
                   );
                 },
               )
@@ -126,11 +125,10 @@ class _OrderScreenState extends State<OrderScreen> {
                               return CustomOrderListTile(
                                 deliveryAt: DateFormat('MM/dd')
                                     .format(_order.deliveryAt),
-                                name: _order.products[0].name,
+                                name: _order.cart[0].name,
                                 shipping: _order.shipping,
                                 onTap: () {
-                                  widget.shopOrderProvider.products =
-                                      _order.products;
+                                  widget.shopOrderProvider.cart = _order.cart;
                                   nextPage(context,
                                       OrderDetailsScreen(order: _order));
                                 },
@@ -152,13 +150,11 @@ class _OrderScreenState extends State<OrderScreen> {
                 onTap: () {
                   showDialog(
                     context: context,
-                    builder: (_) {
-                      return TotalPriceDialog(
-                        title:
-                            '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
-                        orders: orders,
-                      );
-                    },
+                    builder: (_) => TotalPriceDialog(
+                      title:
+                          '${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchOpenedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(widget.shopOrderProvider.searchClosedAt)}',
+                      orders: orders,
+                    ),
                   );
                 },
               )
@@ -201,7 +197,7 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: '締め日で表示',
+      title: '締日で表示',
       content: Container(
         width: 300.0,
         child: ListView(
@@ -220,14 +216,7 @@ class _SearchInvoiceDialogState extends State<SearchInvoiceDialog> {
                   itemBuilder: (context, index) {
                     ShopInvoiceModel _invoice = widget.invoices[index];
                     return Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 1.0,
-                            color: Colors.grey.shade300,
-                          ),
-                        ),
-                      ),
+                      decoration: kBottomBorderDecoration,
                       child: RadioListTile(
                         title: Text(
                           '${DateFormat('yyyy/MM/dd').format(_invoice.openedAt)} 〜 ${DateFormat('yyyy/MM/dd').format(_invoice.closedAt)}',

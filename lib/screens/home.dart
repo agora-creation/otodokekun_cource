@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Container(),
+        automaticallyImplyLeading: false,
         title: CustomAppTitle(
           onTap: () {
             userProvider.shopId = _user?.shopId;

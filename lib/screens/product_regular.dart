@@ -102,11 +102,11 @@ class ProductRegularScreen extends StatelessWidget {
                       },
                     );
                   } else {
-                    return Center(child: Text('定期便がありません'));
+                    return Center(child: Text('商品がありません'));
                   }
                 },
               )
-            : Center(child: Text('定期便がありません')),
+            : Center(child: Text('商品がありません')),
       ],
     );
   }

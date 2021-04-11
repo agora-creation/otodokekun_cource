@@ -40,8 +40,8 @@ android {
         applicationId "com.agoracreation.otodokekun_cource"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 22
-        versionName '22.0'
+        versionCode 23
+        versionName '23.0'
 //        versionCode flutterVersionCode.toInteger()
 //        versionName flutterVersionName
         multiDexEnabled true
